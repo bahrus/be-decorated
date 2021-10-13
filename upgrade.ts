@@ -1,5 +1,5 @@
 import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
-import { UpgradeArgs } from './types.d.js';
+import { UpgradeArg } from './types.d.js';
 
 export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T) => void){
     const beAttrib = `be-${args.ifWantsToBe}`;

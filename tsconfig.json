@@ -10,7 +10,8 @@
 	},
 	"files":[
 		"be-decorated.ts",
-		"upgrade.ts"
+		"upgrade.ts",
+		"demo/be-a-butterbeer-counter.ts"
 	],
 	"exclude":[
 		"build",
