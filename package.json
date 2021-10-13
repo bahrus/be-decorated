@@ -3,15 +3,25 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
+  "dependencies": {
+    "xtal-element": "0.0.443",
+    "trans-render": "0.0.419"
+  },
+  "devDependencies": {
+    "@skypack/package-check": "0.2.2",
+    "xtal-test": "0.0.51"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package-check": "package-check",
+    "serve": "node node_modules/xtal-test/serve.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bahrus/be-decorated.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/bahrus/be-decorated/issues"
   },

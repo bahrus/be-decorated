@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"sourceMap": false,
+		"experimentalDecorators": false,
+		"newLine": "LF",
+		"watch": true,
+		"strict": true,
+	},
+	"files":[
+		"be-decorated.ts",
+		"upgrade.ts"
+	],
+	"exclude":[
+		"build",
+		"bower_components",
+		"node_modules"
+	]
+
+}
