@@ -116,6 +116,8 @@ To specify a different attribute, override the default "ifWantsToBe" property th
 <be-a-butterbeer-counter if-wants-to-be=a-b-c></be-a-butterbeer-counter>
 ```
 
+Another silver lining to this nuisance:  It provides more transparency where the behavior modification is coming from.
+
 ## Setting properties of the proxy externally
 
 Just as we need to be able to pass property values to custom elements, we need a way to do this with be-decorated elements.  But how?
