@@ -5,6 +5,8 @@ import {DefineArgs} from 'trans-render/lib/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
 
+export {BeDecoratedProps} from './types';
+
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions>();
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
