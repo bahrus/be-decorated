@@ -19,6 +19,7 @@
   },
   "files": [
     "be*.*",
+    "u*.*",
     "types.d.ts"
   ],
   "types": "types.d.ts",
