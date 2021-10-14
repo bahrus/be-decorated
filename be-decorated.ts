@@ -53,7 +53,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     }
                     const nv = value;
                     const ov = controller[key];
-                    xe.doActions(xe, filteredActions, this, {key, ov, nv}); 
+                    xe.doActions(xe, filteredActions, controller, {key, ov, nv}); 
                 }
                 return true;
             },
@@ -111,7 +111,7 @@ export function define(controllerConfig: DefineArgs){
         },
         complexPropDefaults:{
             ...controllerConfig.complexPropDefaults
-        }
+        },
         superclass: BeDecoratedCore
     })
 }

@@ -51,7 +51,7 @@ export class BeDecoratedCore extends HTMLElement {
                     }
                     const nv = value;
                     const ov = controller[key];
-                    xe.doActions(xe, filteredActions, this, { key, ov, nv });
+                    xe.doActions(xe, filteredActions, controller, { key, ov, nv });
                 }
                 return true;
             },

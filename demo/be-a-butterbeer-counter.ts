@@ -2,16 +2,18 @@ import {ButterbeerCounterProps} from './types';
 import {define} from '../be-decorated.js';
 
 export class ButterbeerController{
-    init(self: ProxyHandler<HTMLButtonElement>, btn: HTMLButtonElement){
+    #self: ButterbeerCounterProps | undefined;
+    init(self: ButterbeerCounterProps, btn: HTMLButtonElement){
         btn.addEventListener('click', this.handleClick)
-        this.count = 0;
+        self.count = 0;
+        this.#self = self;
     }
     onCountChange(){
         debugger;
     }
     handleClick = (e: MouseEvent) => {
         console.log(e);
-        this.count++;
+        this.#self!.count++;
     }
 }
 
