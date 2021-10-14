@@ -46,22 +46,22 @@ export class BeDecoratedCore extends HTMLElement {
         }
         return false;
     }
-    pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller: controllerCtor, ifWantsToBe, noParse, finale, intro }) {
+    pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro }) {
         if (this.parseAttr(this))
             return;
-        const controller = new controllerCtor();
+        const controllerInstance = new controller();
         const proxy = new Proxy(newTarget, {
             set: (target, key, value) => {
                 if (key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))) {
-                    controller[key] = value;
+                    controllerInstance[key] = value;
                 }
                 else {
                     target[key] = value;
                 }
                 if (key === 'self')
                     return true;
-                if (controller.propChangeQueue) {
-                    controller.propChangeQueue.add(key);
+                if (controllerInstance.propChangeQueue) {
+                    controllerInstance.propChangeQueue.add(key);
                 }
                 else {
                     if (actions !== undefined) {
@@ -76,8 +76,8 @@ export class BeDecoratedCore extends HTMLElement {
                             }
                         }
                         const nv = value;
-                        const ov = controller[key];
-                        xe.doActions(xe, filteredActions, controller, { key, ov, nv });
+                        const ov = controllerInstance[key];
+                        xe.doActions(xe, filteredActions, controllerInstance, { key, ov, nv });
                     }
                 }
                 return true;
@@ -85,7 +85,7 @@ export class BeDecoratedCore extends HTMLElement {
             get: (target, key) => {
                 let value; // = Reflect.get(target, key);
                 if (key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))) {
-                    value = controller[key];
+                    value = controllerInstance[key];
                 }
                 else {
                     value = target[key]; // = value;
@@ -96,15 +96,15 @@ export class BeDecoratedCore extends HTMLElement {
                 return value;
             }
         });
-        controller.proxy = proxy;
-        targetToController.set(newTarget, controller);
+        controllerInstance.proxy = proxy;
+        targetToController.set(newTarget, controllerInstance);
         if (intro !== undefined) {
-            controller[intro](proxy, newTarget);
+            controllerInstance[intro](proxy, newTarget);
         }
         this.parseAttr(this);
         onRemove(newTarget, (removedEl) => {
-            if (controller !== undefined && finale !== undefined)
-                controller[finale](proxy, removedEl);
+            if (controllerInstance !== undefined && finale !== undefined)
+                controllerInstance[finale](proxy, removedEl);
         });
     }
 }
@@ -126,7 +126,7 @@ export function define(controllerConfig) {
                     ifKeyIn: ['forceVisible'],
                 },
                 pairTargetWithController: {
-                    ifAllOf: ['newTarget', 'ifWantsToBe'],
+                    ifAllOf: ['newTarget', 'ifWantsToBe', 'controller'],
                     ifKeyIn: ['finale', 'virtualProps', 'intro', 'actions']
                 },
             }

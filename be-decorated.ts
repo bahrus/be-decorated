@@ -54,19 +54,19 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         return false;
     }
 
-    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller: controllerCtor, ifWantsToBe, noParse, finale, intro}: this){
+    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro}: this){
         if(this.parseAttr(this)) return;
-        const controller = new controllerCtor();
+        const controllerInstance = new controller();
         const proxy = new Proxy(newTarget!, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                 if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key as string))){
-                    controller[key] = value;
+                    controllerInstance[key] = value;
                 }else{
                     target[key] = value;
                 }
                 if(key === 'self') return true;
-                if(controller.propChangeQueue){
-                    controller.propChangeQueue.add(key);
+                if(controllerInstance.propChangeQueue){
+                    controllerInstance.propChangeQueue.add(key);
                 }else{
                     if(actions !== undefined){
                         const filteredActions: any = {};
@@ -79,8 +79,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                             }
                         }
                         const nv = value;
-                        const ov = controller[key];
-                        xe.doActions(xe, filteredActions, controller, {key, ov, nv}); 
+                        const ov = controllerInstance[key];
+                        xe.doActions(xe, filteredActions, controllerInstance, {key, ov, nv}); 
                     }
                 }
 
@@ -89,7 +89,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             get:(target: Element & TControllerProps, key: string & keyof TControllerProps)=>{
                 let value;// = Reflect.get(target, key);
                 if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key as string))){
-                    value = controller[key];
+                    value = controllerInstance[key];
                 }else{
                     value = target[key];// = value;
                 }
@@ -99,15 +99,15 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 return value;
             }
         });
-        controller.proxy = proxy;
-        targetToController.set(newTarget, controller);
+        controllerInstance.proxy = proxy;
+        targetToController.set(newTarget, controllerInstance);
         if(intro !== undefined){
-            (<any>controller)[intro](proxy, newTarget);
+            (<any>controllerInstance)[intro](proxy, newTarget);
         }
         this.parseAttr(this);
         onRemove(newTarget!, (removedEl: Element) =>{
-            if(controller !== undefined && finale !== undefined)
-            (<any>controller)[finale](proxy, removedEl);
+            if(controllerInstance !== undefined && finale !== undefined)
+            (<any>controllerInstance)[finale](proxy, removedEl);
         });
     }
 }
@@ -135,7 +135,7 @@ export function define<TControllerProps = any, TControllerActions = TControllerP
                     ifKeyIn: ['forceVisible'],
                 },
                 pairTargetWithController:{
-                    ifAllOf:['newTarget', 'ifWantsToBe'],
+                    ifAllOf:['newTarget', 'ifWantsToBe', 'controller'],
                     ifKeyIn:['finale',  'virtualProps', 'intro', 'actions']
                 },             
             }
