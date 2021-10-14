@@ -2,12 +2,12 @@ import { define } from '../be-decorated.js';
 export class ButterbeerController {
     #self;
     init(self, btn) {
+        this.#self = self;
         btn.addEventListener('click', this.handleClick);
         self.count = 0;
-        this.#self = self;
     }
     onCountChange() {
-        debugger;
+        console.log(this.#self.count);
     }
     handleClick = (e) => {
         console.log(e);

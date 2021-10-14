@@ -4,12 +4,13 @@ import {define} from '../be-decorated.js';
 export class ButterbeerController{
     #self: ButterbeerCounterProps | undefined;
     init(self: ButterbeerCounterProps, btn: HTMLButtonElement){
+        this.#self = self;
         btn.addEventListener('click', this.handleClick)
         self.count = 0;
-        this.#self = self;
+        
     }
     onCountChange(){
-        debugger;
+        console.log(this.#self!.count);
     }
     handleClick = (e: MouseEvent) => {
         console.log(e);
