@@ -52,7 +52,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         return false;
     }
 
-    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controllerCtor, ifWantsToBe, noParse, finale, intro}: this){
+    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller: controllerCtor, ifWantsToBe, noParse, finale, intro}: this){
         if(this.parseAttr(this)) return;
         const controller = new controllerCtor();
         const proxy = new Proxy(newTarget!, {

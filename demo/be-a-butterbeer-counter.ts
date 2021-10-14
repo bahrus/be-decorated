@@ -38,7 +38,7 @@ define<ButterbeerCounterProps & BeDecoratedProps, ButterbeerCounterActions>({
         }
     },
     complexPropDefaults:{
-        controllerCtor: ButterbeerController,
+        controller: ButterbeerController,
     }
 });
 document.head.appendChild(document.createElement('be-a-butterbeer-counter'));

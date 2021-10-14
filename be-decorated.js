@@ -46,7 +46,7 @@ export class BeDecoratedCore extends HTMLElement {
         }
         return false;
     }
-    pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controllerCtor, ifWantsToBe, noParse, finale, intro }) {
+    pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller: controllerCtor, ifWantsToBe, noParse, finale, intro }) {
         if (this.parseAttr(this))
             return;
         const controller = new controllerCtor();
