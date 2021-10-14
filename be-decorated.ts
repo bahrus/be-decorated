@@ -20,7 +20,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         }, callback);
     }
 
-    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controllerCtor, ifWantsToBe, noParse, finale, intro}: this){
+    parseAttr({targetToController, newTarget, noParse, ifWantsToBe}: this){
         const existingController = targetToController.get(newTarget);
         if(existingController){
             if(!noParse){
@@ -30,8 +30,13 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     //TODO:  orchestrate
                 }
             }
-            return;
+            return true;
         }
+        return false;
+    }
+
+    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controllerCtor, ifWantsToBe, noParse, finale, intro}: this){
+        if(this.parseAttr(this)) return;
         const controller = new controllerCtor();
         const proxy = new Proxy(newTarget!, {
             set: (target: any, key, value) => {
@@ -70,11 +75,12 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 return value;
             }
         });
+        controller.proxy = proxy;
         targetToController.set(newTarget, controller);
         if(intro !== undefined){
             controller[intro](proxy, newTarget);
         }
-        
+        this.parseAttr(this);
         onRemove(newTarget!, (removedEl: Element) =>{
             if(controller !== undefined && finale !== undefined)
             controller[finale](proxy, removedEl);
