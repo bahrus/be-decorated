@@ -118,7 +118,7 @@ To specify a different attribute, override the default "ifWantsToBe" property th
 
 ## Setting properties of the proxy externally
 
-Just as we need to be able to pass property values to custom elements, we need a way to do this with xtal-decor.  But how?
+Just as we need to be able to pass property values to custom elements, we need a way to do this with be-decorated elements.  But how?
 
 The tricky thing about proxies is they're great if you have access to them, useless if you don't.  
 
