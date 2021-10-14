@@ -67,9 +67,10 @@ export class ButterbeerController{
 
 Then use (mostly) JSON configuration to instruct be-decorated how to apply the decorator onto elements:
 
-```html
-<script type=module>
+```JavaScript
 import {ButterbeerController} from '[wherever]';
+import {define} from 'be-decorated/be-decorate.js';
+
 define({
     config:{
         tagName: 'be-a-butterbeer-counter',
@@ -191,7 +192,7 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 A [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
 
-## Approach III.  Integrate with other decorators -- binding decorators -- that hide the complexity
+### Approach III.  Integrate with other decorators -- binding decorators -- that hide the complexity
 
 [be-observant](https://github.com/bahrus/be-observant) provides a pattern, and exposes some reusable functions, for "pulling-in" bindings from the host or neighboring siblings.  This can often be a sufficient and elegant way to deal with this concern.
 
