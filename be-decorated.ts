@@ -102,7 +102,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         controllerInstance.proxy = proxy;
         targetToController.set(newTarget, controllerInstance);
         if(intro !== undefined){
-            (<any>controllerInstance)[intro](proxy, newTarget);
+            (<any>controllerInstance)[intro](proxy, newTarget, this);
         }
         this.parseAttr(this);
         onRemove(newTarget!, (removedEl: Element) =>{
