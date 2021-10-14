@@ -4,17 +4,43 @@ be-decorated provides a base class which enables attaching ES6 proxies onto othe
 
 be-decorated provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial "is"-based customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).
 
+In contrast to the "is" approach, we can apply multiple behaviors / decorators to the same element:
+
+```html
+#shadow-root (open)
+    <be-on-the-next-level upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></be-on-the-next-level>
+    <be-rocking-over-that-bass-tremble upgrade=black-eyed-peas if-wants-to-be=rocking-over-that-bass-tremble></be-rocking-over-that-bass-tremble>
+    <be-chilling-with-my-motherfuckin-crew upgrade=blacked-eyed-peas if-wants-to-be=chilling-with-my-motherfuckin-crew></be-chilling-with-my-motherfuckin-crew>
+    ...
+
+
+
+    <black-eyed-peas 
+        be-on-the-next-level='{"level":"level 11"}' 
+        be-rocking-over-that-bass-tremble
+        be-chilling-with-my-motherfuckin-crew
+    ></black-eyed-peas>
+
+    <!-- Becomes, after upgrading -->
+    <black-eyed-peas 
+        is-on-the-next-level='{"level":"level 11"}'
+        is-rocking-over-that-bass-tremble
+        is-chilling-with-my-motherfuckin-crew
+    ></black-eyed-peas>
+```
+
 ## Priors
 
 be-decorate's goals are quite similar to what is achieved via things [commonly](https://vuejs.org/v2/guide/custom-directive.html) [referred](https://docs.angularjs.org/guide/directive) to as "custom directives."
-
-Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
 Differences to these solutions:
 
 1. This can be used independently of any framework (web component based).
 2. Definition is class-based.
 3. Applies exclusively within ShadowDOM realms.
+
+Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
+
 
 ## Basic Syntax
 
@@ -66,7 +92,7 @@ define({
 
 Note the specification of "virtualProps".  Use of virtualProps is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
 
-Within each shadow DOM realm, our decorator web component will only have an effective if an instance of the web component is plopped somewhere inside that ShadowDOM realm.
+Within each shadow DOM realm, our decorator web component will only have an effect if an instance of the web component is plopped somewhere inside that ShadowDOM realm.
 
 Although it is a bit of a nuisance to remember to plop an instance in each ShadowDOM realm, it does gives us the ability to avoid name conflicts with other libraries that use custom attributes.  In the example above, if we plop an instance inside the ShadowDOM with no overrides: 
 
