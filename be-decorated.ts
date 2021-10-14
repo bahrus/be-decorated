@@ -3,6 +3,7 @@ import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
 import {DefineArgs} from 'trans-render/lib/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
+import {intersection} from 'xtal-element/lib/intersection.js';
 
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions>();
 
@@ -20,14 +21,30 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         }, callback);
     }
 
-    parseAttr({targetToController, newTarget, noParse, ifWantsToBe}: this){
-        const existingController = targetToController.get(newTarget);
-        if(existingController){
+    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions}: this){
+        const controller = targetToController.get(newTarget);
+        if(controller){
             if(!noParse){
                 const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
                 if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
-                    Object.assign(existingController.proxy, JSON.parse(attr[0]!));
-                    //TODO:  orchestrate
+                    controller.propChangeQueue = new Set<string>();
+                    Object.assign(controller.proxy, JSON.parse(attr[0]!));
+                    const filteredActions: any = {};
+                    const queue = controller.propChangeQueue;
+                    controller.propChangeQueue = undefined;
+                    if(actions !== undefined){
+                        for(const methodName in actions){
+                            const action = actions[methodName]!;
+                            const props = xe.getProps(xe, action); //TODO:  cache this
+                            //if(!props.has(key as string)) continue;
+                            if(!intersection(queue, props)) continue;
+                            if(xe.pq(xe, action, this)){
+                                filteredActions[methodName] = action;
+                            }
+                        }
+                        xe.doActions(xe, filteredActions, controller, null);
+                    }
+
                 }
             }
             return true;
@@ -46,20 +63,25 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     target[key] = value;
                 }
                 if(key === 'self') return true;
-                if(actions !== undefined){
-                    const filteredActions: any = {};
-                    for(const methodName in actions){
-                        const action = actions[methodName]!;
-                        const props = xe.getProps(xe, action); //TODO:  cache this
-                        if(!props.has(key as string)) continue;
-                        if(xe.pq(xe, action, this)){
-                            filteredActions[methodName] = action;
+                if(controller.propChangeQueue){
+                    controller.propChangeQueue.add(key);
+                }else{
+                    if(actions !== undefined){
+                        const filteredActions: any = {};
+                        for(const methodName in actions){
+                            const action = actions[methodName]!;
+                            const props = xe.getProps(xe, action); //TODO:  cache this
+                            if(!props.has(key as string)) continue;
+                            if(xe.pq(xe, action, this)){
+                                filteredActions[methodName] = action;
+                            }
                         }
+                        const nv = value;
+                        const ov = controller[key];
+                        xe.doActions(xe, filteredActions, controller, {key, ov, nv}); 
                     }
-                    const nv = value;
-                    const ov = controller[key];
-                    xe.doActions(xe, filteredActions, controller, {key, ov, nv}); 
                 }
+
                 return true;
             },
             get:(target, key)=>{

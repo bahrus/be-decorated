@@ -1,6 +1,7 @@
 import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
+import { intersection } from 'xtal-element/lib/intersection.js';
 export const xe = new XE();
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
@@ -15,14 +16,30 @@ export class BeDecoratedCore extends HTMLElement {
             forceVisible,
         }, callback);
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe }) {
-        const existingController = targetToController.get(newTarget);
-        if (existingController) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions }) {
+        const controller = targetToController.get(newTarget);
+        if (controller) {
             if (!noParse) {
                 const attr = getAttrInfo(newTarget, ifWantsToBe, true);
                 if (attr !== null && attr.length > 0 && attr[0].length > 0) {
-                    Object.assign(existingController.proxy, JSON.parse(attr[0]));
-                    //TODO:  orchestrate
+                    controller.propChangeQueue = new Set();
+                    Object.assign(controller.proxy, JSON.parse(attr[0]));
+                    const filteredActions = {};
+                    const queue = controller.propChangeQueue;
+                    controller.propChangeQueue = undefined;
+                    if (actions !== undefined) {
+                        for (const methodName in actions) {
+                            const action = actions[methodName];
+                            const props = xe.getProps(xe, action); //TODO:  cache this
+                            //if(!props.has(key as string)) continue;
+                            if (!intersection(queue, props))
+                                continue;
+                            if (xe.pq(xe, action, this)) {
+                                filteredActions[methodName] = action;
+                            }
+                        }
+                        xe.doActions(xe, filteredActions, controller, null);
+                    }
                 }
             }
             return true;
@@ -43,20 +60,25 @@ export class BeDecoratedCore extends HTMLElement {
                 }
                 if (key === 'self')
                     return true;
-                if (actions !== undefined) {
-                    const filteredActions = {};
-                    for (const methodName in actions) {
-                        const action = actions[methodName];
-                        const props = xe.getProps(xe, action); //TODO:  cache this
-                        if (!props.has(key))
-                            continue;
-                        if (xe.pq(xe, action, this)) {
-                            filteredActions[methodName] = action;
+                if (controller.propChangeQueue) {
+                    controller.propChangeQueue.add(key);
+                }
+                else {
+                    if (actions !== undefined) {
+                        const filteredActions = {};
+                        for (const methodName in actions) {
+                            const action = actions[methodName];
+                            const props = xe.getProps(xe, action); //TODO:  cache this
+                            if (!props.has(key))
+                                continue;
+                            if (xe.pq(xe, action, this)) {
+                                filteredActions[methodName] = action;
+                            }
                         }
+                        const nv = value;
+                        const ov = controller[key];
+                        xe.doActions(xe, filteredActions, controller, { key, ov, nv });
                     }
-                    const nv = value;
-                    const ov = controller[key];
-                    xe.doActions(xe, filteredActions, controller, { key, ov, nv });
                 }
                 return true;
             },

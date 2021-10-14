@@ -10,7 +10,6 @@ export class ButterbeerController {
         console.log(this.#self.count);
     }
     handleClick = (e) => {
-        console.log(e);
         this.#self.count++;
     };
 }
