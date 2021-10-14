@@ -40,7 +40,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                             const props = xe.getProps(xe, action); //TODO:  cache this
                             //if(!props.has(key as string)) continue;
                             if(!intersection(queue, props)) continue;
-                            if(xe.pq(xe, action, this)){
+                            if(xe.pq(xe, action, controller.proxy)){
                                 filteredActions[methodName] = action;
                             }
                         }

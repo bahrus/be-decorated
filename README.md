@@ -128,12 +128,11 @@ The instance of the decorator component sitting inside the Shadow DOM has a key 
 
 ```JavaScript
 function getProxy(btn){
-const controller = shadowRoot.querySelector('be-a-butterbeer-counter').targetToController.get(btn);
+const proxy = shadowRoot.querySelector('be-a-butterbeer-counter').targetToController.get(btn).proxy;
 }
 
 ```
 
-It is up to the controller to decide whether to provide access to the proxy.
 
 ###  Approach II. Setting properties via the controlling attribute:
 

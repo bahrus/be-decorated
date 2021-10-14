@@ -34,7 +34,7 @@ export class BeDecoratedCore extends HTMLElement {
                             //if(!props.has(key as string)) continue;
                             if (!intersection(queue, props))
                                 continue;
-                            if (xe.pq(xe, action, this)) {
+                            if (xe.pq(xe, action, controller.proxy)) {
                                 filteredActions[methodName] = action;
                             }
                         }
