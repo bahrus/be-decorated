@@ -1,4 +1,5 @@
-import {ButterbeerCounterProps} from './types';
+import {ButterbeerCounterProps, ButterbeerCounterActions} from './types';
+import {BeDecoratedProps} from '../types';
 import {define} from '../be-decorated.js';
 
 export class ButterbeerController{
@@ -17,9 +18,11 @@ export class ButterbeerController{
     }
 }
 
+//type ButterBeerCounterPropsExt = ButterbeerCounterProps & BeDecoratedProps
+
 export interface ButterbeerController extends ButterbeerCounterProps{}
 
-define({
+define<ButterbeerCounterProps & BeDecoratedProps, ButterbeerCounterActions>({
     config:{
         tagName: 'be-a-butterbeer-counter',
         propDefaults:{

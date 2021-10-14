@@ -22,6 +22,11 @@ export interface BeDecoratedConfig<TControllerProps, TControllerActions = TContr
     controller: TControllerProps & TControllerActions;
 }
 
+export interface MinimalController{
+    propChangeQueue?: Set<string>;
+    proxy?: Element;
+}
+
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{
     upgrade: string;
     ifWantsToBe: string;
@@ -30,13 +35,11 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     finale: keyof TControllerActions;
 
-    //on: {[key: string]: keyof TControllerActions};
 
     actions: Partial<{[key in keyof TControllerActions]: XAction}>;
 
-    controllerCtor: any;// TControllerProps & TControllerActions;
+    controllerCtor: {new(): TControllerProps & TControllerActions & MinimalController};
 
-    //controllerConfig: DefineArgs<TControllerProps, TControllerActions>
 
     newTarget: Element | undefined;
 

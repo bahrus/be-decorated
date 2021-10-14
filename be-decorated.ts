@@ -56,7 +56,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         if(this.parseAttr(this)) return;
         const controller = new controllerCtor();
         const proxy = new Proxy(newTarget!, {
-            set: (target: any, key, value) => {
+            set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                 if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key as string))){
                     controller[key] = value;
                 }else{
@@ -84,7 +84,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
                 return true;
             },
-            get:(target, key)=>{
+            get:(target: Element & TControllerProps, key: string & keyof TControllerProps)=>{
                 let value;// = Reflect.get(target, key);
                 if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key as string))){
                     value = controller[key];
@@ -100,12 +100,12 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         controller.proxy = proxy;
         targetToController.set(newTarget, controller);
         if(intro !== undefined){
-            controller[intro](proxy, newTarget);
+            (<any>controller)[intro](proxy, newTarget);
         }
         this.parseAttr(this);
         onRemove(newTarget!, (removedEl: Element) =>{
             if(controller !== undefined && finale !== undefined)
-            controller[finale](proxy, removedEl);
+            (<any>controller)[finale](proxy, removedEl);
         });
     }
 }
@@ -118,7 +118,7 @@ export interface BeDecoratedCore<TControllerProps, TControllerActions> extends B
 //     xe.def(metaConfig.wc)
 // }
 
-export function define(controllerConfig: DefineArgs){
+export function define<TControllerProps = any, TControllerActions = TControllerProps>(controllerConfig: DefineArgs<TControllerProps, TControllerActions>){
     const rC = controllerConfig.config;
     xe.def({
         config:{
