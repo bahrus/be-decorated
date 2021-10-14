@@ -4,7 +4,7 @@ import { onRemove } from 'trans-render/lib/onRemove.js';
 export const xe = new XE();
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
-    watchForElementsToUpgrade({ upgrade, ifWantsToBe, intro, actions, forceVisible }) {
+    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const callback = (target) => {
             this.newTarget = target;
         };
@@ -70,7 +70,9 @@ export class BeDecoratedCore extends HTMLElement {
             }
         });
         targetToController.set(newTarget, controller);
-        controller[intro];
+        if (intro !== undefined) {
+            controller[intro](proxy, newTarget);
+        }
         onRemove(newTarget, (removedEl) => {
             controller[finale](proxy, removedEl);
         });
@@ -90,12 +92,17 @@ export function define(controllerConfig) {
             },
             actions: {
                 watchForElementsToUpgrade: {
-                    ifAllOf: ['upgrade', 'ifWantsToBe', 'intro', 'actions']
+                    ifAllOf: ['upgrade', 'ifWantsToBe'],
+                    ifKeyIn: ['forceVisible'],
                 },
                 pairTargetWithController: {
-                    ifAllOf: ['newTarget', 'actions', 'virtualProps', 'ifWantsToBe', 'finale']
+                    ifAllOf: ['newTarget', 'ifWantsToBe'],
+                    ifKeyIn: ['finale', 'virtualProps', 'intro', 'actions']
                 },
             }
+        },
+        complexPropDefaults: {
+            ...controllerConfig.complexPropDefaults
         },
         superclass: BeDecoratedCore
     });

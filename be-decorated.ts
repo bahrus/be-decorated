@@ -8,7 +8,7 @@ export const xe = new XE<BeDecoratedProps, BeDecoratedActions>();
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
-    watchForElementsToUpgrade({upgrade, ifWantsToBe, intro, actions, forceVisible}: this){
+    watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const callback = (target: Element) => {
             this.newTarget = target;
         }
@@ -71,7 +71,10 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             }
         });
         targetToController.set(newTarget, controller);
-        controller[intro]
+        if(intro !== undefined){
+            controller[intro](proxy, newTarget);
+        }
+        
         onRemove(newTarget!, (removedEl: Element) =>{
             controller[finale!](proxy, removedEl);
         });
@@ -97,13 +100,18 @@ export function define(controllerConfig: DefineArgs){
             }, 
             actions:{
                 watchForElementsToUpgrade:{
-                    ifAllOf: ['upgrade', 'ifWantsToBe', 'intro', 'actions']
+                    ifAllOf: ['upgrade', 'ifWantsToBe'],
+                    ifKeyIn: ['forceVisible'],
                 },
                 pairTargetWithController:{
-                    ifAllOf:['newTarget', 'actions', 'virtualProps', 'ifWantsToBe', 'finale']
+                    ifAllOf:['newTarget', 'ifWantsToBe'],
+                    ifKeyIn:['finale',  'virtualProps', 'intro', 'actions']
                 },             
             }
         },
+        complexPropDefaults:{
+            ...controllerConfig.complexPropDefaults
+        }
         superclass: BeDecoratedCore
     })
 }
