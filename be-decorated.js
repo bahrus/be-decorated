@@ -74,7 +74,8 @@ export class BeDecoratedCore extends HTMLElement {
             controller[intro](proxy, newTarget);
         }
         onRemove(newTarget, (removedEl) => {
-            controller[finale](proxy, removedEl);
+            if (controller !== undefined && finale !== undefined)
+                controller[finale](proxy, removedEl);
         });
     }
 }

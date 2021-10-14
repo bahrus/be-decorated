@@ -76,7 +76,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         }
         
         onRemove(newTarget!, (removedEl: Element) =>{
-            controller[finale!](proxy, removedEl);
+            if(controller !== undefined && finale !== undefined)
+            controller[finale](proxy, removedEl);
         });
     }
 }
