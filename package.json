@@ -1,8 +1,27 @@
 {
   "name": "be-decorated",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "keywords": [
+    "web-components",
+    "web-component",
+    "custom-element",
+    "custom-elements",
+    "decorate",
+    "behavior",
+    "directive"
+  ],
+  "description": "be-decorated provides a base class that enables attaching ES6 proxies onto other 'Shadow DOM peer citizens] -- native DOM or custom elements in the same Shadow DOM realm.",
+  "main": "be-decorated.js",
+  "module": "be-decorated.js",
+  "exports": {
+    ".": "./be-decorated.js",
+    "./be-decorated.js": "./be-decorated.js"
+  },
+  "files": [
+    "be*.*",
+    "types.d.ts"
+  ],
+  "types": "types.d.ts",
   "dependencies": {
     "xtal-element": "0.0.443",
     "trans-render": "0.0.419"
