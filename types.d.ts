@@ -72,3 +72,9 @@ export interface UpgradeArg<T extends Object>{
 
     forceVisible: boolean,
 }
+
+export interface EventHandler{
+    on: keyof ElementEventMap;
+    elementToObserve: Element;
+    fn: (e: Event) => void;
+}
