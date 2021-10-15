@@ -59,7 +59,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controllerInstance = new controller();
         const proxy = new Proxy(newTarget!, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
-                if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key as string))){
+                if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;
                 }else{
                     target[key] = value;
@@ -88,7 +88,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             },
             get:(target: Element & TControllerProps, key: string & keyof TControllerProps)=>{
                 let value;// = Reflect.get(target, key);
-                if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key as string))){
+                if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))){
                     value = controllerInstance[key];
                 }else{
                     value = target[key];// = value;
