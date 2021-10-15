@@ -31,7 +31,7 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ## Priors
 
-be-decorate's goals are quite similar to what is achieved via things [commonly](https://vuejs.org/v2/guide/custom-directive.html) [referred](https://docs.angularjs.org/guide/directive) to as "custom directives."
+be-decorate's goals are quite similar to what is achieved via things [commonly](https://vuejs.org/v2/guide/custom-directive.html) [referred](https://docs.angularjs.org/guide/directive) to [as](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) "custom directives."
 
 Differences to these solutions:
 
