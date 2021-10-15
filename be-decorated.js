@@ -129,6 +129,9 @@ export function define(controllerConfig) {
                     ifAllOf: ['newTarget', 'ifWantsToBe', 'controller'],
                     ifKeyIn: ['finale', 'virtualProps', 'intro', 'actions']
                 },
+            },
+            style: {
+                display: 'none'
             }
         },
         complexPropDefaults: {

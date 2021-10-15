@@ -138,7 +138,11 @@ export function define<TControllerProps = any, TControllerActions = TControllerP
                     ifAllOf:['newTarget', 'ifWantsToBe', 'controller'],
                     ifKeyIn:['finale',  'virtualProps', 'intro', 'actions']
                 },             
+            },
+            style:{
+                display: 'none'
             }
+
         },
         complexPropDefaults:{
             ...controllerConfig.complexPropDefaults
