@@ -45,7 +45,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     forceVisible: boolean;
 
-    virtualProps: string[];
+    virtualProps: (keyof TControllerProps)[];
 
     noParse: boolean;
 }
