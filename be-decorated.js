@@ -105,6 +105,7 @@ export class BeDecoratedCore extends HTMLElement {
         onRemove(newTarget, (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined)
                 controllerInstance[finale](proxy, removedEl, this);
+            //element might come back -- need to reactivate if it does
             const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
             if (isAttr !== null) {
                 setTimeout(() => {
