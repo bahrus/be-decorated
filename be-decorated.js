@@ -106,8 +106,11 @@ export class BeDecoratedCore extends HTMLElement {
             if (controllerInstance !== undefined && finale !== undefined)
                 controllerInstance[finale](proxy, removedEl, this);
             const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
-            if (isAttr !== null)
-                removedEl.setAttribute('be-' + this.ifWantsToBe, isAttr);
+            if (isAttr !== null) {
+                setTimeout(() => {
+                    removedEl.setAttribute('be-' + this.ifWantsToBe, isAttr);
+                }, 50);
+            }
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
         });
     }
