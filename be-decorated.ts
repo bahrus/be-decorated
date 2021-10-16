@@ -107,7 +107,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         this.parseAttr(this);
         onRemove(newTarget!, (removedEl: Element) =>{
             if(controllerInstance !== undefined && finale !== undefined)
-            (<any>controllerInstance)[finale](proxy, removedEl);
+            (<any>controllerInstance)[finale](proxy, removedEl, this);
         });
     }
 }

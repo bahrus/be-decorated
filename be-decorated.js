@@ -104,7 +104,7 @@ export class BeDecoratedCore extends HTMLElement {
         this.parseAttr(this);
         onRemove(newTarget, (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined)
-                controllerInstance[finale](proxy, removedEl);
+                controllerInstance[finale](proxy, removedEl, this);
         });
     }
 }
