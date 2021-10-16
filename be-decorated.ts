@@ -108,6 +108,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         onRemove(newTarget!, (removedEl: Element) =>{
             if(controllerInstance !== undefined && finale !== undefined)
             (<any>controllerInstance)[finale](proxy, removedEl, this);
+            const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
+            if(isAttr !== null) removedEl.setAttribute('be-' + this.ifWantsToBe, isAttr);
+            removedEl.removeAttribute('is-' + this.ifWantsToBe);
         });
     }
 }
