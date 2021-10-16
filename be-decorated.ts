@@ -2,6 +2,7 @@ import {upgrade as upgr, getAttrInfo} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
 import {DefineArgs} from 'trans-render/lib/types';
+import {XAction} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
 
@@ -128,7 +129,7 @@ export interface BeDecoratedCore<TControllerProps, TControllerActions> extends B
 //     xe.def(metaConfig.wc)
 // }
 
-export function define<TControllerProps = any, TControllerActions = TControllerProps>(controllerConfig: DefineArgs<TControllerProps, TControllerActions>){
+export function define<TControllerProps = any, TControllerActions = TControllerProps, TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, TActions>){
     const rC = controllerConfig.config;
     xe.def({
         config:{
