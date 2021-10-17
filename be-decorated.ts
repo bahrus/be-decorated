@@ -56,7 +56,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                                 filteredActions[methodName] = action;
                             }
                         }
-                        xe.doActions(xe, filteredActions, controller, null);
+                        xe.doActions(xe, filteredActions, controller, controller.proxy);
                     }
 
                 }

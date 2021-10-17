@@ -48,7 +48,7 @@ export class BeDecoratedCore extends HTMLElement {
                                 filteredActions[methodName] = action;
                             }
                         }
-                        xe.doActions(xe, filteredActions, controller, null);
+                        xe.doActions(xe, filteredActions, controller, controller.proxy);
                     }
                 }
             }
