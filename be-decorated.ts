@@ -2,13 +2,13 @@ import {upgrade as upgr, getAttrInfo} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
 import {DefineArgs} from 'trans-render/lib/types';
-import {XAction} from 'xtal-element/src/types';
+import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
 
 export {BeDecoratedProps} from './types';
 
-export const xe = new XE<BeDecoratedProps, BeDecoratedActions>();
+export const xe = new XE<BeDecoratedProps, BeDecoratedActions, XAction<BeDecoratedProps>>();
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
@@ -143,7 +143,7 @@ export interface BeDecoratedCore<TControllerProps, TControllerActions> extends B
 export function define<
     TControllerProps = any, 
     TControllerActions = TControllerProps, 
-    TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, TActions>){
+    TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfoExt<TControllerProps>, XAction<TControllerProps>>){
     const rC = controllerConfig.config;
     xe.def({
         config:{
