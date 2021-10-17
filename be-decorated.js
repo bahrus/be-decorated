@@ -15,6 +15,13 @@ export class BeDecoratedCore extends HTMLElement {
             ifWantsToBe: ifWantsToBe,
             forceVisible,
         }, callback);
+        // register in the be-hive registry
+        const rn = this.getRootNode();
+        const sym = Symbol.for('be-hive');
+        if (rn[sym] === undefined) {
+            rn[sym] = {};
+        }
+        rn[sym][this.localName] = ifWantsToBe;
     }
     parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults }) {
         const controller = targetToController.get(newTarget);
