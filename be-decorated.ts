@@ -24,13 +24,16 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         }, callback);
     }
 
-    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions}: this){
+    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults}: this){
         const controller = targetToController.get(newTarget);
         if(controller){
             if(!noParse){
                 const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
                 if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
                     controller.propChangeQueue = new Set<string>();
+                    if(proxyPropDefaults !== undefined){
+                        Object.assign(controller.proxy, proxyPropDefaults);
+                    }
                     Object.assign(controller.proxy, JSON.parse(attr[0]!));
                     const filteredActions: any = {};
                     const queue = controller.propChangeQueue;
@@ -129,7 +132,10 @@ export interface BeDecoratedCore<TControllerProps, TControllerActions> extends B
 //     xe.def(metaConfig.wc)
 // }
 
-export function define<TControllerProps = any, TControllerActions = TControllerProps, TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, TActions>){
+export function define<
+    TControllerProps = any, 
+    TControllerActions = TControllerProps, 
+    TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, TActions>){
     const rC = controllerConfig.config;
     xe.def({
         config:{

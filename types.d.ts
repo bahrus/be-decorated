@@ -36,7 +36,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     finale: keyof TControllerActions;
 
 
-    actions: Partial<{[key in keyof TControllerActions]: XAction}>;
+    actions: Partial<{[key in keyof TControllerActions]: XAction<TControllerProps>}>;
 
     controller: {new(): TControllerProps & TControllerActions & MinimalController};
 
@@ -48,6 +48,8 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     virtualProps: (keyof TControllerProps)[];
 
     noParse: boolean;
+
+    proxyPropDefaults: Partial<{[key in keyof TControllerActions]: any}>;
 }
 
 export interface BeDecoratedActions{

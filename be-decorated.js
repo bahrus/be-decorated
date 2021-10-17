@@ -16,13 +16,16 @@ export class BeDecoratedCore extends HTMLElement {
             forceVisible,
         }, callback);
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions }) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults }) {
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (!noParse) {
                 const attr = getAttrInfo(newTarget, ifWantsToBe, true);
                 if (attr !== null && attr.length > 0 && attr[0].length > 0) {
                     controller.propChangeQueue = new Set();
+                    if (proxyPropDefaults !== undefined) {
+                        Object.assign(controller.proxy, proxyPropDefaults);
+                    }
                     Object.assign(controller.proxy, JSON.parse(attr[0]));
                     const filteredActions = {};
                     const queue = controller.propChangeQueue;
