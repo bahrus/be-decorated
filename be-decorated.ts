@@ -92,7 +92,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         }
                         const nv = value;
                         const ov = controllerInstance[key];
-                        xe.doActions(xe, filteredActions, controllerInstance, {key, ov, nv}); 
+                        xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy); 
                     }
                 }
 
