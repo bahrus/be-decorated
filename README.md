@@ -118,6 +118,8 @@ To specify a different attribute, override the default "ifWantsToBe" property th
 
 Another silver lining to this nuisance:  It provides more transparency where the behavior modification is coming from.
 
+The [be-hive component](https://github.com/bahrus/be-hive) makes managing this nuisance in a better way.  If developing a component that uses more than a few decorators, it is probably worth the extra dependency.
+
 ## Setting properties of the proxy externally
 
 Just as we need to be able to pass property values to custom elements, we need a way to do this with be-decorated elements.  But how?

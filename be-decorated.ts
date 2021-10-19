@@ -23,12 +23,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             forceVisible,
         }, callback);
         // register in the be-hive registry
-        const rn = this.getRootNode() as any;
-        const sym = Symbol.for('be-hive');
-        if(rn[sym] === undefined){
-            rn[sym] = {}
-        }
-        rn[sym][this.localName] = ifWantsToBe;
+
+
+
 
     }
 
