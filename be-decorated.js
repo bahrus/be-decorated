@@ -3,6 +3,7 @@ import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
 export const xe = new XE();
+const reqVirtualProps = ['self', 'emitEvent'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
     emitEvent = false;
@@ -57,7 +58,7 @@ export class BeDecoratedCore extends HTMLElement {
         const controllerInstance = new controller();
         const proxy = new Proxy(newTarget, {
             set: (target, key, value) => {
-                if (key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))) {
+                if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
                     controllerInstance[key] = value;
                 }
                 else {

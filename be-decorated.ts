@@ -10,6 +10,8 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions, XAction<BeDecoratedProps>>();
 
+const reqVirtualProps = ['self', 'emitEvent'];
+
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
     emitEvent = false;
@@ -69,7 +71,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controllerInstance = new controller();
         const proxy = new Proxy(newTarget!, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
-                if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))){
+                if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;
                 }else{
                     target[key] = value;
