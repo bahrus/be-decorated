@@ -6,7 +6,7 @@ import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
 
-export {BeDecoratedProps} from './types';
+export {BeDecoratedProps, MinimalController} from './types';
 
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions, XAction<BeDecoratedProps>>();
 
