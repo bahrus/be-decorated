@@ -12,6 +12,7 @@ export const xe = new XE<BeDecoratedProps, BeDecoratedActions, XAction<BeDecorat
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
+    emitEvent = false;
     watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const callback = (target: Element) => {
             this.newTarget = target;
@@ -92,7 +93,13 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy); 
                     }
                 }
-
+                if(controllerInstance.emitEvent){
+                    target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${key}-changed`, {
+                        detail: {
+                            value
+                        }
+                    }));
+                }
                 return true;
             },
             get:(target: Element & TControllerProps, key: string & keyof TControllerProps)=>{

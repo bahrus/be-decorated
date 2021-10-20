@@ -5,6 +5,7 @@ import { intersection } from 'xtal-element/lib/intersection.js';
 export const xe = new XE();
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
+    emitEvent = false;
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const callback = (target) => {
             this.newTarget = target;
@@ -83,6 +84,13 @@ export class BeDecoratedCore extends HTMLElement {
                         const ov = controllerInstance[key];
                         xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy);
                     }
+                }
+                if (controllerInstance.emitEvent) {
+                    target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${key}-changed`, {
+                        detail: {
+                            value
+                        }
+                    }));
                 }
                 return true;
             },

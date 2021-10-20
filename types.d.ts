@@ -25,6 +25,7 @@ export interface BeDecoratedConfig<TControllerProps, TControllerActions = TContr
 export interface MinimalController{
     propChangeQueue?: Set<string>;
     proxy?: Element;
+    emitEvent?: boolean;
 }
 
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{
@@ -50,6 +51,8 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     noParse: boolean;
 
     proxyPropDefaults: Partial<{[key in keyof TControllerProps]: any}>;
+
+    emitEvent: boolean;
 }
 
 export interface BeDecoratedActions{
