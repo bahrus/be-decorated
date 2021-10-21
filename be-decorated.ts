@@ -41,6 +41,16 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     if(proxyPropDefaults !== undefined){
                         Object.assign(controller.proxy, proxyPropDefaults);
                     }
+                    let parsedObj: any;
+                    try{
+                        parsedObj = JSON.parse(attr[0]!);
+                    }catch(e){
+                        console.error({
+                            attr,
+                            e,
+                            newTarget
+                        })
+                    }
                     Object.assign(controller.proxy, JSON.parse(attr[0]!));
                     const filteredActions: any = {};
                     const queue = controller.propChangeQueue;

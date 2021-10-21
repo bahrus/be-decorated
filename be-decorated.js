@@ -28,6 +28,17 @@ export class BeDecoratedCore extends HTMLElement {
                     if (proxyPropDefaults !== undefined) {
                         Object.assign(controller.proxy, proxyPropDefaults);
                     }
+                    let parsedObj;
+                    try {
+                        parsedObj = JSON.parse(attr[0]);
+                    }
+                    catch (e) {
+                        console.error({
+                            attr,
+                            e,
+                            newTarget
+                        });
+                    }
                     Object.assign(controller.proxy, JSON.parse(attr[0]));
                     const filteredActions = {};
                     const queue = controller.propChangeQueue;
