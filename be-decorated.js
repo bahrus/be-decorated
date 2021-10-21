@@ -98,10 +98,10 @@ export class BeDecoratedCore extends HTMLElement {
                                 value
                             }
                         };
-                        target.dispatchEvent(new CustomEvent(name, detail));
                         if (debug) {
                             console.log({ emitEvents, name, detail, target });
                         }
+                        target.dispatchEvent(new CustomEvent(name, detail));
                     }
                 }
                 return true;
