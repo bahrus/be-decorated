@@ -248,7 +248,11 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ```
 
+## Debugging
 
+Compared to working with custom elements, working with attribute-based decorators is more difficult, due to the issues mentioned above -- namely, the difficulty in getting a reference to the roxy.
+
+But if the JSON attribute associated with a decorator has value "debug": true, then an adjacent debugging template element is inserted, that makes viewing the proxy and controller much easier.
 
 ## Viewing example from git clone or git fork:
 
