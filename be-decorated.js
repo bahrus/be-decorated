@@ -6,7 +6,6 @@ export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvent'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
-    emitEvent = false;
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const callback = (target) => {
             this.newTarget = target;
@@ -86,8 +85,8 @@ export class BeDecoratedCore extends HTMLElement {
                         xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy);
                     }
                 }
-                if (controllerInstance.emitEvent) {
-                    target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${key}-changed`, {
+                if (controllerInstance.emitEvents) {
+                    target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${xe.toLisp(key)}-changed`, {
                         detail: {
                             value
                         }
