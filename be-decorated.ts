@@ -10,7 +10,7 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions, XAction<BeDecoratedProps>>();
 
-const reqVirtualProps = ['self', 'emitEvent'];
+const reqVirtualProps = ['self', 'emitEvents'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
