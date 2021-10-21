@@ -3,7 +3,7 @@ import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
 export const xe = new XE();
-const reqVirtualProps = ['self', 'emitEvents'];
+const reqVirtualProps = ['self', 'emitEvents', 'debug'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
@@ -121,6 +121,13 @@ export class BeDecoratedCore extends HTMLElement {
             controllerInstance[intro](proxy, newTarget, this);
         }
         this.parseAttr(this);
+        if (proxy.debug) {
+            const debugTempl = document.createElement('template');
+            debugTempl.setAttribute(`data-debugger-for-${ifWantsToBe}`, '');
+            debugTempl.controller = controllerInstance;
+            debugTempl.proxy = proxy;
+            newTarget.insertAdjacentElement('afterend', debugTempl);
+        }
         onRemove(newTarget, (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined)
                 controllerInstance[finale](proxy, removedEl, this);

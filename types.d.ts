@@ -26,6 +26,7 @@ export interface MinimalController{
     propChangeQueue?: Set<string>;
     proxy?: Element;
     emitEvents?: boolean | string[];
+    debug?: boolean;
 }
 
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{

@@ -10,7 +10,7 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions, XAction<BeDecoratedProps>>();
 
-const reqVirtualProps = ['self', 'emitEvents'];
+const reqVirtualProps = ['self', 'emitEvents', 'debug'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
@@ -68,7 +68,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro}: this){
         if(this.parseAttr(this)) return;
         const controllerInstance = new controller();
-        const proxy = new Proxy(newTarget!, {
+        const proxy = new Proxy<Element & TControllerProps>(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                 const {emitEvents, propChangeQueue} = controllerInstance;
                 if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
@@ -129,6 +129,13 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             (<any>controllerInstance)[intro](proxy, newTarget, this);
         }
         this.parseAttr(this);
+        if((<any>proxy).debug){
+            const debugTempl = document.createElement('template');
+            debugTempl.setAttribute(`data-debugger-for-${ifWantsToBe}`, '');
+            (<any>debugTempl).controller = controllerInstance;
+            (<any>debugTempl).proxy = proxy;
+            newTarget!.insertAdjacentElement('afterend', debugTempl);
+        }
         onRemove(newTarget!, (removedEl: Element) =>{
             if(controllerInstance !== undefined && finale !== undefined)
             (<any>controllerInstance)[finale](proxy, removedEl, this);
