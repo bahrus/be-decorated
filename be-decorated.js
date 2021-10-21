@@ -103,7 +103,7 @@ export class BeDecoratedCore extends HTMLElement {
             },
             get: (target, key) => {
                 let value; // = Reflect.get(target, key);
-                if (key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))) {
+                if (key === 'self' || (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key)) {
                     value = controllerInstance[key];
                 }
                 else {

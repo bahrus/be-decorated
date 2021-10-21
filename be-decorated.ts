@@ -112,7 +112,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             },
             get:(target: Element & TControllerProps, key: string & keyof TControllerProps)=>{
                 let value;// = Reflect.get(target, key);
-                if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key))){
+                if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key)){
                     value = controllerInstance[key];
                 }else{
                     value = target[key];// = value;
