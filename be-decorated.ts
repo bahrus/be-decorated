@@ -70,14 +70,15 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controllerInstance = new controller();
         const proxy = new Proxy(newTarget!, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
+                const {emitEvents, propChangeQueue} = controllerInstance;
                 if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;
                 }else{
                     target[key] = value;
                 }
                 if(key === 'self') return true;
-                if(controllerInstance.propChangeQueue){
-                    controllerInstance.propChangeQueue.add(key);
+                if(propChangeQueue !== undefined){
+                    propChangeQueue.add(key);
                 }else{
                     if(actions !== undefined){
                         const filteredActions: any = {};
@@ -94,12 +95,18 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy); 
                     }
                 }
-                if(controllerInstance.emitEvents){
-                    target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${xe.toLisp(key)}-changed`, {
-                        detail: {
-                            value
-                        }
-                    }));
+                if(emitEvents !== undefined){
+                    let emitEvent = true;
+                    if(Array.isArray(emitEvents)){
+                        emitEvent = emitEvents.includes(key)
+                    }
+                    if(emitEvent){
+                        target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${xe.toLisp(key)}-changed`, {
+                            detail: {
+                                value
+                            }
+                        }));
+                    }
                 }
                 return true;
             },

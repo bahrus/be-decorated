@@ -57,6 +57,7 @@ export class BeDecoratedCore extends HTMLElement {
         const controllerInstance = new controller();
         const proxy = new Proxy(newTarget, {
             set: (target, key, value) => {
+                const { emitEvents, propChangeQueue } = controllerInstance;
                 if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
                     controllerInstance[key] = value;
                 }
@@ -65,8 +66,8 @@ export class BeDecoratedCore extends HTMLElement {
                 }
                 if (key === 'self')
                     return true;
-                if (controllerInstance.propChangeQueue) {
-                    controllerInstance.propChangeQueue.add(key);
+                if (propChangeQueue !== undefined) {
+                    propChangeQueue.add(key);
                 }
                 else {
                     if (actions !== undefined) {
@@ -85,12 +86,18 @@ export class BeDecoratedCore extends HTMLElement {
                         xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy);
                     }
                 }
-                if (controllerInstance.emitEvents) {
-                    target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${xe.toLisp(key)}-changed`, {
-                        detail: {
-                            value
-                        }
-                    }));
+                if (emitEvents !== undefined) {
+                    let emitEvent = true;
+                    if (Array.isArray(emitEvents)) {
+                        emitEvent = emitEvents.includes(key);
+                    }
+                    if (emitEvent) {
+                        target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${xe.toLisp(key)}-changed`, {
+                            detail: {
+                                value
+                            }
+                        }));
+                    }
                 }
                 return true;
             },
