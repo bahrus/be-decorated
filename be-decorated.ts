@@ -70,7 +70,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controllerInstance = new controller();
         const proxy = new Proxy<Element & TControllerProps>(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
-                const {emitEvents, propChangeQueue} = controllerInstance;
+                const {emitEvents, propChangeQueue, debug} = controllerInstance;
                 if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;
                 }else{
@@ -101,11 +101,16 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         emitEvent = emitEvents.includes(key)
                     }
                     if(emitEvent){
-                        target.dispatchEvent(new CustomEvent(`${ifWantsToBe}::${xe.toLisp(key)}-changed`, {
-                            detail: {
+                        const name = `${ifWantsToBe}::${xe.toLisp(key)}-changed`;
+                        const detail: CustomEventInit = {
+                            detail:{
                                 value
                             }
-                        }));
+                        };
+                        target.dispatchEvent(new CustomEvent(name, detail));
+                        if(debug){
+                            console.log({emitEvents, name, detail, target});
+                        }
                     }
                 }
                 return true;
