@@ -18,9 +18,7 @@
     "./be-decorated.js": "./be-decorated.js"
   },
   "files": [
-    "be*.*",
-    "u*.*",
-    "types.d.ts"
+    "*.*"
   ],
   "types": "types.d.ts",
   "dependencies": {

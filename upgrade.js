@@ -24,7 +24,7 @@ function monitor(id, beAttrib, args, callback) {
         ${attribSelector}{
             display:inline !important
         }
-    ` : undefined);
+    ` : undefined, true);
 }
 export function getAttrInfo(newTarget, ifWantsToBe, is) {
     const bePrefix = is ? 'is-' : 'be-';

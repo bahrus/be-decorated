@@ -25,7 +25,7 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, args: Upgr
         ${attribSelector}{
             display:inline !important
         }
-    `: undefined);
+    `: undefined, true);
 }
 
 export function getAttrInfo(newTarget: Element, ifWantsToBe: string, is: boolean){
