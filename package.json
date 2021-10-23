@@ -22,7 +22,7 @@
   ],
   "types": "types.d.ts",
   "dependencies": {
-    "xtal-element": "0.0.450",
+    "xtal-element": "0.0.451",
     "trans-render": "0.0.425"
   },
   "devDependencies": {
