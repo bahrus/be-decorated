@@ -251,9 +251,13 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ## Debugging
 
-Compared to working with custom elements, working with attribute-based decorators is more difficult, due to the issues mentioned above -- namely, the difficulty in getting a reference to the roxy.
+Compared to working with custom elements, working with attribute-based decorators is more difficult, due to the issues mentioned above -- namely, the difficulty in getting a reference to the proxy.
 
 But if the JSON attribute associated with a decorator has value "debug": true, then an adjacent debugging template element is inserted, that makes viewing the proxy and controller much easier.
+
+In dev tools, after inspecting the element, just look for that adjacent template element, select it in the, and in the console, type $0.controller to show the class behind the behavior.
+
+You should then be able to use the context menu to jump to the definition.  You can view virtual properties by typing $0.controller.[name of virtual property].  You can edit the value by typing $0.proxy.[name of virtual property] = "whatever you want."
 
 ## Primary prop [TODO]
 
