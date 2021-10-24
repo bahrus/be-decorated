@@ -255,6 +255,10 @@ Compared to working with custom elements, working with attribute-based decorator
 
 But if the JSON attribute associated with a decorator has value "debug": true, then an adjacent debugging template element is inserted, that makes viewing the proxy and controller much easier.
 
+## Primary prop [TODO]
+
+Sometimes a decorator will only have a single, primitive-type property value to configure, at least for the time being.  Or maybe there are multiple props, but one property in particular is clearly the most important, and the other properties will rarely deviate from the default value.  In that case, the extra overhead from typing and parsing JSON just to read that value seems like overkill.  So we should have a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [
+
 ## Viewing example from git clone or git fork:
 
 Install node.js.  Then, from a command prompt from the folder of your git clone or github fork:
