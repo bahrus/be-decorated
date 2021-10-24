@@ -261,7 +261,9 @@ You should then be able to use the context menu to jump to the definition.  You 
 
 ## Primary prop [TODO]
 
-Sometimes a decorator will only have a single, primitive-type property value to configure, at least for the time being.  Or maybe there are multiple props, but one property in particular is clearly the most important, and the other properties will rarely deviate from the default value.  In that case, the extra overhead from typing and parsing JSON just to read that value seems like overkill.  So we should have a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [
+Sometimes a decorator will only have a single, primitive-type property value to configure, at least for the time being.  Or maybe there are multiple props, but one property in particular is clearly the most important, and the other properties will rarely deviate from the default value.  In that case, the extra overhead from typing and parsing JSON just to read that value seems like overkill.  So we should have a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [.
+
+Name of the property:  "primaryProp"
 
 ## Viewing example from git clone or git fork:
 
