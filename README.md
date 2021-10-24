@@ -23,7 +23,7 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
     <!-- Becomes, after upgrading -->
     <black-eyed-peas 
-        is-on-the-next-level='{"level":"level 11"}'
+        is-on-the-next-level=11
         is-rocking-over-that-bass-tremble
         is-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
