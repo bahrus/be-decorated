@@ -16,7 +16,7 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 
     <black-eyed-peas 
-        be-on-the-next-level='{"level":"level 11"}' 
+        be-on-the-next-level=11
         be-rocking-over-that-bass-tremble
         be-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
