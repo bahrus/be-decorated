@@ -8,12 +8,6 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ```html
 #shadow-root (open)
-    <be-on-the-next-level upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></be-on-the-next-level>
-    <be-rocking-over-that-bass-tremble upgrade=black-eyed-peas if-wants-to-be=rocking-over-that-bass-tremble></be-rocking-over-that-bass-tremble>
-    <be-chilling-with-my-motherfuckin-crew upgrade=blacked-eyed-peas if-wants-to-be=chilling-with-my-motherfuckin-crew></be-chilling-with-my-motherfuckin-crew>
-    ...
-
-
 
     <black-eyed-peas 
         be-on-the-next-level=11
@@ -36,10 +30,11 @@ be-decorated's goals are quite similar to what is achieved via [things](https://
 Differences to these solutions:
 
 1. This can be used independently of any framework (web component based).
-2. Each decorator can be imported indendently of others via ES6 proxies.
-2. Definition is class-based.
-3. Applies exclusively within Shadow DOM realms.
-4. Reactive properties are managed declaratively via JSON syntax.
+2. Each decorator can be imported independently of others via ES6 proxies.
+3. Definition is class-based.
+4. Applies exclusively within Shadow DOM realms.
+5. Reactive properties are managed declaratively via JSON syntax.
+6. Namespace collisions easily avoidable within each shadow DOM realm.
 
 Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
