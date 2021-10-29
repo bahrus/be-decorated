@@ -8,22 +8,16 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ```html
 #shadow-root (open)
-    <be-on-the-next-level upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></be-on-the-next-level>
-    <be-rocking-over-that-bass-tremble upgrade=black-eyed-peas if-wants-to-be=rocking-over-that-bass-tremble></be-rocking-over-that-bass-tremble>
-    <be-chilling-with-my-motherfuckin-crew upgrade=blacked-eyed-peas if-wants-to-be=chilling-with-my-motherfuckin-crew></be-chilling-with-my-motherfuckin-crew>
-    ...
-
-
 
     <black-eyed-peas 
-        be-on-the-next-level='{"level":"level 11"}' 
+        be-on-the-next-level=11
         be-rocking-over-that-bass-tremble
         be-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
 
     <!-- Becomes, after upgrading -->
     <black-eyed-peas 
-        is-on-the-next-level='{"level":"level 11"}'
+        is-on-the-next-level=11
         is-rocking-over-that-bass-tremble
         is-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
@@ -31,14 +25,16 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ## Priors
 
-be-decorate's goals are quite similar to what is achieved via things [commonly](https://vuejs.org/v2/guide/custom-directive.html) [referred](https://docs.angularjs.org/guide/directive) to [as](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) "custom directives."
+be-decorated's goals are quite similar to what is achieved via [things](https://htmx.org/docs/) [commonly](https://vuejs.org/v2/guide/custom-directive.html) [referred](https://docs.angularjs.org/guide/directive) to [as](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) "custom directives."
 
 Differences to these solutions:
 
 1. This can be used independently of any framework (web component based).
-2. Definition is class-based.
-3. Applies exclusively within Shadow DOM realms.
-4. Reactive properties are managed declaratively via JSON syntax.
+2. Each decorator can be imported independently of others via ES6 proxies.
+3. Definition is class-based.
+4. Applies exclusively within Shadow DOM realms.
+5. Reactive properties are managed declaratively via JSON syntax.
+6. Namespace collisions easily avoidable within each shadow DOM realm.
 
 Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
@@ -102,7 +98,7 @@ Although it is a bit of a nuisance to remember to plop an instance in each shado
 <button be-a-butterbeer-counter='{"count": 30}'>Count</button>
 ...
 
-<be-a-butterbeer-counter></be-a-butterbeer-counter>
+<be-a-butterbeer-counter-bahrus-github></be-a-butterbeer-counter-bahrus-github>
 ```
 
 then it will affect all buttons with attribute be-a-butterbeer-counter within that shadow DOM.
@@ -113,12 +109,15 @@ To specify a different attribute, override the default "ifWantsToBe" property th
 <button be-a-b-c='{"count": 30}'>Count</button>
 ...
 
-<be-a-butterbeer-counter if-wants-to-be=a-b-c></be-a-butterbeer-counter>
+<be-a-butterbeer-counter-bahrus-github if-wants-to-be=a-b-c></be-a-butterbeer-counter-bahrus-github>
 ```
 
 Another silver lining to this nuisance:  It provides more transparency where the behavior modification is coming from.
 
-The [be-hive component](https://github.com/bahrus/be-hive) makes managing this nuisance in a better way.  If developing a component that uses more than a few decorators, it is probably worth the extra dependency.
+The [be-hive component](https://github.com/bahrus/be-hive) makes managing this nuisance almost seamless.  If developing a component that uses more than a few decorators, it is probably worth the extra dependency.
+
+Note the use of long names of the web component.  Since the key name used in the markup is configurable via if-wants-to-be, using long names for the web component, like guid's even, will really guarantee no namespace collisions, even without the help of pending standards.  If be-hive is used to help manage the integration, developers don't really need to care too much what the actual name of the web component is, only the value of if-wants-to-be, which is configurable within each shadow DOM realm.
+
 
 ## Setting properties of the proxy externally
 
@@ -250,9 +249,19 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ## Debugging
 
-Compared to working with custom elements, working with attribute-based decorators is more difficult, due to the issues mentioned above -- namely, the difficulty in getting a reference to the roxy.
+Compared to working with custom elements, working with attribute-based decorators is more difficult, due to the issues mentioned above -- namely, the difficulty in getting a reference to the proxy.
 
 But if the JSON attribute associated with a decorator has value "debug": true, then an adjacent debugging template element is inserted, that makes viewing the proxy and controller much easier.
+
+In dev tools, after inspecting the element, just look for that adjacent template element, select it in the elements exporer, and in the console, type $0.controller to show the class behind the behavior.
+
+You should then be able to use the context menu to jump to the definition.  You can view virtual properties by typing $0.controller.[name of virtual property].  You can edit the value by typing $0.proxy.[name of virtual property] = "whatever you want."
+
+## Primary prop [TODO]
+
+Sometimes a decorator will only have a single, primitive-type property value to configure, at least for the time being.  Or maybe there are multiple props, but one property in particular is clearly the most important, and the other properties will rarely deviate from the default value.  In that case, the extra overhead from typing and parsing JSON just to read that value seems like overkill.  So we should have a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [.
+
+Name of the property:  "primaryProp"
 
 ## Viewing example from git clone or git fork:
 
