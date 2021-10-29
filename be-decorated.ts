@@ -75,11 +75,14 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         return false;
     }
 
-    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro}: this){
+    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps}: this){
         if(this.parseAttr(this)) return;
         const controllerInstance = new controller();
         const proxy = new Proxy<Element & TControllerProps>(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
+                if(nonDryProps === undefined || !nonDryProps.includes(key)){
+                    if(controllerInstance[key] === value) return true;
+                }
                 const {emitEvents, propChangeQueue, debug} = controllerInstance;
                 if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;

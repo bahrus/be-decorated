@@ -49,6 +49,8 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     virtualProps: (keyof TControllerProps)[];
 
+    nonDryProps: (keyof TControllerProps)[];
+
     noParse: boolean;
 
     proxyPropDefaults: Partial<{[key in keyof TControllerProps]: any}>;
