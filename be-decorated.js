@@ -68,11 +68,15 @@ export class BeDecoratedCore extends HTMLElement {
         const controllerInstance = new controller();
         const proxy = new Proxy(newTarget, {
             set: (target, key, value) => {
-                if (nonDryProps === undefined || !nonDryProps.includes(key)) {
-                    if (controllerInstance[key] === value)
-                        return true;
-                }
                 const { emitEvents, propChangeQueue, debug } = controllerInstance;
+                if (nonDryProps === undefined || !nonDryProps.includes(key)) {
+                    if (controllerInstance[key] === value) {
+                        if (propChangeQueue !== undefined) {
+                            propChangeQueue.add(key);
+                        }
+                        return true;
+                    }
+                }
                 if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
                     controllerInstance[key] = value;
                 }
