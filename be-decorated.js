@@ -18,7 +18,7 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
         // register in the be-hive registry
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults }) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp }) {
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (!noParse) {
@@ -29,17 +29,23 @@ export class BeDecoratedCore extends HTMLElement {
                         Object.assign(controller.proxy, proxyPropDefaults);
                     }
                     let parsedObj;
-                    try {
-                        parsedObj = JSON.parse(attr[0]);
+                    const json = attr[0].trim();
+                    if (primaryProp !== undefined && json[0] !== '{' && json[0] !== '[') {
+                        controller.proxy[primaryProp] = json;
                     }
-                    catch (e) {
-                        console.error({
-                            attr,
-                            e,
-                            newTarget
-                        });
+                    else {
+                        try {
+                            parsedObj = JSON.parse(attr[0]);
+                            Object.assign(controller.proxy, parsedObj);
+                        }
+                        catch (e) {
+                            console.error({
+                                attr,
+                                e,
+                                newTarget
+                            });
+                        }
                     }
-                    Object.assign(controller.proxy, JSON.parse(attr[0]));
                     const filteredActions = {};
                     const queue = controller.propChangeQueue;
                     controller.propChangeQueue = undefined;

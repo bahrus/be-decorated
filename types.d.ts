@@ -55,7 +55,9 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     proxyPropDefaults: Partial<{[key in keyof TControllerProps]: any}>;
 
-    emitEvent: boolean;
+    emitEvents: boolean | string[];
+
+    primaryProp: string;
 }
 
 export interface BeDecoratedActions{
@@ -79,6 +81,8 @@ export interface UpgradeArg<T extends Object>{
     ifWantsToBe: string,
 
     forceVisible: boolean,
+
+    
 }
 
 export interface EventHandler{

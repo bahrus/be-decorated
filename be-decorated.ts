@@ -31,7 +31,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     }
 
-    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults}: this){
+    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp}: this){
         const controller = targetToController.get(newTarget);
         if(controller){
             if(!noParse){
@@ -42,16 +42,21 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         Object.assign(controller.proxy, proxyPropDefaults);
                     }
                     let parsedObj: any;
-                    try{
-                        parsedObj = JSON.parse(attr[0]!);
-                    }catch(e){
-                        console.error({
-                            attr,
-                            e,
-                            newTarget
-                        })
+                    const json = attr[0]!.trim();
+                    if(primaryProp !== undefined && json[0] !== '{' && json[0] !== '['){
+                        controller.proxy[primaryProp] = json;
+                    }else{
+                        try{
+                            parsedObj = JSON.parse(attr[0]!);
+                            Object.assign(controller.proxy, parsedObj)
+                        }catch(e){
+                            console.error({
+                                attr,
+                                e,
+                                newTarget
+                            })
+                        }
                     }
-                    Object.assign(controller.proxy, JSON.parse(attr[0]!));
                     const filteredActions: any = {};
                     const queue = controller.propChangeQueue;
                     controller.propChangeQueue = undefined;
