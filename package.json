@@ -27,10 +27,12 @@
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
-    "xtal-test": "0.0.51"
+    "xtal-test": "0.0.51",
+    "xtal-editor": "0.0.87",
+    "xtal-shell": "0.0.25"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/test-all.js",
     "package-check": "package-check",
     "serve": "node node_modules/xtal-test/serve.js"
   },
