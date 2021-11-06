@@ -259,9 +259,9 @@ If set to true, then all property changes will emit an event whenever a property
 
 For example, if a property "foo" is modified via the proxy, and emitEvents is set to either true, or an array containing "foo", then an event will be dispatched from the adorned element with name "[if-wants-to-be]::foo-changed".
 
-## Reserved, Universal Events [TODO]
+## Reserved, Universal Events
 
-If emitEvents is defined, then when the proxy has been established, the target element will emit event:
+**If** emitEvents is defined, then when the proxy has been established, the target element will emit event:
 
 "[if-wants-to-be]::is-[if-wants-to-be]".
 
