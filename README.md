@@ -251,6 +251,22 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ```
 
+## Monitoring
+
+Any be-decorated based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  
+
+If set to true, then all property changes will emit an event whenever a property change is made via the proxy. 
+
+For example, if a property "foo" is modified via the proxy, and emitEvents is set to either true, or an array containing "foo", then an event will be dispatched from the adorned element with name "[if-wants-to-be]::foo-changed".
+
+## Reserved, Universal Events [TODO]
+
+If emitEvents is defined, then when the proxy has been established, the target element will emit event:
+
+"[if-wants-to-be]::is-[if-wants-to-be]".
+
+The detail of the event contains the proxy, and the controllerInstance.
+
 ## Debugging
 
 Compared to working with custom elements, working with attribute-based decorators is more difficult, due to the issues mentioned above -- namely, the difficulty in getting a reference to the proxy.

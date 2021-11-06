@@ -80,7 +80,7 @@ export class BeDecoratedCore extends HTMLElement {
         }
         return false;
     }
-    pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps }) {
+    pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
         if (this.parseAttr(this))
             return;
         const controllerInstance = new controller();
@@ -161,6 +161,16 @@ export class BeDecoratedCore extends HTMLElement {
         targetToController.set(newTarget, controllerInstance);
         if (intro !== undefined) {
             controllerInstance[intro](proxy, newTarget, this);
+        }
+        if (emitEvents !== undefined) {
+            const name = `${ifWantsToBe}::is-${ifWantsToBe}`;
+            const detail = {
+                detail: {
+                    proxy,
+                    controllerInstance
+                }
+            };
+            newTarget.dispatchEvent(new CustomEvent(name, detail));
         }
         this.parseAttr(this);
         if (proxy.debug) {
