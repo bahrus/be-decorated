@@ -265,6 +265,15 @@ For example, if a property "foo" is modified via the proxy, and emitEvents is se
 
 "[if-wants-to-be]::is-[if-wants-to-be]".
 
+For example, this behavior:
+
+```html
+<form be-reformable='{}'>
+</form>
+```
+
+will emit event "reformable::is-reformable" when the proxy has been created.
+
 The detail of the event contains the proxy, and the controllerInstance.
 
 ## Debugging
