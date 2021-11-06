@@ -2,7 +2,7 @@ const xt = require('xtal-test/index');
 (async () => {
     const passed = await xt.runTests([
         {
-            path: 'test/example1.html',
+            path: 'test/xtal-editor-test1.html',
             expectedNoOfSuccessMarkers: 1,
         },
     ]);
