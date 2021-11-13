@@ -198,6 +198,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 }, 50);
             }
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
+            targetToController.delete(removedEl);
         });
     }
 }

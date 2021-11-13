@@ -191,6 +191,7 @@ export class BeDecoratedCore extends HTMLElement {
                 }, 50);
             }
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
+            targetToController.delete(removedEl);
         });
     }
 }
