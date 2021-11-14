@@ -207,6 +207,11 @@ export function define(controllerConfig) {
                 actions: rC.actions,
                 ...rC.propDefaults
             },
+            propInfo: {
+                newTarget: {
+                    dry: false,
+                }
+            },
             actions: {
                 watchForElementsToUpgrade: {
                     ifAllOf: ['upgrade', 'ifWantsToBe'],

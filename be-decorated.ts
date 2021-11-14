@@ -222,7 +222,12 @@ export function define<
             propDefaults:{
                 actions: rC.actions,
                 ...rC.propDefaults
-            }, 
+            },
+            propInfo:{
+                newTarget:{
+                    dry: false,
+                }
+            },
             actions:{
                 watchForElementsToUpgrade:{
                     ifAllOf: ['upgrade', 'ifWantsToBe'],
