@@ -8,7 +8,7 @@ import {intersection} from 'xtal-element/lib/intersection.js';
 
 export {BeDecoratedProps, MinimalController} from './types';
 
-export const xe = new XE<BeDecoratedProps, BeDecoratedActions, XAction<BeDecoratedProps>>();
+export const xe = new XE<BeDecoratedProps, BeDecoratedActions, PropInfoExt, XAction<BeDecoratedProps>>();
 
 const reqVirtualProps = ['self', 'emitEvents', 'debug'];
 
@@ -213,7 +213,7 @@ export interface BeDecoratedCore<TControllerProps, TControllerActions> extends B
 
 export function define<
     TControllerProps = any, 
-    TControllerActions = TControllerProps, 
+    TControllerActions = TControllerProps,
     TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfoExt<TControllerProps>, XAction<TControllerProps>>){
     const rC = controllerConfig.config;
     xe.def({

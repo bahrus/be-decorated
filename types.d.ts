@@ -1,4 +1,4 @@
-import {XAction} from 'xtal-element/src/types';
+import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {DefineArgs} from 'trans-render/lib/types';
 
 export interface BeDecoratedConfig<TControllerProps, TControllerActions = TControllerProps>{
