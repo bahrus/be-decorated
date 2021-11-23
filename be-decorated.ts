@@ -221,7 +221,8 @@ export function define<
             tagName: controllerConfig.config.tagName,
             propDefaults:{
                 actions: rC.actions,
-                ...rC.propDefaults
+                ...rC.propDefaults,
+                isC: true,
             },
             propInfo:{
                 newTarget:{
@@ -230,7 +231,7 @@ export function define<
             },
             actions:{
                 watchForElementsToUpgrade:{
-                    ifAllOf: ['upgrade', 'ifWantsToBe'],
+                    ifAllOf: ['isC', 'upgrade', 'ifWantsToBe'],
                     ifKeyIn: ['forceVisible'],
                 },
                 pairTargetWithController:{

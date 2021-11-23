@@ -58,6 +58,8 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     emitEvents: boolean | string[];
 
     primaryProp: string;
+
+    isC: boolean;
 }
 
 export interface BeDecoratedActions{
