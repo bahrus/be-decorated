@@ -35,6 +35,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controller = targetToController.get(newTarget);
         if(controller){
             if(!noParse){
+                if(proxyPropDefaults !== undefined){
+                    Object.assign(controller.proxy, proxyPropDefaults);
+                }
                 const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
                 if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
                     controller.propChangeQueue = new Set<string>();
@@ -68,26 +71,21 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                             })
                         }
                     }
-                    const filteredActions: any = {};
-                    const queue = controller.propChangeQueue;
-                    controller.propChangeQueue = undefined;
-                    if(actions !== undefined){
-                        for(const methodName in actions){
-                            const action = actions[methodName]!;
-                            const props = xe.getProps(xe, action); //TODO:  cache this
-                            //if(!props.has(key as string)) continue;
-                            if(!intersection(queue, props)) continue;
-                            if(xe.pq(xe, action, controller.proxy)){
-                                filteredActions[methodName] = action;
-                            }
+                }
+                const filteredActions: any = {};
+                const queue = controller.propChangeQueue;
+                controller.propChangeQueue = undefined;
+                if(actions !== undefined){
+                    for(const methodName in actions){
+                        const action = actions[methodName]!;
+                        const props = xe.getProps(xe, action); //TODO:  cache this
+                        //if(!props.has(key as string)) continue;
+                        if(!intersection(queue, props)) continue;
+                        if(xe.pq(xe, action, controller.proxy)){
+                            filteredActions[methodName] = action;
                         }
-                        xe.doActions(xe, filteredActions, controller, controller.proxy);
                     }
-
-                }else{
-                    if(proxyPropDefaults !== undefined){
-                        Object.assign(controller.proxy, proxyPropDefaults);
-                    }
+                    xe.doActions(xe, filteredActions, controller, controller.proxy);
                 }
             }
             return true;
