@@ -22,7 +22,9 @@ function monitor(id, beAttrib, args, callback) {
             callback(target);
     }, args.forceVisible ? `
         ${attribSelector}{
-            display:inline !important
+            display:inline !important;
+            position:absolute;
+            left:-1000px;
         }
     ` : undefined, true);
 }

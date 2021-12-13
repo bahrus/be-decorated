@@ -23,7 +23,9 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, args: Upgr
         if(callback !== undefined) callback(target as T);
     }, args.forceVisible ? `
         ${attribSelector}{
-            display:inline !important
+            display:inline !important;
+            position:absolute;
+            left:-1000px;
         }
     `: undefined, true);
 }
