@@ -22,12 +22,12 @@ export class BeDecoratedCore extends HTMLElement {
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (!noParse) {
+                controller.propChangeQueue = new Set();
                 if (proxyPropDefaults !== undefined) {
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
                 const attr = getAttrInfo(newTarget, ifWantsToBe, true);
                 if (attr !== null && attr.length > 0 && attr[0].length > 0) {
-                    controller.propChangeQueue = new Set();
                     if (proxyPropDefaults !== undefined) {
                         Object.assign(controller.proxy, proxyPropDefaults);
                     }

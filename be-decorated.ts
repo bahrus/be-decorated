@@ -35,12 +35,13 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controller = targetToController.get(newTarget);
         if(controller){
             if(!noParse){
+                controller.propChangeQueue = new Set<string>();
                 if(proxyPropDefaults !== undefined){
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
                 const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
                 if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
-                    controller.propChangeQueue = new Set<string>();
+                    
                     if(proxyPropDefaults !== undefined){
                         Object.assign(controller.proxy, proxyPropDefaults);
                     }
