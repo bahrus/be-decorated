@@ -75,6 +75,11 @@ export class BeDecoratedCore extends HTMLElement {
                         xe.doActions(xe, filteredActions, controller, controller.proxy);
                     }
                 }
+                else {
+                    if (proxyPropDefaults !== undefined) {
+                        Object.assign(controller.proxy, proxyPropDefaults);
+                    }
+                }
             }
             return true;
         }

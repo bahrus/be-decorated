@@ -84,6 +84,10 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         xe.doActions(xe, filteredActions, controller, controller.proxy);
                     }
 
+                }else{
+                    if(proxyPropDefaults !== undefined){
+                        Object.assign(controller.proxy, proxyPropDefaults);
+                    }
                 }
             }
             return true;
