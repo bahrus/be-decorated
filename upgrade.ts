@@ -7,22 +7,23 @@ export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (
     monitor(id, beAttrib, args, callback);
 }
 
-function monitor<T extends EventTarget>(id: string, beAttrib: string, args: UpgradeArg<T>, callback?: (t: T) => void){
-    const attribSelector = `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`;
-    addCSSListener(id, args.shadowDomPeer, attribSelector, (e: AnimationEvent) => {
+function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T) => void){
+    const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
+    let forcedVisibleSelector: string | undefined = undefined;
+    addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         const target = e.target;
-        const val = getAttrInfo(target as Element, args.ifWantsToBe, false);
+        const val = getAttrInfo(target as Element, ifWantsToBe, false);
         if(val === null) {
             //console.warn("Mismatch found.");
             //TODO:  investigate this scenario more.
             return;
         }
-        (target as Element).setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0] as string);
-        (target as Element).removeAttribute(`${val[1]}be-${args.ifWantsToBe}`);
+        (target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0] as string);
+        (target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
-    }, args.forceVisible ? `
-        ${attribSelector}{
+    }, forceVisible !== undefined ? `
+        ${forceVisible.map(s => s + attribSelector).join(',')}{
             display:inline !important;
             position:absolute;
             left:-1000px;

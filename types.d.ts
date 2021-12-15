@@ -82,7 +82,7 @@ export interface UpgradeArg<T extends Object>{
      */
     ifWantsToBe: string,
 
-    forceVisible: boolean,
+    forceVisible: string[],
 
     
 }
