@@ -45,7 +45,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     newTarget: Element | undefined;
 
-    forceVisible: boolean;
+    forceVisible: string[];
 
     virtualProps: (keyof TControllerProps)[];
 
