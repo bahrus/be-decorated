@@ -21,7 +21,7 @@ function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisib
         if (callback !== undefined)
             callback(target);
     }, forceVisible !== undefined ? `
-        ${forceVisible.map(s => `${s}[${beAttrib}],${s}[${beAttrib}]`).join(',')}{
+        ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
             display:inline !important;
             position:absolute;
             left:-1000px;

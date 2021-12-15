@@ -22,7 +22,7 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, 
         (target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
     }, forceVisible !== undefined ? `
-        ${forceVisible.map(s => `${s}[${beAttrib}],${s}[${beAttrib}]`).join(',')}{
+        ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
             display:inline !important;
             position:absolute;
             left:-1000px;
