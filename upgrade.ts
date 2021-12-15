@@ -9,7 +9,6 @@ export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (
 
 function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
-    let forcedVisibleSelector: string | undefined = undefined;
     addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         const target = e.target;
@@ -23,7 +22,7 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, 
         (target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
     }, forceVisible !== undefined ? `
-        ${forceVisible.map(s => s + attribSelector).join(',')}{
+        ${forceVisible.map(s => `${s}[${beAttrib}],${s}[${beAttrib}]`).join(',')}{
             display:inline !important;
             position:absolute;
             left:-1000px;

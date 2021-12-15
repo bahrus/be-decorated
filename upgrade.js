@@ -6,7 +6,6 @@ export function upgrade(args, callback) {
 }
 function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
-    let forcedVisibleSelector = undefined;
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
         if (e.animationName !== id)
             return;
@@ -22,7 +21,7 @@ function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisib
         if (callback !== undefined)
             callback(target);
     }, forceVisible !== undefined ? `
-        ${forceVisible.map(s => s + attribSelector).join(',')}{
+        ${forceVisible.map(s => `${s}[${beAttrib}],${s}[${beAttrib}]`).join(',')}{
             display:inline !important;
             position:absolute;
             left:-1000px;
