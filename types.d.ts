@@ -38,7 +38,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     finale: keyof TControllerActions;
 
 
-    actions: Partial<{[key in keyof TControllerActions]: string | XAction<TControllerProps>}>;
+    actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | XAction<TControllerProps>}>;
 
     controller: {new(): TControllerProps & TControllerActions & MinimalController};
 
