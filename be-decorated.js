@@ -114,10 +114,11 @@ export class BeDecoratedCore extends HTMLElement {
                         const filteredActions = {};
                         for (const methodName in actions) {
                             const action = actions[methodName];
-                            const props = xe.getProps(xe, action); //TODO:  cache this
+                            const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
+                            const props = xe.getProps(xe, typedAction); //TODO:  cache this
                             if (!props.has(key))
                                 continue;
-                            if (xe.pq(xe, action, controllerInstance)) {
+                            if (xe.pq(xe, typedAction, controllerInstance)) {
                                 filteredActions[methodName] = action;
                             }
                         }
