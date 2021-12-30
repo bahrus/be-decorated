@@ -45,8 +45,6 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     forceVisible: string[];
 
-    waitForUpgrade: boolean,
-
     virtualProps: (keyof TControllerProps)[];
 
     nonDryProps: (keyof TControllerProps)[];
