@@ -37,15 +37,15 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     finale: keyof TControllerActions;
 
-
     actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | XAction<TControllerProps>}>;
 
     controller: {new(): TControllerProps & TControllerActions & MinimalController};
 
-
     newTarget: Element | undefined;
 
     forceVisible: string[];
+
+    waitForUpgrade: boolean,
 
     virtualProps: (keyof TControllerProps)[];
 
@@ -83,6 +83,8 @@ export interface UpgradeArg<T extends Object>{
     ifWantsToBe: string,
 
     forceVisible: string[],
+
+    
 
     
 }

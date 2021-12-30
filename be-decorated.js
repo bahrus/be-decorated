@@ -6,9 +6,15 @@ export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents', 'debug'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
-    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
-        const callback = (target) => {
-            this.newTarget = target;
+    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible, waitForUpgrade }) {
+        const callback = async (target) => {
+            if (waitForUpgrade && target instanceof HTMLUnknownElement) {
+                await customElements.whenDefined(target.localName);
+                this.newTarget = target;
+            }
+            else {
+                this.newTarget = target;
+            }
         };
         upgr({
             shadowDomPeer: this,
