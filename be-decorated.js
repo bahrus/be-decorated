@@ -88,7 +88,7 @@ export class BeDecoratedCore extends HTMLElement {
         if (this.parseAttr(this))
             return;
         const controllerInstance = new controller();
-        const proxy = new Proxy(newTarget, {
+        const revocable = Proxy.revocable(newTarget, {
             set: (target, key, value) => {
                 const { emitEvents, propChangeQueue, debug } = controllerInstance;
                 if (nonDryProps === undefined || !nonDryProps.includes(key)) {
@@ -162,7 +162,8 @@ export class BeDecoratedCore extends HTMLElement {
                 return value;
             }
         });
-        controllerInstance.proxy = proxy;
+        const { proxy } = revocable;
+        controllerInstance.proxy = revocable.proxy;
         targetToController.set(newTarget, controllerInstance);
         if (intro !== undefined) {
             controllerInstance[intro](proxy, newTarget, this);
@@ -197,6 +198,7 @@ export class BeDecoratedCore extends HTMLElement {
             }
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
             targetToController.delete(removedEl);
+            revocable.revoke();
         });
     }
 }

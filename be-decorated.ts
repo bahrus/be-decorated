@@ -98,7 +98,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
         if(this.parseAttr(this)) return;
         const controllerInstance = new controller();
-        const proxy = new Proxy<Element & TControllerProps>(newTarget! as Element & TControllerProps, {
+        const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                 const {emitEvents, propChangeQueue, debug} = controllerInstance;
                 if(nonDryProps === undefined || !nonDryProps.includes(key)){
@@ -169,7 +169,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 return value;
             }
         });
-        controllerInstance.proxy = proxy;
+        const {proxy} = revocable;
+        controllerInstance.proxy = revocable.proxy;
         targetToController.set(newTarget, controllerInstance);
         if(intro !== undefined){
             (<any>controllerInstance)[intro](proxy, newTarget, this);
@@ -204,6 +205,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             }
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
             targetToController.delete(removedEl);
+            revocable.revoke();
         });
     }
 }
