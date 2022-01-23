@@ -200,6 +200,7 @@ export class BeDecoratedCore extends HTMLElement {
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
             targetToController.delete(removedEl);
             unsubscribe(revocable);
+            unsubscribe(removedEl);
             revocable.revoke();
         });
     }

@@ -207,6 +207,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
             targetToController.delete(removedEl);
             unsubscribe(revocable as any as Element);
+            unsubscribe(removedEl);
             revocable.revoke();
         });
     }
