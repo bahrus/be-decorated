@@ -5,6 +5,7 @@ import {DefineArgs} from 'trans-render/lib/types';
 import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
+import {unsubscribe} from 'trans-render/lib/subscribe.js';
 
 export {BeDecoratedProps, MinimalController} from './types';
 
@@ -205,6 +206,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             }
             removedEl.removeAttribute('is-' + this.ifWantsToBe);
             targetToController.delete(removedEl);
+            unsubscribe(revocable as any as Element);
             revocable.revoke();
         });
     }
