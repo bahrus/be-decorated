@@ -88,7 +88,7 @@ export interface UpgradeArg<T extends Object>{
 }
 
 export interface EventHandler{
-    on: keyof ElementEventMap;
+    on: string;
     elementToObserve: Element;
     fn: (e: Event) => void;
 }
