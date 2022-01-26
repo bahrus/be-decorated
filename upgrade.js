@@ -16,9 +16,6 @@ function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisib
             //TODO:  investigate this scenario more.
             return;
         }
-        if (target.localName === 'style') {
-            console.log({ target, val, callback });
-        }
         target.setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]);
         target.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if (callback !== undefined)

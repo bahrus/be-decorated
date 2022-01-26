@@ -17,9 +17,6 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const self = this;
         const callback = (target: Element) => {
-            if(target.localName === 'style'){
-                console.log(target);
-            }
             self.newTarget = target;
         }
         upgr({

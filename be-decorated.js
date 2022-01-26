@@ -9,9 +9,6 @@ export class BeDecoratedCore extends HTMLElement {
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const self = this;
         const callback = (target) => {
-            if (target.localName === 'style') {
-                console.log(target);
-            }
             self.newTarget = target;
         };
         upgr({
