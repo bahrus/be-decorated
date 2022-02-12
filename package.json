@@ -28,7 +28,7 @@
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
     "xtal-test": "0.0.55",
-    "xtal-editor": "0.0.130",
+    "xtal-editor": "0.0.131",
     "xtal-shell": "0.0.25"
   },
   "scripts": {

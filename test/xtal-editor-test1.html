@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel=preload as=script id="xtal-editor/theme.css" href="../node_modules/xtal-editor/theme.css" crossorigin="anonymous">
+    <link rel=preload as=script id="xtal-editor/xef-config.json" href="../node_modules/xtal-editor/xef-config.json" crossorigin="anonymous">
 </head>
 <body>
     <xtal-editor key=abc>
@@ -76,7 +78,7 @@
         }, 2000);
     </script>
     <script type=module>
-        import '../node_modules/xtal-editor/xtal-editor.js';
+        import 'xtal-editor/xtal-editor.js';
         import '../node_modules/xtal-shell/$hell.js'
     </script>
     <be-hive></be-hive>
