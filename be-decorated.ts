@@ -1,7 +1,7 @@
 import {upgrade as upgr, getAttrInfo} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
-import {DefineArgs} from 'trans-render/lib/types';
+import {DefineArgs, WCConfig} from 'trans-render/lib/types';
 import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
@@ -96,7 +96,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         return false;
     }
 
-    pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
+    async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
         if(this.parseAttr(this)) return;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
@@ -174,7 +174,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         controllerInstance.proxy = revocable.proxy;
         targetToController.set(newTarget, controllerInstance);
         if(intro !== undefined){
-            (<any>controllerInstance)[intro](proxy, newTarget, this);
+            await (<any>controllerInstance)[intro](proxy, newTarget, this);
         }
         if(emitEvents !== undefined){
             const name = `${ifWantsToBe}::is-${ifWantsToBe}`;
@@ -194,9 +194,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             (<any>debugTempl).proxy = proxy;
             newTarget!.insertAdjacentElement('afterend', debugTempl);
         }
-        onRemove(newTarget!, (removedEl: Element) =>{
+        onRemove(newTarget!, async (removedEl: Element) => {
             if(controllerInstance !== undefined && finale !== undefined)
-            (<any>controllerInstance)[finale](proxy, removedEl, this);
+            await (<any>controllerInstance)[finale](proxy, removedEl, this);
             //element might come back -- need to reactivate if it does
             const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
             if(isAttr !== null) {
@@ -223,10 +223,10 @@ export function define<
     TControllerProps = any, 
     TControllerActions = TControllerProps,
     TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfoExt<TControllerProps>, XAction<TControllerProps>>){
-    const rC = controllerConfig.config;
+    const rC = controllerConfig.config as WCConfig;
     xe.def({
         config:{
-            tagName: controllerConfig.config.tagName,
+            tagName: rC.tagName,
             propDefaults:{
                 actions: rC.actions,
                 ...rC.propDefaults,
