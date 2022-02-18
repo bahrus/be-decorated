@@ -3,8 +3,6 @@ import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
 import {DefineArgs, WCConfig} from 'trans-render/lib/types';
 import {XAction, PropInfoExt} from 'xtal-element/src/types';
-import {onRemove} from 'trans-render/lib/onRemove.js';
-import {intersection} from 'xtal-element/lib/intersection.js';
 
 export {BeDecoratedProps, MinimalController} from './types';
 
@@ -32,7 +30,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     }
 
-    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp}: this){
+    async parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp}: this){
         const controller = targetToController.get(newTarget);
         if(controller){
             if(!noParse){
@@ -83,6 +81,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as XAction<TControllerProps> : action as XAction<TControllerProps>;
                         const props = xe.getProps(xe, typedAction); //TODO:  cache this
                         //if(!props.has(key as string)) continue;
+                        const {intersection} = await import('xtal-element/lib/intersection.js');
                         if(!intersection(queue, props)) continue;
                         if(xe.pq(xe, typedAction, controller.proxy)){
                             filteredActions[methodName] = action;
@@ -97,7 +96,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     }
 
     async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
-        if(this.parseAttr(this)) return;
+        if(await this.parseAttr(this)) return;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
@@ -194,6 +193,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             (<any>debugTempl).proxy = proxy;
             newTarget!.insertAdjacentElement('afterend', debugTempl);
         }
+        const {onRemove} = await import('trans-render/lib/onRemove.js');
         onRemove(newTarget!, async (removedEl: Element) => {
             if(controllerInstance !== undefined && finale !== undefined)
             await (<any>controllerInstance)[finale](proxy, removedEl, this);
