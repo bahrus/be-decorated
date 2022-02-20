@@ -85,7 +85,7 @@ export class BeDecoratedCore extends HTMLElement {
         }
         return false;
     }
-    async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
+    pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
         if (this.parseAttr(this))
             return;
         const controllerInstance = new controller();
@@ -167,7 +167,7 @@ export class BeDecoratedCore extends HTMLElement {
         controllerInstance.proxy = revocable.proxy;
         targetToController.set(newTarget, controllerInstance);
         if (intro !== undefined) {
-            await controllerInstance[intro](proxy, newTarget, this);
+            await(controllerInstance)[intro](proxy, newTarget, this);
         }
         if (emitEvents !== undefined) {
             const name = `${ifWantsToBe}::is-${ifWantsToBe}`;
