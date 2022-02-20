@@ -5,6 +5,7 @@ import {DefineArgs, WCConfig} from 'trans-render/lib/types';
 import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
+//be careful about adopting async with onRemove, intersection.  Test be-repeated, example IIb, make sure no repeated calls to renderlist.
 
 export {BeDecoratedProps, MinimalController} from './types';
 
