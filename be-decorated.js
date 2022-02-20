@@ -1,5 +1,7 @@
 import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
+import { onRemove } from 'trans-render/lib/onRemove.js';
+import { intersection } from 'xtal-element/lib/intersection.js';
 export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents', 'debug'];
 export class BeDecoratedCore extends HTMLElement {
@@ -17,7 +19,7 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
         // register in the be-hive registry
     }
-    async parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp }) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp }) {
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (!noParse) {
@@ -70,7 +72,6 @@ export class BeDecoratedCore extends HTMLElement {
                         const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
                         const props = xe.getProps(xe, typedAction); //TODO:  cache this
                         //if(!props.has(key as string)) continue;
-                        const { intersection } = await import('xtal-element/lib/intersection.js');
                         if (!intersection(queue, props))
                             continue;
                         if (xe.pq(xe, typedAction, controller.proxy)) {
@@ -85,7 +86,7 @@ export class BeDecoratedCore extends HTMLElement {
         return false;
     }
     async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
-        if (await this.parseAttr(this))
+        if (this.parseAttr(this))
             return;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget, {
@@ -186,7 +187,6 @@ export class BeDecoratedCore extends HTMLElement {
             debugTempl.proxy = proxy;
             newTarget.insertAdjacentElement('afterend', debugTempl);
         }
-        const { onRemove } = await import('trans-render/lib/onRemove.js');
         onRemove(newTarget, async (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined)
                 await controllerInstance[finale](proxy, removedEl, this);
