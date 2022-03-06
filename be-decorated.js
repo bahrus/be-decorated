@@ -190,14 +190,15 @@ export class BeDecoratedCore extends HTMLElement {
         onRemove(newTarget, async (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined)
                 await controllerInstance[finale](proxy, removedEl, this);
-            //element might come back -- need to reactivate if it does
-            const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
-            if (isAttr !== null) {
-                setTimeout(() => {
-                    removedEl.setAttribute('be-' + this.ifWantsToBe, isAttr);
-                }, 50);
-            }
-            removedEl.removeAttribute('is-' + this.ifWantsToBe);
+            // Commented out code below doesn't seem to work, so leaving out for now.
+            // //element might come back -- need to reactivate if it does
+            // const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
+            // if(isAttr !== null) {
+            //     setTimeout(() => {
+            //         removedEl.setAttribute('be-' + this.ifWantsToBe, isAttr);
+            //     }, 50);
+            // }
+            // removedEl.removeAttribute('is-' + this.ifWantsToBe);
             targetToController.delete(removedEl);
             revocable.revoke();
         });

@@ -29,16 +29,19 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ## Priors
 
-be-decorated's goals are quite similar to what is achieved via [things](https://htmx.org/docs/) [commonly](https://vuejs.org/v2/guide/custom-directive.html) [referred](https://docs.angularjs.org/guide/directive) to [as](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) "custom directives."
+be-decorated's goals are quite similar to what is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [have](https://docs.angularjs.org/guide/directive) to [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
+
+We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "custom attribute", "directive", "behavior" is fine also.
 
 Differences to these solutions:
 
 1. This can be used independently of any framework (web component based).
-2. Each decorator can be imported independently of others via ES6 proxies.
+2. Each decorator can be imported independently of others via ES6 module.
 3. Definition is class-based.
 4. Applies exclusively within Shadow DOM realms.
 5. Reactive properties are managed declaratively via JSON syntax.
 6. Namespace collisions easily avoidable within each shadow DOM realm.
+7. Use of ES6 proxies for extending properties allows us to avoid future conflicts.
 
 Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
