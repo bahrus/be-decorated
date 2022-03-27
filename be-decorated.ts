@@ -11,7 +11,7 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions, PropInfoExt, XAction<BeDecoratedProps>>();
 
-const reqVirtualProps = ['self', 'emitEvents', 'debug'];
+const reqVirtualProps = ['self', 'emitEvents'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
@@ -102,7 +102,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
-                const {emitEvents, propChangeQueue, debug} = controllerInstance;
+                const {emitEvents, propChangeQueue} = controllerInstance;
                 if(nonDryProps === undefined || !nonDryProps.includes(key)){
                     if(controllerInstance[key] === value) {
                         if(propChangeQueue !== undefined){
@@ -149,9 +149,6 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                                 value
                             }
                         };
-                        if(debug){
-                            console.log({emitEvents, name, detail, target});
-                        }
                         target.dispatchEvent(new CustomEvent(name, detail));
 
                     }
@@ -173,6 +170,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         });
         const {proxy} = revocable;
         controllerInstance.proxy = revocable.proxy;
+        if((<any>newTarget).beDecorated === undefined) (<any>newTarget).beDecorated = {};
+        (<any>newTarget).beDecorated[xe.toCamel(ifWantsToBe!)] = proxy;
         targetToController.set(newTarget, controllerInstance);
         if(intro !== undefined){
             await (<any>controllerInstance)[intro](proxy, newTarget, this);
@@ -188,16 +187,11 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             newTarget!.dispatchEvent(new CustomEvent(name, detail));
         }
         this.parseAttr(this);
-        if((<any>proxy).debug){
-            const debugTempl = document.createElement('template');
-            debugTempl.setAttribute(`data-debugger-for-${ifWantsToBe}`, '');
-            (<any>debugTempl).controller = controllerInstance;
-            (<any>debugTempl).proxy = proxy;
-            newTarget!.insertAdjacentElement('afterend', debugTempl);
-        }
         onRemove(newTarget!, async (removedEl: Element) => {
-            if(controllerInstance !== undefined && finale !== undefined)
-            await (<any>controllerInstance)[finale](proxy, removedEl, this);
+            if(controllerInstance !== undefined && finale !== undefined){
+                await (<any>controllerInstance)[finale](proxy, removedEl, this);
+            }
+            if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[xe.toCamel(ifWantsToBe!)];
             // Commented out code below doesn't seem to work, so leaving out for now.
             // //element might come back -- need to reactivate if it does
             // const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);

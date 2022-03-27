@@ -3,7 +3,7 @@ import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
 export const xe = new XE();
-const reqVirtualProps = ['self', 'emitEvents', 'debug'];
+const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
@@ -91,7 +91,7 @@ export class BeDecoratedCore extends HTMLElement {
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget, {
             set: (target, key, value) => {
-                const { emitEvents, propChangeQueue, debug } = controllerInstance;
+                const { emitEvents, propChangeQueue } = controllerInstance;
                 if (nonDryProps === undefined || !nonDryProps.includes(key)) {
                     if (controllerInstance[key] === value) {
                         if (propChangeQueue !== undefined) {
@@ -141,9 +141,6 @@ export class BeDecoratedCore extends HTMLElement {
                                 value
                             }
                         };
-                        if (debug) {
-                            console.log({ emitEvents, name, detail, target });
-                        }
                         target.dispatchEvent(new CustomEvent(name, detail));
                     }
                 }
@@ -165,6 +162,9 @@ export class BeDecoratedCore extends HTMLElement {
         });
         const { proxy } = revocable;
         controllerInstance.proxy = revocable.proxy;
+        if (newTarget.beDecorated === undefined)
+            newTarget.beDecorated = {};
+        newTarget.beDecorated[xe.toCamel(ifWantsToBe)] = proxy;
         targetToController.set(newTarget, controllerInstance);
         if (intro !== undefined) {
             await controllerInstance[intro](proxy, newTarget, this);
@@ -180,16 +180,12 @@ export class BeDecoratedCore extends HTMLElement {
             newTarget.dispatchEvent(new CustomEvent(name, detail));
         }
         this.parseAttr(this);
-        if (proxy.debug) {
-            const debugTempl = document.createElement('template');
-            debugTempl.setAttribute(`data-debugger-for-${ifWantsToBe}`, '');
-            debugTempl.controller = controllerInstance;
-            debugTempl.proxy = proxy;
-            newTarget.insertAdjacentElement('afterend', debugTempl);
-        }
         onRemove(newTarget, async (removedEl) => {
-            if (controllerInstance !== undefined && finale !== undefined)
+            if (controllerInstance !== undefined && finale !== undefined) {
                 await controllerInstance[finale](proxy, removedEl, this);
+            }
+            if (removedEl.beDecorated !== undefined)
+                delete removedEl.beDecorated[xe.toCamel(ifWantsToBe)];
             // Commented out code below doesn't seem to work, so leaving out for now.
             // //element might come back -- need to reactivate if it does
             // const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
