@@ -164,7 +164,12 @@ export class BeDecoratedCore extends HTMLElement {
         controllerInstance.proxy = revocable.proxy;
         if (newTarget.beDecorated === undefined)
             newTarget.beDecorated = {};
-        newTarget.beDecorated[xe.toCamel(ifWantsToBe)] = proxy;
+        const key = xe.toCamel(ifWantsToBe);
+        const existingProp = newTarget.beDecorated[key];
+        if (existingProp !== undefined) {
+            Object.assign(proxy, existingProp);
+        }
+        newTarget.beDecorated[key] = proxy;
         targetToController.set(newTarget, controllerInstance);
         if (intro !== undefined) {
             await controllerInstance[intro](proxy, newTarget, this);
@@ -185,7 +190,7 @@ export class BeDecoratedCore extends HTMLElement {
                 await controllerInstance[finale](proxy, removedEl, this);
             }
             if (removedEl.beDecorated !== undefined)
-                delete removedEl.beDecorated[xe.toCamel(ifWantsToBe)];
+                delete removedEl.beDecorated[key];
             // Commented out code below doesn't seem to work, so leaving out for now.
             // //element might come back -- need to reactivate if it does
             // const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
