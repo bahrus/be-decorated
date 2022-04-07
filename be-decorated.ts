@@ -1,4 +1,4 @@
-import {upgrade as upgr, getAttrInfo} from './upgrade.js';
+import {upgrade as upgr, tempAttrLookup} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
 import {DefineArgs, WCConfig} from 'trans-render/lib/types';
@@ -48,7 +48,14 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     const virtualProps = this.virtualPropsMap.get(newTarget!);
                     Object.assign(controller.proxy, virtualProps);
                 }else{
-                    const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
+                    //const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
+                    const lookup = tempAttrLookup.get(newTarget!)!;
+                    const val = lookup[ifWantsToBe!];
+                    delete lookup[ifWantsToBe!];
+                    if(Object.keys(lookup).length === 0){
+                        tempAttrLookup.delete(newTarget!);
+                    }
+                    const attr = val[0]!;
                     if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
                     
                         if(proxyPropDefaults !== undefined){
@@ -86,6 +93,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                             }
                         }
                     }
+                    newTarget!.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
+                    newTarget!.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
                 }
                 
 

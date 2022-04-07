@@ -4,6 +4,7 @@ export function upgrade(args, callback) {
     const id = 'a' + (new Date()).valueOf().toString();
     monitor(id, beAttrib, args, callback);
 }
+export const tempAttrLookup = new WeakMap();
 function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
@@ -16,8 +17,13 @@ function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisib
             //TODO:  investigate this scenario more.
             return;
         }
-        target.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
-        target.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
+        if (!tempAttrLookup.has(target)) {
+            tempAttrLookup.set(target, {});
+        }
+        const lookup = tempAttrLookup.get(target);
+        lookup[ifWantsToBe] = val;
+        //(target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
+        //(target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if (callback !== undefined)
             callback(target);
     }, forceVisible !== undefined ? `
