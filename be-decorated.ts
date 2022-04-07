@@ -43,45 +43,52 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 if(proxyPropDefaults !== undefined){
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
+                const val = getVal(newTarget!, ifWantsToBe);
+                const attr = val[0]!.trim();
                 if(this.virtualPropsMap.has(newTarget!)){
-                    //this may happen if an element is moved after already initialized
+                    //this may happen if an element is moved or "frozen" via trans-render/lib/freeze.js after already initialized
                     const virtualProps = this.virtualPropsMap.get(newTarget!);
+                    if(attr.length > 0){
+                        try{
+                            const parsedObj = JSON.parse(attr);
+                            Object.assign(virtualProps, parsedObj);
+                        }catch(e){
+                            console.error(e);
+                        }
+                    }
                     Object.assign(controller.proxy, virtualProps);
                 }else{
-                    const val = getVal(newTarget!, ifWantsToBe);
-                    
-                    const attr = val[0]!;
+
                     if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
                     
                         if(proxyPropDefaults !== undefined){
                             Object.assign(controller.proxy, proxyPropDefaults);
                         }
                         let parsedObj: any;
-                        const json = attr.trim();
                         const proxy = controller.proxy;
-                        if(primaryProp !== undefined && json[0] !== '{'){
-                            if(json[0] === '['){
+                        if(primaryProp !== undefined && attr[0] !== '{'){
+                            if(attr[0] === '['){
                                 try{
-                                    parsedObj = JSON.parse(json);
+                                    parsedObj = JSON.parse(attr);
                                     proxy[primaryProp] = parsedObj;
                                     virtualPropsMap.set(newTarget!, parsedObj);
                                 }catch(e){
-                                    proxy[primaryProp] = json;
-                                    virtualPropsMap.set(newTarget!, {[primaryProp]: json});
+                                    proxy[primaryProp] = attr;
+                                    virtualPropsMap.set(newTarget!, {[primaryProp]: attr});
                                 }
                             }else{
-                                proxy[primaryProp] = json;
-                                virtualPropsMap.set(newTarget!, {[primaryProp]: json});
+                                proxy[primaryProp] = attr;
+                                virtualPropsMap.set(newTarget!, {[primaryProp]: attr});
                             }
                             
                         }else{
                             try{
-                                parsedObj = JSON.parse(json);
+                                parsedObj = JSON.parse(attr);
                                 Object.assign(proxy, parsedObj);
                                 virtualPropsMap.set(newTarget!, parsedObj);
                             }catch(e){
                                 console.error({
-                                    json,
+                                    attr,
                                     e,
                                     newTarget
                                 })
