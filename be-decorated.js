@@ -1,4 +1,4 @@
-import { upgrade as upgr, tempAttrLookup } from './upgrade.js';
+import { upgrade as upgr, getVal } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
@@ -34,13 +34,7 @@ export class BeDecoratedCore extends HTMLElement {
                     Object.assign(controller.proxy, virtualProps);
                 }
                 else {
-                    //const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
-                    const lookup = tempAttrLookup.get(newTarget);
-                    const val = lookup[ifWantsToBe];
-                    delete lookup[ifWantsToBe];
-                    if (Object.keys(lookup).length === 0) {
-                        tempAttrLookup.delete(newTarget);
-                    }
+                    const val = getVal(newTarget, ifWantsToBe);
                     const attr = val[0];
                     if (attr !== null && attr.length > 0 && attr[0].length > 0) {
                         if (proxyPropDefaults !== undefined) {

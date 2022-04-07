@@ -4,7 +4,16 @@ export function upgrade(args, callback) {
     const id = 'a' + (new Date()).valueOf().toString();
     monitor(id, beAttrib, args, callback);
 }
-export const tempAttrLookup = new WeakMap();
+const tempAttrLookup = new WeakMap();
+export function getVal(e, ifWantsToBe) {
+    const lookup = tempAttrLookup.get(e);
+    const val = lookup[ifWantsToBe];
+    delete lookup[ifWantsToBe];
+    if (Object.keys(lookup).length === 0) {
+        tempAttrLookup.delete(e);
+    }
+    return val;
+}
 function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {

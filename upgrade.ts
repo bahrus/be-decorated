@@ -7,7 +7,17 @@ export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (
     monitor(id, beAttrib, args, callback);
 }
 
-export const tempAttrLookup = new WeakMap<Element, {[key: string] : (string | null)[]}>();
+const tempAttrLookup = new WeakMap<Element, {[key: string] : (string | null)[]}>();
+
+export function getVal(e: Element, ifWantsToBe: string){
+    const lookup = tempAttrLookup.get(e)!;
+    const val = lookup[ifWantsToBe];
+    delete lookup[ifWantsToBe];
+    if(Object.keys(lookup).length === 0){
+        tempAttrLookup.delete(e);
+    }
+    return val;
+}
 
 function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
