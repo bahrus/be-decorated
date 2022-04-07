@@ -21,7 +21,7 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
     <!-- Becomes, after upgrading -->
     <black-eyed-peas 
-        is-on-the-next-level=11
+        is-on-the-next-level
         is-rocking-over-that-bass-tremble
         is-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
@@ -132,7 +132,15 @@ Just as we need to be able to pass property values to custom elements, we need a
 
 The tricky thing about proxies is they're great if you have access to them, useless if you don't.  
 
-###  Approach I.  Programmatically (Ugly, not guaranteed)
+###  Approach I.  Programmatically, but carefully.
+
+be-decorated applies a "cardinal sin" and attaches a field onto the adorned element called beDecorated.  Inside of which all the proxies are linked.  So to set the property of a proxy, we need to act gingerly:
+
+```JavaScript
+if(myElement.beDecorated === undefined) myElement.beDecorated = {};
+if(myElement.beDecorated.aButterbeerCounter === undefined) myElement.beDecorated.aButterbeerCounter = {};
+myElement.beDecorated.aButterbeerCounter.count = 7;
+```
 
 The instance of the decorator component sitting inside the Shadow DOM has a key to getting the controller class.  Assuming we've waited long enough:
 
@@ -168,7 +176,7 @@ After list-sorter does its thing, the attribute "be-sorted" switches to "is-sort
 
 ```html
 
-<ul is-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
+<ul is-sorted>
     <li>
         <span>Aardvark</span>
     </li>
@@ -184,7 +192,7 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 ```html
 
-<ul id=list is-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
+<ul id=list is-sorted>
     <li>
         <span>Aardvark</span>
     </li>
