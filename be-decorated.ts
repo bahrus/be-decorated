@@ -47,7 +47,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 const attr = val[0]!.trim();
                 if(this.virtualPropsMap.has(newTarget!)){
                     //this may happen if an element is moved or "frozen" via trans-render/lib/freeze.js after already initialized
-                    const virtualProps = this.virtualPropsMap.get(newTarget!);
+                    
                     if(attr.length > 0){
                         try{
                             const parsedObj = JSON.parse(attr);
