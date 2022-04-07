@@ -6,6 +6,7 @@ export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
+    virtualPropsMap = new WeakMap();
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const self = this;
         const callback = (target) => {
@@ -19,47 +20,58 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
         // register in the be-hive registry
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp }) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, virtualPropsMap }) {
         const controller = targetToController.get(newTarget);
         if (controller) {
-            if (!noParse) {
+            if (!noParse) { //yes, parse please
                 controller.propChangeQueue = new Set();
                 if (proxyPropDefaults !== undefined) {
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
-                const attr = getAttrInfo(newTarget, ifWantsToBe, true);
-                if (attr !== null && attr.length > 0 && attr[0].length > 0) {
-                    if (proxyPropDefaults !== undefined) {
-                        Object.assign(controller.proxy, proxyPropDefaults);
-                    }
-                    let parsedObj;
-                    const json = attr[0].trim();
-                    const proxy = controller.proxy;
-                    if (primaryProp !== undefined && json[0] !== '{') {
-                        if (json[0] === '[') {
-                            try {
-                                parsedObj = JSON.parse(json);
-                                proxy[primaryProp] = parsedObj;
+                if (this.virtualPropsMap.has(newTarget)) {
+                    //this may happen if an element is moved after already initialized
+                    const virtualProps = this.virtualPropsMap.get(newTarget);
+                    Object.assign(controller.proxy, virtualProps);
+                }
+                else {
+                    const attr = getAttrInfo(newTarget, ifWantsToBe, true);
+                    if (attr !== null && attr.length > 0 && attr[0].length > 0) {
+                        if (proxyPropDefaults !== undefined) {
+                            Object.assign(controller.proxy, proxyPropDefaults);
+                        }
+                        let parsedObj;
+                        const json = attr[0].trim();
+                        const proxy = controller.proxy;
+                        if (primaryProp !== undefined && json[0] !== '{') {
+                            if (json[0] === '[') {
+                                try {
+                                    parsedObj = JSON.parse(json);
+                                    proxy[primaryProp] = parsedObj;
+                                    virtualPropsMap.set(newTarget, parsedObj);
+                                }
+                                catch (e) {
+                                    proxy[primaryProp] = json;
+                                    virtualPropsMap.set(newTarget, { [primaryProp]: json });
+                                }
                             }
-                            catch (e) {
+                            else {
                                 proxy[primaryProp] = json;
+                                virtualPropsMap.set(newTarget, { [primaryProp]: json });
                             }
                         }
                         else {
-                            proxy[primaryProp] = json;
-                        }
-                    }
-                    else {
-                        try {
-                            parsedObj = JSON.parse(json);
-                            Object.assign(proxy, parsedObj);
-                        }
-                        catch (e) {
-                            console.error({
-                                json,
-                                e,
-                                newTarget
-                            });
+                            try {
+                                parsedObj = JSON.parse(json);
+                                Object.assign(proxy, parsedObj);
+                                virtualPropsMap.set(newTarget, parsedObj);
+                            }
+                            catch (e) {
+                                console.error({
+                                    json,
+                                    e,
+                                    newTarget
+                                });
+                            }
                         }
                     }
                 }
@@ -85,7 +97,7 @@ export class BeDecoratedCore extends HTMLElement {
         }
         return false;
     }
-    async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
+    async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents, virtualPropsMap }) {
         if (this.parseAttr(this))
             return;
         const controllerInstance = new controller();
@@ -102,6 +114,9 @@ export class BeDecoratedCore extends HTMLElement {
                 }
                 if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
                     controllerInstance[key] = value;
+                    if (virtualPropsMap.has(target)) {
+                        virtualPropsMap.get(target)[key] = value;
+                    }
                 }
                 else {
                     target[key] = value;
@@ -205,9 +220,6 @@ export class BeDecoratedCore extends HTMLElement {
         });
     }
 }
-// export function define<TControllerProps, TControllerActions>(metaConfig: BeDecoratedConfig<TControllerProps, TControllerActions>){
-//     xe.def(metaConfig.wc)
-// }
 export function define(controllerConfig) {
     const rC = controllerConfig.config;
     xe.def({

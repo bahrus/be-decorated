@@ -18,7 +18,7 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, 
             //TODO:  investigate this scenario more.
             return;
         }
-        (target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0] as string);
+        (target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
         (target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
     }, forceVisible !== undefined ? `

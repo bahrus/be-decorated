@@ -13,8 +13,10 @@ export const xe = new XE<BeDecoratedProps, BeDecoratedActions, PropInfoExt, XAct
 
 const reqVirtualProps = ['self', 'emitEvents'];
 
+
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
+    virtualPropsMap = new WeakMap<Element, any>();
     watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const self = this;
         const callback = (target: Element) => {
@@ -33,48 +35,60 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     }
 
-    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp}: this){
+    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, virtualPropsMap}: this){
         const controller = targetToController.get(newTarget);
         if(controller){
-            if(!noParse){
+            if(!noParse){ //yes, parse please
                 controller.propChangeQueue = new Set<string>();
                 if(proxyPropDefaults !== undefined){
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
-                const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
-                if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
+                if(this.virtualPropsMap.has(newTarget!)){
+                    //this may happen if an element is moved after already initialized
+                    const virtualProps = this.virtualPropsMap.get(newTarget!);
+                    Object.assign(controller.proxy, virtualProps);
+                }else{
+                    const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
+                    if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
                     
-                    if(proxyPropDefaults !== undefined){
-                        Object.assign(controller.proxy, proxyPropDefaults);
-                    }
-                    let parsedObj: any;
-                    const json = attr[0]!.trim();
-                    const proxy = controller.proxy;
-                    if(primaryProp !== undefined && json[0] !== '{'){
-                        if(json[0] === '['){
+                        if(proxyPropDefaults !== undefined){
+                            Object.assign(controller.proxy, proxyPropDefaults);
+                        }
+                        let parsedObj: any;
+                        const json = attr[0]!.trim();
+                        const proxy = controller.proxy;
+                        if(primaryProp !== undefined && json[0] !== '{'){
+                            if(json[0] === '['){
+                                try{
+                                    parsedObj = JSON.parse(json);
+                                    proxy[primaryProp] = parsedObj;
+                                    virtualPropsMap.set(newTarget!, parsedObj);
+                                }catch(e){
+                                    proxy[primaryProp] = json;
+                                    virtualPropsMap.set(newTarget!, {[primaryProp]: json});
+                                }
+                            }else{
+                                proxy[primaryProp] = json;
+                                virtualPropsMap.set(newTarget!, {[primaryProp]: json});
+                            }
+                            
+                        }else{
                             try{
                                 parsedObj = JSON.parse(json);
-                                proxy[primaryProp] = parsedObj;
+                                Object.assign(proxy, parsedObj);
+                                virtualPropsMap.set(newTarget!, parsedObj);
                             }catch(e){
-                                proxy[primaryProp] = json;
+                                console.error({
+                                    json,
+                                    e,
+                                    newTarget
+                                })
                             }
-                        }else{
-                            proxy[primaryProp] = json;
-                        }
-                        
-                    }else{
-                        try{
-                            parsedObj = JSON.parse(json);
-                            Object.assign(proxy, parsedObj)
-                        }catch(e){
-                            console.error({
-                                json,
-                                e,
-                                newTarget
-                            })
                         }
                     }
                 }
+                
+
                 const filteredActions: any = {};
                 const queue = controller.propChangeQueue;
                 controller.propChangeQueue = undefined;
@@ -97,7 +111,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         return false;
     }
 
-    async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
+    async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents, virtualPropsMap}: this){
         if(this.parseAttr(this)) return;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
@@ -114,6 +128,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 
                 if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;
+                    if(virtualPropsMap.has(target)){
+                        virtualPropsMap.get(target)![key] = value;
+                    }
                 }else{
                     target[key] = value;
                 }
@@ -215,10 +232,6 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 type BeDecoratedMC<TControllerProps, TControllerActions> =  BeDecoratedActions & BeDecoratedProps<TControllerProps, TControllerActions>;
 
 export interface BeDecoratedCore<TControllerProps, TControllerActions> extends BeDecoratedMC<TControllerProps, TControllerActions>{}
-
-// export function define<TControllerProps, TControllerActions>(metaConfig: BeDecoratedConfig<TControllerProps, TControllerActions>){
-//     xe.def(metaConfig.wc)
-// }
 
 export function define<
     TControllerProps = any, 

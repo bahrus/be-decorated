@@ -16,7 +16,7 @@ function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisib
             //TODO:  investigate this scenario more.
             return;
         }
-        target.setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]);
+        target.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
         target.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if (callback !== undefined)
             callback(target);
