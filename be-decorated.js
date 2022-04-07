@@ -115,9 +115,9 @@ export class BeDecoratedCore extends HTMLElement {
                 }
                 if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
                     controllerInstance[key] = value;
-                    if (virtualPropsMap.has(target)) {
-                        virtualPropsMap.get(target)[key] = value;
-                    }
+                    // if(virtualPropsMap.has(target)){
+                    //     virtualPropsMap.get(target)![key] = value;
+                    // }
                 }
                 else {
                     target[key] = value;

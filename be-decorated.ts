@@ -131,9 +131,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 
                 if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;
-                    if(virtualPropsMap.has(target)){
-                        virtualPropsMap.get(target)![key] = value;
-                    }
+                    // if(virtualPropsMap.has(target)){
+                    //     virtualPropsMap.get(target)![key] = value;
+                    // }
                 }else{
                     target[key] = value;
                 }
