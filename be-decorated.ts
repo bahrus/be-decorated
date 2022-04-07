@@ -88,8 +88,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                             }
                         }
                     }
-                    newTarget!.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
-                    newTarget!.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
+                    
                 }
                 
 

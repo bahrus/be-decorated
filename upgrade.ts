@@ -16,6 +16,8 @@ export function getVal(e: Element, ifWantsToBe: string){
     if(Object.keys(lookup).length === 0){
         tempAttrLookup.delete(e);
     }
+    e.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
+    e.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
     return val;
 }
 

@@ -75,8 +75,6 @@ export class BeDecoratedCore extends HTMLElement {
                             }
                         }
                     }
-                    newTarget.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
-                    newTarget.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
                 }
                 const filteredActions = {};
                 const queue = controller.propChangeQueue;
