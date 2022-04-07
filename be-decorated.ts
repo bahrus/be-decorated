@@ -57,7 +57,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                             Object.assign(controller.proxy, proxyPropDefaults);
                         }
                         let parsedObj: any;
-                        const json = attr[0]!.trim();
+                        const json = attr.trim();
                         const proxy = controller.proxy;
                         if(primaryProp !== undefined && json[0] !== '{'){
                             if(json[0] === '['){
