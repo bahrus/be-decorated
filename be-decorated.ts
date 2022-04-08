@@ -11,7 +11,7 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const xe = new XE<BeDecoratedProps, BeDecoratedActions, PropInfoExt, XAction<BeDecoratedProps>>();
 
-const reqVirtualProps = ['self', 'emitEvents', 'virtualPropsMap'];
+const reqVirtualProps = ['self', 'emitEvents'];
 
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
