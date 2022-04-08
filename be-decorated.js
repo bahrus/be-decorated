@@ -1,4 +1,4 @@
-import { upgrade as upgr, getVal } from './upgrade.js';
+import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
@@ -6,7 +6,6 @@ export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
-    virtualPropsMap = new WeakMap();
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const self = this;
         const callback = (target) => {
@@ -20,67 +19,47 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
         // register in the be-hive registry
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, virtualPropsMap }) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp }) {
         const controller = targetToController.get(newTarget);
         if (controller) {
-            if (!noParse) { //yes, parse please
+            if (!noParse) {
                 controller.propChangeQueue = new Set();
                 if (proxyPropDefaults !== undefined) {
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
-                const val = getVal(newTarget, ifWantsToBe);
-                const attr = val[0].trim();
-                if (this.virtualPropsMap.has(newTarget)) {
-                    //this may happen if an element is moved or "frozen" via trans-render/lib/freeze.js after already initialized
-                    const virtualProps = this.virtualPropsMap.get(newTarget);
-                    if (attr.length > 0) {
-                        try {
-                            const parsedObj = JSON.parse(attr);
-                            Object.assign(virtualProps, parsedObj);
-                        }
-                        catch (e) {
-                            console.error(e);
-                        }
+                const attr = getAttrInfo(newTarget, ifWantsToBe, true);
+                if (attr !== null && attr.length > 0 && attr[0].length > 0) {
+                    if (proxyPropDefaults !== undefined) {
+                        Object.assign(controller.proxy, proxyPropDefaults);
                     }
-                    Object.assign(controller.proxy, virtualProps);
-                }
-                else {
-                    if (attr !== null && attr.length > 0 && attr[0].length > 0) {
-                        if (proxyPropDefaults !== undefined) {
-                            Object.assign(controller.proxy, proxyPropDefaults);
-                        }
-                        let parsedObj;
-                        const proxy = controller.proxy;
-                        if (primaryProp !== undefined && attr[0] !== '{') {
-                            if (attr[0] === '[') {
-                                try {
-                                    parsedObj = JSON.parse(attr);
-                                    proxy[primaryProp] = parsedObj;
-                                    virtualPropsMap.set(newTarget, parsedObj);
-                                }
-                                catch (e) {
-                                    proxy[primaryProp] = attr;
-                                    virtualPropsMap.set(newTarget, { [primaryProp]: attr });
-                                }
+                    let parsedObj;
+                    const json = attr[0].trim();
+                    const proxy = controller.proxy;
+                    if (primaryProp !== undefined && json[0] !== '{') {
+                        if (json[0] === '[') {
+                            try {
+                                parsedObj = JSON.parse(json);
+                                proxy[primaryProp] = parsedObj;
                             }
-                            else {
-                                proxy[primaryProp] = attr;
-                                virtualPropsMap.set(newTarget, { [primaryProp]: attr });
+                            catch (e) {
+                                proxy[primaryProp] = json;
                             }
                         }
                         else {
-                            try {
-                                parsedObj = JSON.parse(attr);
-                                Object.assign(proxy, parsedObj);
-                                virtualPropsMap.set(newTarget, parsedObj);
-                            }
-                            catch (e) {
-                                console.error({
-                                    attr,
-                                    e,
-                                    newTarget
-                                });
-                            }
+                            proxy[primaryProp] = json;
+                        }
+                    }
+                    else {
+                        try {
+                            parsedObj = JSON.parse(json);
+                            Object.assign(proxy, parsedObj);
+                        }
+                        catch (e) {
+                            console.error({
+                                json,
+                                e,
+                                newTarget
+                            });
                         }
                     }
                 }
@@ -106,7 +85,7 @@ export class BeDecoratedCore extends HTMLElement {
         }
         return false;
     }
-    async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents, virtualPropsMap }) {
+    async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
         if (this.parseAttr(this))
             return;
         const controllerInstance = new controller();
@@ -123,9 +102,6 @@ export class BeDecoratedCore extends HTMLElement {
                 }
                 if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
                     controllerInstance[key] = value;
-                    // if(virtualPropsMap.has(target)){
-                    //     virtualPropsMap.get(target)![key] = value;
-                    // }
                 }
                 else {
                     target[key] = value;
@@ -229,6 +205,9 @@ export class BeDecoratedCore extends HTMLElement {
         });
     }
 }
+// export function define<TControllerProps, TControllerActions>(metaConfig: BeDecoratedConfig<TControllerProps, TControllerActions>){
+//     xe.def(metaConfig.wc)
+// }
 export function define(controllerConfig) {
     const rC = controllerConfig.config;
     xe.def({

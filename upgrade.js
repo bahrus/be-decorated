@@ -4,18 +4,6 @@ export function upgrade(args, callback) {
     const id = 'a' + (new Date()).valueOf().toString();
     monitor(id, beAttrib, args, callback);
 }
-const tempAttrLookup = new WeakMap();
-export function getVal(e, ifWantsToBe) {
-    const lookup = tempAttrLookup.get(e);
-    const val = lookup[ifWantsToBe];
-    delete lookup[ifWantsToBe];
-    if (Object.keys(lookup).length === 0) {
-        tempAttrLookup.delete(e);
-    }
-    e.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
-    e.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
-    return val;
-}
 function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
@@ -28,13 +16,8 @@ function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisib
             //TODO:  investigate this scenario more.
             return;
         }
-        if (!tempAttrLookup.has(target)) {
-            tempAttrLookup.set(target, {});
-        }
-        const lookup = tempAttrLookup.get(target);
-        lookup[ifWantsToBe] = val;
-        //(target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
-        //(target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
+        target.setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]);
+        target.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if (callback !== undefined)
             callback(target);
     }, forceVisible !== undefined ? `

@@ -16,7 +16,6 @@
   "exports": {
     ".": "./be-decorated.js",
     "./be-decorated.js": "./be-decorated.js",
-    "./doParse.js": "./doParse.js",
     "./upgrade.js": "./upgrade.js"
   },
   "files": [

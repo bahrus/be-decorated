@@ -7,20 +7,6 @@ export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (
     monitor(id, beAttrib, args, callback);
 }
 
-const tempAttrLookup = new WeakMap<Element, {[key: string] : (string | null)[]}>();
-
-export function getVal(e: Element, ifWantsToBe: string){
-    const lookup = tempAttrLookup.get(e)!;
-    const val = lookup[ifWantsToBe];
-    delete lookup[ifWantsToBe];
-    if(Object.keys(lookup).length === 0){
-        tempAttrLookup.delete(e);
-    }
-    e.setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
-    e.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
-    return val;
-}
-
 function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
@@ -32,13 +18,8 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, 
             //TODO:  investigate this scenario more.
             return;
         }
-        if(!tempAttrLookup.has(target as Element)){
-            tempAttrLookup.set(target as Element, {});
-        }
-        const lookup = tempAttrLookup.get(target as Element)!;
-        lookup[ifWantsToBe] = val;
-        //(target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, '');
-        //(target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
+        (target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]!);
+        (target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
