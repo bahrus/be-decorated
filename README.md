@@ -21,7 +21,7 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
     <!-- Becomes, after upgrading -->
     <black-eyed-peas 
-        is-on-the-next-level
+        is-on-the-next-level=11
         is-rocking-over-that-bass-tremble
         is-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
@@ -176,7 +176,7 @@ After list-sorter does its thing, the attribute "be-sorted" switches to "is-sort
 
 ```html
 
-<ul is-sorted>
+<ul is-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
     <li>
         <span>Aardvark</span>
     </li>
