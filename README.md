@@ -102,13 +102,13 @@ Within each shadow DOM realm, our decorator web component will only have an effe
 Although it is a bit of a nuisance to remember to plop an instance in each shadow DOM realm, it does gives us the ability to avoid name conflicts with other libraries that use custom attributes.  In the example above, if we plop an instance inside the shadow DOM with no overrides: 
 
 ```html
-<button be-a-butterbeer-counter='{"count": 30}'>Count</button>
+<button be-a-butterbeer-counter-bahrus-github='{"count": 30}'>Count</button>
 ...
 
 <be-a-butterbeer-counter-bahrus-github></be-a-butterbeer-counter-bahrus-github>
 ```
 
-then it will affect all buttons with attribute be-a-butterbeer-counter within that shadow DOM.
+then it will affect all buttons with attribute be-a-butterbeer-counter-bahrus-github within that shadow DOM.
 
 To specify a different attribute, override the default "ifWantsToBe" property thusly:
 
@@ -134,7 +134,7 @@ The tricky thing about proxies is they're great if you have access to them, usel
 
 ###  Approach I.  Programmatically, but carefully.
 
-be-decorated applies a "cardinal sin" and attaches a field onto the adorned element called beDecorated.  Inside of which all the proxies are linked.  So to set the property of a proxy, we need to act gingerly:
+be-decorated applies a "cardinal sin" and attaches a field onto the adorned element called beDecorated.  Inside of which all the proxies based off of be-decorated are linked.  So to set the property of a proxy, we need to act gingerly:
 
 ```JavaScript
 if(myElement.beDecorated === undefined) myElement.beDecorated = {};
@@ -144,12 +144,7 @@ myElement.beDecorated.aButterbeerCounter.count = 7;
 
 The instance of the decorator component sitting inside the Shadow DOM has a key to getting the controller class.  Assuming we've waited long enough:
 
-```JavaScript
-function getProxy(btn){
-const proxy = shadowRoot.querySelector('be-a-butterbeer-counter').targetToController.get(btn).proxy;
-}
-
-```
+This can be done before or after the custom attribute has "upgraded."
 
 
 ###  Approach II. Setting properties via the controlling attribute:
@@ -171,6 +166,8 @@ A more elegant solution, perhaps, which xtal-decor supports, is to pass in prope
 </ul>
 
 ```
+
+By the way, a [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
 
 After list-sorter does its thing, the attribute "be-sorted" switches to "is-sorted":
 
@@ -207,7 +204,7 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 ```
 
-A [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
+The disadvantage of this approach is we are limited to JSON-serializable properties, and there is a cost to stringifying / parsing.
 
 ### Approach III.  Integrate with other decorators -- binding decorators -- that hide the complexity
 
@@ -239,7 +236,7 @@ upgrade({
 });
 ```
 
-The API by itself is much more open ended, as you will need to entirely define what to do in your callback.  In other words, the api provides no built-in support for creating a proxy and passing it to a controller.
+The API by itself is much more open-ended, as you will need to entirely define what to do in your callback.  In other words, the api provides no built-in support for creating a proxy and passing it to a controller.
 
 ## For the sticklers
 
@@ -262,7 +259,7 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ```
 
-## Monitoring
+## Notifying
 
 Any be-decorated based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  
 
@@ -287,19 +284,13 @@ will emit event "reformable::is-reformable" when the proxy has been created.
 
 The detail of the event contains the proxy, and the controllerInstance.
 
-## Debugging
-
-Compared to working with custom elements, working with attribute-based decorators is more difficult, due to the issues mentioned above -- namely, the difficulty in getting a reference to the proxy.
-
-But if the JSON attribute associated with a decorator has value "debug": true, then an adjacent debugging template element is inserted, that makes viewing the proxy and controller much easier.
-
-In dev tools, after inspecting the element, just look for that adjacent template element, select it in the elements exporer, and in the console, type $0.controller to show the class behind the behavior.
-
-You should then be able to use the context menu to jump to the definition.  You can view virtual properties by typing $0.controller.[name of virtual property].  You can edit the value by typing $0.proxy.[name of virtual property] = "whatever you want."
+Alternatively or in addition, [be-noticed](https://github.com/bahrus/be-noticed) provides a pattern as far as syntax, as well as reusable code, that can pass things more directly, to the hosting (custom) element, or neighboring elements, similar to be-observant (but in the opposite direction).
 
 ## Primary prop
 
-Sometimes a decorator will only have a single, primitive-type property value to configure, at least for the time being.  Or maybe there are multiple props, but one property in particular is clearly the most important, and the other properties will rarely deviate from the default value.  In that case, the extra overhead from typing and parsing JSON just to read that value seems like overkill.  So we should have a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [.
+Sometimes a decorator will only have a single, primitive-type property value to configure, at least for the time being.  Or maybe there are multiple props, but one property in particular is clearly the most important, and the other properties will rarely deviate from the default value.  In that case, the extra overhead from typing and parsing JSON just to read that value seems like overkill.  
+
+So be-decorated provides a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [.
 
 Name of the property:  "primaryProp"
 
