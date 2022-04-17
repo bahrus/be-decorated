@@ -41,7 +41,7 @@
     "type": "git",
     "url": "git+https://github.com/bahrus/be-decorated.git"
   },
-  "author": "",
+  "author": "Bruce Anderson <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/bahrus/be-decorated/issues"
