@@ -20,7 +20,8 @@ define({
             virtualProps: ['count'],
             upgrade: 'button',
             ifWantsToBe: 'a-butterbeer-counter',
-            intro: 'init'
+            intro: 'init',
+            emitEvents: ['count'],
         },
         actions: {
             'onCountChange': {
