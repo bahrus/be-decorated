@@ -11,7 +11,9 @@
 	"files":[
 		"be-decorated.ts",
 		"upgrade.ts",
-		"demo/be-a-butterbeer-counter.ts"
+		"demo/be-a-butterbeer-counter.ts",
+		//"playwright.config.ts",
+		//"tests/test1.spec.mts"
 	],
 	"exclude":[
 		"build",
