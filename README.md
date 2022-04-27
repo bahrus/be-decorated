@@ -1,6 +1,6 @@
 # be-decorated
 
-[![Actions Status](https://github.com/bahrus/be-decorated/workflows/CI/badge.svg)](https://github.com/bahrus/be-decorated/actions?query=workflow%3ACI)
+[![Playwright Tests](https://github.com/bahrus/be-decorated/actions/workflows/CI.yml/badge.svg?branch=baseline)](https://github.com/bahrus/be-decorated/actions/workflows/CI.yml)
 
 <a href="https://nodei.co/npm/be-decorated/"><img src="https://nodei.co/npm/be-decorated.png"></a>
 
