@@ -102,7 +102,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
-                const {emitEvents, propChangeQueue} = controllerInstance;
+                const {propChangeQueue} = controllerInstance;
                 if(nonDryProps === undefined || !nonDryProps.includes(key)){
                     if(controllerInstance[key] === value) {
                         if(propChangeQueue !== undefined){

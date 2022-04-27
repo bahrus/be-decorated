@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <button be-a-butterbeer-counter='{"count": 30}'>Count</button>
+    <button id='test' be-a-butterbeer-counter='{"count": 30}'>Count</button>
     <script type=importmap>
         {
             "imports":{
@@ -18,6 +18,11 @@
     </script>
     <script type=module>
         import './be-a-butterbeer-counter.js';
+    </script>
+    <script>
+        test.addEventListener('a-butterbeer-counter::count-changed', e => {
+            console.log(e.detail);
+        });
     </script>
 </body>
 </html>
