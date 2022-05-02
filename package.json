@@ -23,8 +23,8 @@
   ],
   "types": "types.d.ts",
   "dependencies": {
-    "xtal-element": "0.0.492",
-    "trans-render": "0.0.535"
+    "xtal-element": "0.0.493",
+    "trans-render": "0.0.536"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
