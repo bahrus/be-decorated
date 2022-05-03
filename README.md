@@ -29,11 +29,11 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ## Priors
 
-be-decorated's goals are quite similar to what is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [have](https://docs.angularjs.org/guide/directive) to [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
+be-decorated's goals are quite similar to what is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
 
 We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "custom attribute", "directive", "behavior" is fine also.
 
-Differences to these solutions:
+Differences to these solutions (perhaps):
 
 1. This can be used independently of any framework (web component based).
 2. Each decorator can be imported independently of others via ES6 module.
