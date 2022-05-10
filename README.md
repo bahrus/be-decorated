@@ -27,6 +27,17 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
     ></black-eyed-peas>
 ```
 
+which seems slightly more readable than:
+
+```html
+<is-on-the-next-lvel level=11>
+    <is-rocking-over-that-base-tremble>
+        <is-chilling-with-my-motherfunckin-crew>
+            <black-eyed-peas></black-eyed-peas>
+        </is-chilling-with-my-motherfuckin-crew>
+    </is-rocking-over-that-base-tremble>
+</is-on-the-next-level>
+```
 ## Priors
 
 be-decorated's goals are quite similar to what is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
