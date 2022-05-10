@@ -7,19 +7,24 @@ export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (
     monitor(id, beAttrib, args, callback);
 }
 
+export function doReplace(target: EventTarget, ifWantsToBe: string){
+    const val = getAttrInfo(target as Element, ifWantsToBe, false);
+    if(val === null) {
+        //console.warn("Mismatch found.");
+        //TODO:  investigate this scenario more.
+        return false;
+    }
+    (target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]!);
+    (target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
+    return true;
+}
+
 function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         const target = e.target;
-        const val = getAttrInfo(target as Element, ifWantsToBe, false);
-        if(val === null) {
-            //console.warn("Mismatch found.");
-            //TODO:  investigate this scenario more.
-            return;
-        }
-        (target as Element).setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]!);
-        (target as Element).removeAttribute(`${val[1]}be-${ifWantsToBe}`);
+        if(!doReplace(target!, ifWantsToBe)) return;
         if(callback !== undefined) callback(target as T);
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{

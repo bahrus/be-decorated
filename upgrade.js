@@ -4,20 +4,25 @@ export function upgrade(args, callback) {
     const id = 'a' + (new Date()).valueOf().toString();
     monitor(id, beAttrib, args, callback);
 }
+export function doReplace(target, ifWantsToBe) {
+    const val = getAttrInfo(target, ifWantsToBe, false);
+    if (val === null) {
+        //console.warn("Mismatch found.");
+        //TODO:  investigate this scenario more.
+        return false;
+    }
+    target.setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]);
+    target.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
+    return true;
+}
 function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
         if (e.animationName !== id)
             return;
         const target = e.target;
-        const val = getAttrInfo(target, ifWantsToBe, false);
-        if (val === null) {
-            //console.warn("Mismatch found.");
-            //TODO:  investigate this scenario more.
+        if (!doReplace(target, ifWantsToBe))
             return;
-        }
-        target.setAttribute(`${val[1]}is-${ifWantsToBe}`, val[0]);
-        target.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
         if (callback !== undefined)
             callback(target);
     }, forceVisible !== undefined ? `
