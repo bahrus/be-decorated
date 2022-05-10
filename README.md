@@ -30,7 +30,7 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 which seems slightly more readable than:
 
 ```html
-<is-on-the-next-lvel level=11>
+<is-on-the-next-level level=11>
     <is-rocking-over-that-base-tremble>
         <is-chilling-with-my-motherfunckin-crew>
             <black-eyed-peas></black-eyed-peas>
@@ -40,7 +40,7 @@ which seems slightly more readable than:
 ```
 ## Priors
 
-be-decorated's goals are quite similar to what is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
+be-decorated's goals are quite [similar](https://knockoutjs.com/documentation/custom-bindings.html) [to](https://medium.com/@_edhuang/add-a-custom-attribute-to-an-ember-component-81f485f8d997) what is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
 
 We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "custom attribute", "directive", "behavior" is fine also.
 
@@ -145,7 +145,7 @@ The tricky thing about proxies is they're great if you have access to them, usel
 
 ###  Approach I.  Programmatically, but carefully.
 
-be-decorated applies a "cardinal sin" and attaches a field onto the adorned element called beDecorated.  Inside of which all the proxies based off of be-decorated are linked.  So to set the property of a proxy, we need to act gingerly:
+be-decorated applies a "cardinal sin" and attaches a field onto the adorned element called beDecorated.  Inside of which all the proxies based off of be-decorated are linked.  So to set the property of a proxy via the element in adorns, we need to act gingerly:
 
 ```JavaScript
 if(myElement.beDecorated === undefined) myElement.beDecorated = {};
@@ -153,9 +153,7 @@ if(myElement.beDecorated.aButterbeerCounter === undefined) myElement.beDecorated
 myElement.beDecorated.aButterbeerCounter.count = 7;
 ```
 
-The instance of the decorator component sitting inside the Shadow DOM has a key to getting the controller class.  Assuming we've waited long enough:
-
-This can be done before or after the custom attribute has "upgraded."
+The intention here is even if the element hasn't been upgraded yet, property settings set this way should be absorbed into the proxy once it becomes attached.  And if the proxy is already attached, than those undefined checks will be superfluous, but better to play it safe.
 
 
 ###  Approach II. Setting properties via the controlling attribute:
