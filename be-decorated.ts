@@ -1,4 +1,4 @@
-import {upgrade as upgr, getAttrInfo} from './upgrade.js';
+import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
 import {DefineArgs, WCConfig} from 'trans-render/lib/types';
@@ -15,9 +15,11 @@ const reqVirtualProps = ['self', 'emitEvents'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
+    #modifiedAttrs = false;
     watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const self = this;
         const callback = (target: Element) => {
+            this.#modifiedAttrs = true;
             self.newTarget = target;
         }
         upgr({
@@ -34,6 +36,10 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     }
 
     parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp}: this){
+        if(!this.#modifiedAttrs){
+            doReplace(newTarget!, ifWantsToBe);
+            this.#modifiedAttrs = true;
+        }
         const controller = targetToController.get(newTarget);
         if(controller){
             if(!noParse){

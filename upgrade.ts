@@ -1,7 +1,7 @@
 import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
 import { UpgradeArg } from './types.d.js';
 
-export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T) => void){
+export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
     const beAttrib = `be-${args.ifWantsToBe}`;
     const id = 'a' + (new Date()).valueOf().toString();
     monitor(id, beAttrib, args, callback);
@@ -19,13 +19,13 @@ export function doReplace(target: EventTarget, ifWantsToBe: string){
     return true;
 }
 
-function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T) => void){
+function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         const target = e.target;
         if(!doReplace(target!, ifWantsToBe)) return;
-        if(callback !== undefined) callback(target as T);
+        if(callback !== undefined) callback(target as T, true);
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
             display:inline !important;

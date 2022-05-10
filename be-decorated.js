@@ -1,4 +1,4 @@
-import { upgrade as upgr, getAttrInfo } from './upgrade.js';
+import { upgrade as upgr, getAttrInfo, doReplace } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
@@ -6,9 +6,11 @@ export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
+    #modifiedAttrs = false;
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const self = this;
         const callback = (target) => {
+            this.#modifiedAttrs = true;
             self.newTarget = target;
         };
         upgr({
@@ -20,6 +22,10 @@ export class BeDecoratedCore extends HTMLElement {
         // register in the be-hive registry
     }
     parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp }) {
+        if (!this.#modifiedAttrs) {
+            doReplace(newTarget, ifWantsToBe);
+            this.#modifiedAttrs = true;
+        }
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (!noParse) {
