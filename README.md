@@ -12,19 +12,12 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ```html
 #shadow-root (open)
-
     <black-eyed-peas 
         be-on-the-next-level=11
         be-rocking-over-that-bass-tremble
         be-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
 
-    <!-- Becomes, after upgrading -->
-    <black-eyed-peas 
-        is-on-the-next-level=11
-        is-rocking-over-that-bass-tremble
-        is-chilling-with-my-motherfuckin-crew
-    ></black-eyed-peas>
 ```
 
 which seems slightly more readable than:
@@ -38,11 +31,22 @@ which seems slightly more readable than:
     </is-rocking-over-that-base-tremble>
 </is-on-the-next-level>
 ```
+
+Note that after upgrading,  first example ends up upgradng to:
+
+```html
+#shadow-root (open)
+    <black-eyed-peas 
+        is-on-the-next-level=11
+        is-rocking-over-that-bass-tremble
+        is-chilling-with-my-motherfuckin-crew
+    ></black-eyed-peas>
+```
 ## Priors
 
-be-decorated's goals are quite [similar](https://knockoutjs.com/documentation/custom-bindings.html) [to](https://medium.com/@_edhuang/add-a-custom-attribute-to-an-ember-component-81f485f8d997) what is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
+be-decorated's goals are quite [similar](https://knockoutjs.com/documentation/custom-bindings.html) [to](https://medium.com/@_edhuang/add-a-custom-attribute-to-an-ember-component-81f485f8d997) [what](https://twitter.com/biondifabio/status/1530474444266823682) is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
 
-We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "custom attribute", "directive", "behavior" is fine also.
+We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "[cross-cutting] custom attribute", "directive", "behavior" is fine also.
 
 Differences to these solutions (perhaps):
 
@@ -53,6 +57,7 @@ Differences to these solutions (perhaps):
 5. Reactive properties are managed declaratively via JSON syntax.
 6. Namespace collisions easily avoidable within each shadow DOM realm.
 7. Use of ES6 proxies for extending properties allows us to avoid future conflicts.
+8. be-decorated provides experimental support for transforming templates during template instantiation, as opposed to after the DOM tree is already rendered, using the same syntax and common code as much as possible.
 
 Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
@@ -119,7 +124,7 @@ Although it is a bit of a nuisance to remember to plop an instance in each shado
 <be-a-butterbeer-counter-bahrus-github></be-a-butterbeer-counter-bahrus-github>
 ```
 
-then it will affect all buttons with attribute be-a-butterbeer-counter-bahrus-github within that shadow DOM.
+then it will affect all buttons with attribute be-a-butterbeer-counter-bahrus-github within that shadow DOM realm.
 
 To specify a different attribute, override the default "ifWantsToBe" property thusly:
 
@@ -139,7 +144,7 @@ Note the use of long names of the web component.  Since the key name used in the
 
 ## Setting properties of the proxy externally
 
-Just as we need to be able to pass property values to custom elements, we need a way to do this with be-decorated elements.  But how?
+Just as we need to be able to pass property values to custom elements, we need a way to do this with be-decorated proxy decorators.  But how?
 
 The tricky thing about proxies is they're great if you have access to them, useless if you don't.  
 
@@ -153,12 +158,12 @@ if(myElement.beDecorated.aButterbeerCounter === undefined) myElement.beDecorated
 myElement.beDecorated.aButterbeerCounter.count = 7;
 ```
 
-The intention here is even if the element hasn't been upgraded yet, property settings set this way should be absorbed into the proxy once it becomes attached.  And if the proxy is already attached, than those undefined checks will be superfluous, but better to play it safe.
+The intention here is even if the element hasn't been upgraded yet, property settings made this way should be absorbed into the proxy once it becomes attached.  And if the proxy is already attached, then those undefined checks will be superfluous, but better to play it safe.
 
 
 ###  Approach II. Setting properties via the controlling attribute:
 
-A more elegant solution, perhaps, which xtal-decor supports, is to pass in properties via its custom attribute:
+An alternative approach, which be-decorated also supports, is to pass in properties via its custom attribute:
 
 ```html
 <list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>
@@ -176,7 +181,6 @@ A more elegant solution, perhaps, which xtal-decor supports, is to pass in prope
 
 ```
 
-By the way, a [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
 
 After list-sorter does its thing, the attribute "be-sorted" switches to "is-sorted":
 
@@ -215,7 +219,10 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 The disadvantage of this approach is we are limited to JSON-serializable properties, and there is a cost to stringifying / parsing.
 
-### Approach III.  Integrate with other decorators -- binding decorators -- that hide the complexity
+By the way, a [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
+
+
+### Approach III.  Pulling, rather than pushing, down.
 
 [be-observant](https://github.com/bahrus/be-observant) provides a pattern, and exposes some reusable functions, for "pulling-in" bindings from the host or neighboring siblings.  This can often be a sufficient and elegant way to deal with this concern.
 
@@ -224,7 +231,7 @@ The disadvantage of this approach is we are limited to JSON-serializable propert
 This web component base class builds on the provided api:
 
 ```JavaScript
-import { upgrade } from 'xtal-decor/upgrade.js';
+import { upgrade } from 'be-decorated/upgrade.js';
 upgrade({
     shadowDOMPeer: ... //Apply trait to all elements within the same ShadowDOM realm as this node.
     upgrade: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
@@ -235,7 +242,7 @@ upgrade({
 API example:
 
 ```JavaScript
-import {upgrade} from 'xtal-decor/upgrade.js';
+import {upgrade} from 'be-decorated/upgrade.js';
 upgrade({
     shadowDOMPeer: document.body,
     upgrade: 'black-eyed-peas',
@@ -245,7 +252,7 @@ upgrade({
 });
 ```
 
-The API by itself is much more open-ended, as you will need to entirely define what to do in your callback.  In other words, the api provides no built-in support for creating a proxy and passing it to a controller.
+The API by itself is much more open-ended, which means we need to entirely define what to do in our callback.  In other words, the API provides no built-in support for creating a proxy and passing it to a controller.
 
 ## For the sticklers
 
@@ -270,11 +277,16 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ## Notifying
 
-Any be-decorated based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  
+Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
 
-If set to true, then all property changes will emit an event whenever a property change is made via the proxy. 
+```JavaScript
+emitEvents: ['value', 'fetchInProgress'],
+```
 
-For example, if a property "foo" is modified via the proxy, and emitEvents is set to either true, or an array containing "foo", then an event will be dispatched from the adorned element with name "[if-wants-to-be]::foo-changed".
+For example, if a property "foo" is modified via the proxy, and emitEvents is set an array containing "foo", then an event will be dispatched from the adorned element with name "[if-wants-to-be]::foo-changed".
+
+In the code linked to above, by default, events "looking-up::value-changed" and "looking-up::fetch-in-progress-changed" are emitted whenever the corresponding virtual property changes.
+
 
 ## Reserved, Universal Events
 
