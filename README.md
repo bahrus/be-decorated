@@ -1,5 +1,7 @@
 # be-decorated
 
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/be-decorated)
+
 [![Playwright Tests](https://github.com/bahrus/be-decorated/actions/workflows/CI.yml/badge.svg?branch=baseline)](https://github.com/bahrus/be-decorated/actions/workflows/CI.yml)
 
 <a href="https://nodei.co/npm/be-decorated/"><img src="https://nodei.co/npm/be-decorated.png"></a>
@@ -20,7 +22,7 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ```
 
-which seems slightly more readable than:
+which seems [more readable](https://opensource.com/article/19/12/zen-python-flat-sparse#:~:text=If%20the%20Zen%20was%20designed%20to%20be%20a,obvious%20than%20in%20Python%27s%20strong%20insistence%20on%20indentation.) than:
 
 ```html
 <is-on-the-next-level level=11>
@@ -283,9 +285,7 @@ Any be-decorated-based decorator/behavior can be configured to emit namespaced e
 emitEvents: ['value', 'fetchInProgress'],
 ```
 
-For example, if a property "foo" is modified via the proxy, and emitEvents is set an array containing "foo", then an event will be dispatched from the adorned element with name "[if-wants-to-be]::foo-changed".
-
-In the code linked to above, by default, events "looking-up::value-changed" and "looking-up::fetch-in-progress-changed" are emitted whenever the corresponding virtual property changes.
+For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "spoke::foo-changed".
 
 
 ## Reserved, Universal Events
