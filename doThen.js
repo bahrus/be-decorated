@@ -1,4 +1,4 @@
-import { lispToCamel } from 'trans-render/lib/lispToCamel.js';
+import { camelToLisp } from 'trans-render/lib/camelToLisp.js';
 export function doThen(proxy, then) {
     switch (typeof then) {
         case 'string':
@@ -11,7 +11,7 @@ export function doThen(proxy, then) {
             else {
                 for (const key in then) {
                     const val = then[key];
-                    const ltc = lispToCamel(key);
+                    const ltc = camelToLisp(key);
                     switch (typeof val) {
                         case 'string':
                             proxy.setAttribute(ltc, val);
