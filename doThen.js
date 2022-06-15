@@ -2,7 +2,7 @@ import { camelToLisp } from 'trans-render/lib/camelToLisp.js';
 export function doThen(proxy, then) {
     switch (typeof then) {
         case 'string':
-            proxy.setAttribute(lispToCamel(then), '');
+            proxy.setAttribute(camelToLisp(then), '');
             break;
         case 'object':
             if (Array.isArray(then)) {
