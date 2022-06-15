@@ -16,7 +16,8 @@
   "exports": {
     ".": "./be-decorated.js",
     "./be-decorated.js": "./be-decorated.js",
-    "./upgrade.js": "./upgrade.js"
+    "./upgrade.js": "./upgrade.js",
+    "./doThen.js": "./doThen.js"
   },
   "files": [
     "*.*"
@@ -28,9 +29,9 @@
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
-    "@playwright/test": "1.21.1",
+    "@playwright/test": "1.22.2",
     "may-it-serve": "0.0.0",
-    "xtal-editor": "0.0.168",
+    "xtal-editor": "0.0.175",
     "xtal-shell": "0.0.27"
   },
   "scripts": {
