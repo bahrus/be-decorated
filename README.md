@@ -117,7 +117,7 @@ Note the specification of "virtualProps".  Use of virtualProps is critical if we
 
 Within each shadow DOM realm, our decorator web component will only have an effect if an instance of the web component is plopped somewhere inside that shadow DOM.
 
-Although it is a bit of a nuisance to remember to plop an instance in each shadow DOM realm, it does gives us the ability to avoid name conflicts with other libraries that use custom attributes.  In the example above, if we plop an instance inside the shadow DOM with no overrides: 
+Although it is a bit of a nuisance to remember to plop an instance in each shadow DOM realm, it does give us the ability to avoid name conflicts with other libraries that use custom attributes.  In the example above, if we plop an instance inside the shadow DOM with no overrides: 
 
 ```html
 <button be-a-butterbeer-counter-bahrus-github='{"count": 30}'>Count</button>
