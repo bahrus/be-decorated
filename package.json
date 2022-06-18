@@ -17,7 +17,9 @@
     ".": "./be-decorated.js",
     "./be-decorated.js": "./be-decorated.js",
     "./upgrade.js": "./upgrade.js",
-    "./doThen.js": "./doThen.js"
+    "./doThen.js": "./doThen.js",
+    "./isoStorage.js": "./isoStorage.js",
+    "./findAdjacentElement.js": "./findAdjacentElement.js"
   },
   "files": [
     "*.*"

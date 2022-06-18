@@ -13,6 +13,8 @@
 		"upgrade.ts",
 		"demo/be-a-butterbeer-counter.ts",
 		"doThen.ts",
+		"findAdjacentElement.ts",
+		"isoStorage.ts"
 		//"playwright.config.ts",
 		//"tests/test1.spec.mts"
 	],
