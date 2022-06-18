@@ -2,6 +2,7 @@ import { upgrade as upgr, getAttrInfo, doReplace } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
+import { isoStorage } from './isoStorage.js';
 export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
@@ -21,13 +22,23 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
         // register in the be-hive registry
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp }) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, resume }) {
         if (!this.#modifiedAttrs) {
             doReplace(newTarget, ifWantsToBe);
             this.#modifiedAttrs = true;
         }
         const controller = targetToController.get(newTarget);
         if (controller) {
+            if (resume) {
+                if (isoStorage.has(ifWantsToBe)) {
+                    const weakMap = isoStorage.get(ifWantsToBe);
+                    if (weakMap !== undefined && weakMap.has(newTarget)) {
+                        const isoHelper = weakMap.get(newTarget);
+                        controller[resume](controller.proxy, newTarget, this, isoHelper);
+                        return true;
+                    }
+                }
+            }
             if (!noParse) {
                 controller.propChangeQueue = new Set();
                 if (proxyPropDefaults !== undefined) {
