@@ -25,6 +25,7 @@ export function findAdjacentElement(insertPosition, element, selector) {
                     }
                     trigger = trigger.nextElementSibling;
                 }
+                return null;
             }
             break;
     }
