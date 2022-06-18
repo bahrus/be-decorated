@@ -1,0 +1,1 @@
+export const isoStorage: Map<string, WeakMap<Element, any>> = new Map();

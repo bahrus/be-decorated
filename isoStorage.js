@@ -1,1 +1,1 @@
-"use strict";
+export const isoStorage = new Map();
