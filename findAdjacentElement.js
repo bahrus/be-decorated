@@ -15,7 +15,6 @@ export function findAdjacentElement(insertPosition, element, selector) {
                 }
                 return null;
             }
-            break;
         case 'afterend':
             {
                 let trigger = element.nextElementSibling;
@@ -27,6 +26,5 @@ export function findAdjacentElement(insertPosition, element, selector) {
                 }
                 return null;
             }
-            break;
     }
 }
