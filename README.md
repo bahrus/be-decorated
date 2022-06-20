@@ -48,7 +48,7 @@ Note that after upgrading,  first example ends up upgradng to:
 
 be-decorated's goals are quite [similar](https://knockoutjs.com/documentation/custom-bindings.html) [to](https://medium.com/@_edhuang/add-a-custom-attribute-to-an-ember-component-81f485f8d997) [what](https://twitter.com/biondifabio/status/1530474444266823682) is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
 
-We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "[cross-cutting] custom attribute", "directive", "behavior" is fine also.
+We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "[cross-cutting] custom attribute", "directive", and especially "behavior" are also acceptable terms.  
 
 Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
@@ -305,7 +305,7 @@ emitEvents: ['value', 'fetchInProgress'],
 For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "spoke::foo-changed".
 
 
-## Reserved, Universal Events
+## Reserved, universal Events
 
 **If** emitEvents is defined, then when the proxy has been established, the target element will emit event:
 
@@ -320,9 +320,11 @@ For example, this behavior:
 
 will emit event "reformable::is-reformable" when the proxy has been created.
 
-The detail of the event contains the proxy, and the controllerInstance.
+The detail of the event contains the proxy, and the controller instance.
 
-Alternatively or in addition, [be-noticed](https://github.com/bahrus/be-noticed) provides a pattern as far as syntax, as well as reusable code, that can pass things more directly, to the hosting (custom) element, or neighboring elements, similar to be-observant (but in the opposite direction).
+## be-noticed pattern
+
+Alternatively, or in addition, [be-noticed](https://github.com/bahrus/be-noticed) provides a pattern as far as syntax, as well as reusable code, that can pass things more directly to the hosting (custom) element, or neighboring elements, similar to be-observant (but in the opposite direction).
 
 ## Primary prop
 
@@ -331,6 +333,24 @@ Sometimes a decorator will only have a single, primitive-type property value to 
 So be-decorated provides a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [.
 
 Name of the property:  "primaryProp"
+
+## Lifecycle event methods
+
+There are three lifecycle event methods that be-decorated provides.  They are all optional and can be omitted.
+
+<table>
+<tr>
+    <th>Name</th><th>Description</th>
+</tr>
+<tr>
+    <td>intro</td><td>Occurs when the proxy is created for a new target that has been discovered that matches the custom attribute criteria.</td>
+</tr>
+<tr>
+    <td>resume</td><td>This is used in conjunction with template instantiation, when applying isomorphic logic between template instantiation and within the live DOM tree.  More on this below</td>
+</tr>
+<tr>
+    <td>finale</td><td>Occurs when the underlying element is removed from the DOM, and the proxy is destroyed.</td>
+</table>
 
 ## Viewing example from git clone or git fork:
 
