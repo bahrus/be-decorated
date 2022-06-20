@@ -53,13 +53,13 @@ We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the 
 Differences to these solutions (perhaps):
 
 1. This can be used independently of any framework (web component based).
-2. Each decorator can be imported independently of others via ES6 module.
+2. Each decorator can be imported independently of others via an ES6 module.
 3. Definition is class-based.
 4. Applies exclusively within Shadow DOM realms.
 5. Reactive properties are managed declaratively via JSON syntax.
 6. Namespace collisions easily avoidable within each shadow DOM realm.
 7. Use of ES6 proxies for extending properties allows us to avoid future conflicts.
-8. be-decorated provides experimental support for transforming templates during template instantiation, as opposed to after the DOM tree is already rendered, using the same syntax and common code as much as possible.
+8. be-decorated provides "isomorphic" support for using the same declarative syntax while transforming templates during template instantiation, as well as while the DOM is sitting in the live DOM tree.  But the critical feature is that if the library is not yet loaded during template instantiation, *nuk ka problem*, the live DOM decorator can apply the logic progressively when the library is loaded.  Meaning we can punt during template instantiation, so that render blocking is avoided.  And if the library *is* loaded prior to template instantiation, it can still be supplemented by the live DOM decorator, but the initial work performed during the template instantiation can be skipped by the live DOM decorator.
 
 Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
@@ -116,15 +116,18 @@ define({
 > **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
 
 <details>
-    <summary>Why not specify an interface for lifecycle event methods?</summary>
+    <summary>Why not specify a specific interface for lifecycle event methods?</summary>
 
 Being a home-grown library, as opposed to a universal web standard, the advantage of not specifying the names of lifecycle event names (like init, for example) is that it provides developers the flexibility to work with other libraries that may also use the same method names for other purposes.
 
-The disadvantage is it requires an additional step, providing the mapping between the internal name be-decorated uses for initialization (intro) and what the developer may prefer (which might be a different name).  As a result, the following "boring" configuration has to be added to tap into the initialization method:
+The disadvantage is it requires an additional step, providing the mapping between the internal name be-decorated uses for initialization (intro) and what the developer may prefer (which might be a different name, like init).  As a result, the following "boring" configuration has to be added to tap into the initialization method, assuming the developer is fine adopting the internal name of intro:
 
 ```JavaScript
 intro: 'intro'
 ```
+
+And of course the previous example indicates what the configuration looks like when the developer feels the need to adopt a different name.
+
 </details>
 
 Within each shadow DOM realm, our decorator web component will only have an effect if an instance of the web component is plopped somewhere inside that shadow DOM.
