@@ -14,7 +14,7 @@
 		"demo/be-a-butterbeer-counter.ts",
 		"doThen.ts",
 		"findAdjacentElement.ts",
-		"isoStorage.ts"
+		"isoMgr.ts"
 		//"playwright.config.ts",
 		//"tests/test1.spec.mts"
 	],

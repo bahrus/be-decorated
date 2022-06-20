@@ -2,7 +2,7 @@ import { upgrade as upgr, getAttrInfo, doReplace } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
-import { get } from './isoStorage.js';
+import { gripTheBaton } from './isoMgr.js';
 export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
@@ -22,17 +22,17 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
         // register in the be-hive registry
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, resume }) {
+    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }) {
         if (!this.#modifiedAttrs) {
             doReplace(newTarget, ifWantsToBe);
             this.#modifiedAttrs = true;
         }
         const controller = targetToController.get(newTarget);
         if (controller) {
-            if (resume) {
-                const isoHelper = get(ifWantsToBe, newTarget);
-                if (isoHelper !== undefined) {
-                    controller[resume](controller.proxy, newTarget, this, isoHelper);
+            if (batonPass) {
+                const baton = gripTheBaton(ifWantsToBe, newTarget);
+                if (baton !== undefined) {
+                    controller[batonPass](controller.proxy, newTarget, this, baton);
                     return true;
                 }
             }

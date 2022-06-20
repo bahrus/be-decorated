@@ -305,7 +305,7 @@ emitEvents: ['value', 'fetchInProgress'],
 For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "spoke::foo-changed".
 
 
-## Reserved, universal Events
+## Reserved, universal events
 
 **If** emitEvents is defined, then when the proxy has been established, the target element will emit event:
 
