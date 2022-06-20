@@ -169,7 +169,7 @@ The tricky thing about proxies is they're great if you have access to them, usel
 
 ###  Approach I.  Programmatically, but carefully.
 
-be-decorated applies a "cardinal sin" and attaches a field onto the adorned element called beDecorated.  Inside of which all the proxies based off of be-decorated are linked.  So to set the property of a proxy via the element in adorns, we need to act gingerly:
+be-decorated reluctantly commits a "cardinal sin" by attaching a field onto the adorned element called "beDecorated", specifically to allow passing properties down easier.  Within this field, all the proxies based off of be-decorated are linked.  So to set the property of a proxy via the element it adorns, we need to act gingerly:
 
 ```JavaScript
 if(myElement.beDecorated === undefined) myElement.beDecorated = {};
