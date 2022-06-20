@@ -5,7 +5,7 @@ import {DefineArgs, WCConfig} from 'trans-render/lib/types';
 import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
-import {isoStorage} from './isoStorage.js';
+import {get} from './isoStorage.js';
 //be careful about adopting async with onRemove, intersection.  Test be-repeated, example IIb, make sure no repeated calls to renderlist.
 
 export {BeDecoratedProps, MinimalController} from './types';
@@ -44,13 +44,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controller = targetToController.get(newTarget);
         if(controller){
             if(resume){
-                if(isoStorage.has(ifWantsToBe)){
-                    const weakMap = isoStorage.get(ifWantsToBe);
-                    if(weakMap !== undefined && weakMap.has(newTarget!)){
-                        const isoHelper = weakMap.get(newTarget!);
-                        controller[resume](controller.proxy, newTarget, this, isoHelper);
-                        return true;
-                    }
+                const isoHelper = get(ifWantsToBe, newTarget!);
+                if(isoHelper !== undefined){
+                    controller[resume](controller.proxy, newTarget, this, isoHelper);
                 }
             }
             if(!noParse){
