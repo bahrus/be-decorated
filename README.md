@@ -115,6 +115,18 @@ define({
 
 > **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
 
+<details>
+    <summary>Why not specify an interface for lifecycle event methods?</summary>
+
+Being a home-grown library, as opposed to a universal web standard, the advantage of not specifying the names of lifecycle event names (like init, for example) is that it provides developers the flexibility to work with other libraries that may also use the same method names for other purposes.
+
+The disadvantage is it requires an additional step, providing the mapping between the internal name be-decorated uses for initialization (intro) and what the developer may prefer (which might be a different name).  As a result, the following "boring" configuration has to be added to tap into the initialization method:
+
+```JavaScript
+intro: 'intro'
+```
+</details>
+
 Within each shadow DOM realm, our decorator web component will only have an effect if an instance of the web component is plopped somewhere inside that shadow DOM.
 
 Although it is a bit of a nuisance to remember to plop an instance in each shadow DOM realm, it does give us the ability to avoid name conflicts with other libraries that use custom attributes.  In the example above, if we plop an instance inside the shadow DOM with no overrides: 
