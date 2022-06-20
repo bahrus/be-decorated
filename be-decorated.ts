@@ -47,6 +47,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 const isoHelper = get(ifWantsToBe, newTarget!);
                 if(isoHelper !== undefined){
                     controller[resume](controller.proxy, newTarget, this, isoHelper);
+                    return true;
                 }
             }
             if(!noParse){
