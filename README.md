@@ -50,6 +50,8 @@ be-decorated's goals are quite [similar](https://knockoutjs.com/documentation/cu
 
 We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "[cross-cutting] custom attribute", "directive", "behavior" is fine also.
 
+Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
+
 Differences to these solutions (perhaps):
 
 1. This can be used independently of any framework (web component based).
@@ -61,7 +63,7 @@ Differences to these solutions (perhaps):
 7. Use of ES6 proxies for extending properties allows us to avoid future conflicts.
 8. be-decorated provides "isomorphic" support for using the same declarative syntax while transforming templates during template instantiation, as well as while the DOM is sitting in the live DOM tree.  But the critical feature is that if the library is not yet loaded during template instantiation, *nuk ka problem*, the live DOM decorator can apply the logic progressively when the library is loaded.  Meaning we can punt during template instantiation, so that render blocking is avoided.  And if the library *is* loaded prior to template instantiation, it can still be supplemented by the live DOM decorator, but the initial work performed during the template instantiation can be skipped by the live DOM decorator.
 
-Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
+
 
 
 ## Basic Syntax
