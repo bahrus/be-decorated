@@ -2,7 +2,7 @@ import { upgrade as upgr, getAttrInfo, doReplace } from './upgrade.js';
 import { XE } from 'xtal-element/src/XE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
-import { gripTheBaton } from './isoMgr.js';
+import { grabTheBaton } from './relay.js';
 export const xe = new XE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
@@ -30,7 +30,7 @@ export class BeDecoratedCore extends HTMLElement {
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (batonPass) {
-                const baton = gripTheBaton(ifWantsToBe, newTarget);
+                const baton = grabTheBaton(ifWantsToBe, newTarget);
                 if (baton !== undefined) {
                     controller[batonPass](controller.proxy, newTarget, this, baton);
                     return true;

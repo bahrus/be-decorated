@@ -14,7 +14,7 @@
 		"demo/be-a-butterbeer-counter.ts",
 		"doThen.ts",
 		"findAdjacentElement.ts",
-		"isoMgr.ts"
+		"relay.ts"
 		//"playwright.config.ts",
 		//"tests/test1.spec.mts"
 	],
