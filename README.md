@@ -6,7 +6,7 @@
 
 <a href="https://nodei.co/npm/be-decorated/"><img src="https://nodei.co/npm/be-decorated.png"></a>
 
-be-decorated provides a base class that enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm.
+be-decorated provides a base class that enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm, based on cross-cutting custom attributes.
 
 be-decorated provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial "is"-based customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).
 
