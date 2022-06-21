@@ -334,9 +334,11 @@ So be-decorated provides a way of defining a "primary" property, and just set it
 
 Name of the property:  "primaryProp"
 
-## Lifecycle event methods
+## Lifecycle milestones
 
-There are three lifecycle event methods that be-decorated provides.  They are all optional and can be omitted.
+There are three lifecycle milestones that be-decorated observes.  They are all optional and can be omitted.  The names of the lifecycle milestones do not need to match with method names in the controller class.  The mapping between the lifecycle milestones and methods of the controller is specified in the propDefaults section of the configuration settings, as discussed earlier.
+
+
 
 <table>
 <tr>
@@ -346,11 +348,28 @@ There are three lifecycle event methods that be-decorated provides.  They are al
     <td>intro</td><td>Occurs when the proxy is created for a new target that has been discovered that matches the custom attribute criteria.</td>
 </tr>
 <tr>
-    <td>resume</td><td>This is used in conjunction with template instantiation, when applying isomorphic logic between template instantiation and within the live DOM tree.  More on this below</td>
+    <td>batonPass</td><td>This is used in conjunction with template instantiation, when applying isomorphic logic between template instantiation and within the live DOM tree.  More on this below.</td>
 </tr>
 <tr>
     <td>finale</td><td>Occurs when the underlying element is removed from the DOM, and the proxy is destroyed.</td>
 </table>
+
+## Isomorphic logic -- baton passing
+
+In the grand scheme of things, in many cases it makes sense for the the declarative syntax that be-decorated-based decorators / behavior defines in the HTML, to be recognized beyond the confines of the browser's main thread.  It can be used in 4 "laps", in a kind of "relay race", where the baton is passed during the pipeline of processing.
+
+Those 4 "laps" are:
+
+1.  On the server -- for example, in a CloudFlare worker that uses the HTMLRewriter api.
+2.  In a service worker running in the browser, [w3c willing](https://discourse.wicg.io/t/proposal-support-cloudflares-htmlrewriter-api-in-workers/5721).
+3.  In the browser's main thread, during template instantiation.
+4.  In the browser's main thread, using the proxy support tied to CSS pattern matching (attribute + element name, optionally), as we've discussed thus far.
+
+These four laps may be subdivided into two halves -- the first two "laps" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the third and fourth laps could share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.
+
+To see this in action, let's look at the [following example](https://github.com/bahrus/be-clonable): 
+
+[TODO]
 
 ## Viewing example from git clone or git fork:
 
