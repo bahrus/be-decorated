@@ -122,7 +122,7 @@ define({
 
 Being a home-grown library, as opposed to a universal web standard, the advantage of not specifying the names of lifecycle event names (like init, for example) is that it provides developers the flexibility to work with other libraries that may also use the same method names for other purposes.
 
-The disadvantage is it requires an additional step, providing the mapping between the internal name be-decorated uses for initialization (intro) and what the developer may prefer (which might be a different name, like init).  As a result, the following "boring" configuration has to be added to tap into the initialization method, assuming the developer is fine adopting the internal name of intro:
+The disadvantage is it requires an additional step, providing the mapping between the internal name be-decorated uses for initialization (intro) and what the developer may prefer (which might be a different name, like init).  As a result, the following "boring" configuration has to be added to tap into the initialization method, assuming the developer is fine adopting the internal name of "intro":
 
 ```JavaScript
 intro: 'intro'
@@ -243,7 +243,7 @@ By the way, a [vscode plug-in](https://marketplace.visualstudio.com/items?itemNa
 
 ### Approach III.  Pulling, rather than pushing, down.
 
-[be-observant](https://github.com/bahrus/be-observant) provides a pattern, and exposes some reusable functions, for "pulling-in" bindings from the host or neighboring siblings.  This can often be a sufficient and elegant way to deal with this concern.
+[be-observant](https://github.com/bahrus/be-observant) provides a pattern, and exposes some reusable functions, for "pulling-down" bindings from the host or neighboring siblings.  This can often be a sufficient and elegant way to deal with this concern.
 
 ## API
 
@@ -363,7 +363,7 @@ Those 4 "legs" are:
 1.  On the server -- for example, in a CloudFlare worker that uses the HTMLRewriter api.
 2.  In a service worker running in the browser, [w3c willing](https://discourse.wicg.io/t/proposal-support-cloudflares-htmlrewriter-api-in-workers/5721).
 3.  In the browser's main thread, during template instantiation.
-4.  In the browser's live DOM tree, using the proxy support tied to CSS pattern matching (attribute + element name, optionally), as we've discussed thus far.  Also runs in the main thread, [unless](https://amp.dev/documentation/components/amp-script/) [alternatives](https://partytown.builder.io/) improve the performance.
+4.  In the browser's live DOM tree, using this library's proxy support tied to CSS pattern matching (attribute + element name, optionally), as we've discussed thus far.  Also runs in the main thread, [unless](https://amp.dev/documentation/components/amp-script/) [alternatives](https://partytown.builder.io/) improve the performance.
 
 These four legs may be subdivided into two halves -- the front two "legs" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the two hind legs can share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.  The be-decorated library provides explicit support for this.
 
