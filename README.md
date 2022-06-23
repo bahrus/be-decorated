@@ -383,7 +383,7 @@ Install node.js.  Then, from a command prompt from the folder of your git clone 
 $ npm install
 $ npm run serve
 
-Open http://localhost:3030/demo/dev.html
+Open http://localhost:3030/demo/ for a listing of examples.
 ```
 
 
