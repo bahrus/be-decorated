@@ -355,14 +355,14 @@ There are three lifecycle milestones that be-decorated observes.  They are all o
 
 ## Isomorphic logic -- baton passing
 
-In the grand scheme of things, in many cases it makes sense for the declarative HTML syntax that be-decorated-based decorators / behavior activates in the live DOM tree, to also be recognized beyond the confines of said tree.  The same syntax can potentially be applied in 4 "legs" of the journey, in a kind of "relay race", where the baton is passed during the pipeline of processing.
+In the grand scheme of things, in many cases it makes sense for the declarative HTML syntax that be-decorated-based decorators / behavior activates in the live DOM tree, to also be recognized beyond the confines of said tree.  The same syntax can potentially be applied in 4 "legs" of the journey from the server to the end user's screen, in a kind of "relay race", where the baton is passed during the pipeline of processing.
 
 Those 4 "legs" are:
 
 1.  On the server -- for example, in a CloudFlare worker that uses the HTMLRewriter api.
 2.  In a service worker running in the browser, [w3c willing](https://discourse.wicg.io/t/proposal-support-cloudflares-htmlrewriter-api-in-workers/5721).
 3.  In the browser's main thread, during template instantiation.
-4.  In the browser's live DOM tree, using this library's proxy support tied to CSS pattern matching (attribute + element name, optionally), as we've discussed thus far.  Also runs in the main thread, [unless](https://amp.dev/documentation/components/amp-script/) [alternatives](https://partytown.builder.io/) improve the performance.
+4.  In the browser's live DOM tree, using this library's proxy support tied to CSS pattern matching (attribute + element name, optionally), as we've discussed thus far.  This code also runs in the main thread, [unless](https://amp.dev/documentation/components/amp-script/) [alternatives](https://partytown.builder.io/) are found to both work and improve the performance.
 
 These four legs may be subdivided into two halves -- the front two "legs" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the two hind legs can share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.  The be-decorated library provides explicit support for this.
 
@@ -370,7 +370,7 @@ To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [
 
 The first thing we observe is that we end up wanting a "diamond-shaped" dependency graph of file dependencies:
 
-File index.js has two references that can load in parallel --trPlugin.js that is used for template instantiation, and be-*.js, used within the DOM tree.  But those two files have fairly minimal, mostly boilerplate code.  Most of the interesting logic, instead, is contained in a shared ("isomorphic" class) -- Deleter.js, Typer.js Cloner.js, in these examples.
+File index.js has two references that can load in parallel --trPlugin.js that is used for template instantiation, and be-*.js, used within the DOM tree.  But those two files have fairly minimal, mostly boilerplate code.  Most of the interesting logic, instead, is contained in a shared ("isomorphic") class -- Deleter.js, Typer.js Cloner.js, in these examples.
 
 It is a good practice to then have three test files -- one that only does template instantiation, one that does only live DOM tree manipulation, and one that does both.  The one that does both should be checked that the code doesn't unnecessarily get invoked twice, in both layers -- only once during template instantiation.  Only prop changes after the initial rendering should result in any code getting executed in the DOM live tree.
 
