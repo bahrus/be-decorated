@@ -34,7 +34,7 @@ which seems [more readable](https://opensource.com/article/19/12/zen-python-flat
 </is-on-the-next-level>
 ```
 
-Note that after upgrading,  first example ends up upgradng to:
+Note that after upgrading,  the first example ends up upgrading to:
 
 ```html
 #shadow-root (open)
@@ -44,13 +44,12 @@ Note that after upgrading,  first example ends up upgradng to:
         is-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
 ```
+
 ## Priors
 
 be-decorated's goals are quite [similar](https://knockoutjs.com/documentation/custom-bindings.html) [to](https://medium.com/@_edhuang/add-a-custom-attribute-to-an-ember-component-81f485f8d997) [what](https://twitter.com/biondifabio/status/1530474444266823682) is achieved via [things](https://htmx.org/docs/) [that](https://vuejs.org/v2/guide/custom-directive.html) [go](https://docs.angularjs.org/guide/directive) [by](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [many](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [names](https://svelte.dev/docs#template-syntax-element-directives).
 
 We prefer ["decorator"](https://en.wikipedia.org/wiki/Decorator_pattern) as the term, but "[cross-cutting] custom attribute", "directive", and especially "behavior" are also acceptable terms.  
-
-Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
 Differences to these solutions (perhaps):
 
@@ -63,7 +62,7 @@ Differences to these solutions (perhaps):
 7. Use of ES6 proxies for extending properties allows us to avoid future conflicts.
 8. be-decorated provides "isomorphic" support for using the same declarative syntax while transforming templates during template instantiation, as well as while the DOM is sitting in the live DOM tree.  But the critical feature is that if the library is not yet loaded during template instantiation, *nuk ka problem*, the live DOM decorator can apply the logic progressively when the library is loaded.  Meaning we can punt during template instantiation, so that render blocking is avoided.  And if the library *is* loaded prior to template instantiation, it can still be supplemented by the live DOM decorator, but the initial work performed during the template instantiation can be skipped by the live DOM decorator.
 
-
+Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
 
 ## Basic Syntax
@@ -88,7 +87,7 @@ export class ButterbeerController{
 }
 ```
 
-Then use (mostly) JSON configuration to instruct be-decorated how to apply the decorator onto elements:
+Then use (mostly) JSON configuration to instruct be-decorated library how to apply the decorator onto elements:
 
 ```JavaScript
 import {ButterbeerController} from '[wherever]';
@@ -324,7 +323,7 @@ The detail of the event contains the proxy, and the controller instance.
 
 ## be-noticed pattern
 
-Alternatively, more controverially, and in addition, [be-noticed](https://github.com/bahrus/be-noticed) provides a pattern as far as syntax, as well as reusable code, that can pass things more directly to the hosting (custom) element, or neighboring elements, similar to be-observant (but in the opposite direction).
+Alternatively, more controversially, and in addition, [be-noticed](https://github.com/bahrus/be-noticed) provides a pattern as far as syntax, as well as reusable code, that can pass things more directly to the hosting (custom) element, or neighboring elements, similar to be-observant (but in the opposite direction).
 
 ## Primary prop
 
