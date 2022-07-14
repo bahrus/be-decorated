@@ -367,13 +367,13 @@ Those 4 "legs" are:
 
 These four legs may be subdivided into two halves -- the front two "legs" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the two hind legs can share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.  The be-decorated library provides explicit support for this.
 
-To see this in action, let's look at [a](https://github.com/bahrus/be-delable) [few](https://github.com/bahrus/be-typed) [examples](https://github.com/bahrus/be-clonable): 
+To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [few](https://github.com/bahrus/be-typed) [examples](https://github.com/bahrus/be-clonable): 
 
-The first thing we observe is that we end up wanting a "diamond-shapped" dependency graph of file dependencies:
+The first thing we observe is that we end up wanting a "diamond-shaped" dependency graph of file dependencies:
 
 File index.js has two references that can load in parallel --trPlugin.js that is used for template instantiation, and be-*.js, used within the DOM tree.  But those two files have fairly minimal, mostly boilerplate code.  Most of the interesting logic, instead, is contained in a shared ("isomorphic" class) -- Deleter.js, Typer.js Cloner.js, in these examples.
 
-It is a good practice to then have three test files -- one that only does template instantiation, one that does only live DOM tree manipulation, and one that does both.  The one that does both should be checked that the code doesn't unnecessarily get invoked twice, in both layers -- only once during template instiation.  Only prop changes after the initial rendering should result in any code getting executed in the DOM live tree.
+It is a good practice to then have three test files -- one that only does template instantiation, one that does only live DOM tree manipulation, and one that does both.  The one that does both should be checked that the code doesn't unnecessarily get invoked twice, in both layers -- only once during template instantiation.  Only prop changes after the initial rendering should result in any code getting executed in the DOM live tree.
 
 ## Viewing example from git clone or git fork:
 
