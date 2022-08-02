@@ -364,7 +364,7 @@ Those 4 "legs" are:
 3.  In the browser's main thread, during template instantiation.
 4.  In the browser's live DOM tree, using this library's proxy support tied to CSS pattern matching (attribute + element name, optionally), as we've discussed thus far.  This code also runs in the main thread, [unless](https://amp.dev/documentation/components/amp-script/) [alternatives](https://partytown.builder.io/) are found to both work and improve the performance.
 
-These four legs may be subdivided into two halves -- the front two "legs" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the two hind legs can share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.  The be-decorated library provides explicit support for this.
+These four legs may be subdivided into two halves -- the "back-end" two "legs" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the two "front-end" legs can share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.  The be-decorated library provides explicit support for this.
 
 To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [few](https://github.com/bahrus/be-typed) [examples](https://github.com/bahrus/be-clonable): 
 
