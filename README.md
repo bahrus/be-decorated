@@ -370,7 +370,7 @@ To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [
 
 The first thing we observe is that we end up wanting a "diamond-shaped" dependency graph of file dependencies:
 
-File index.js has two references that can load in parallel --trPlugin.js that is used for template instantiation, and be-*.js, used within the DOM tree.  But those two files have fairly minimal, mostly boilerplate code.  Most of the interesting logic, instead, is contained in a shared ("isomorphic") class -- Deleter.js, Typer.js Cloner.js, in these examples.
+File index.js has two references that can load in parallel -- 1.  trPlugin.js that is used for template instantiation, and 2. be-*.js, used within the DOM tree.  But those two files have fairly minimal, mostly boilerplate code.  Most of the interesting logic, instead, is contained in a shared ("isomorphic") class -- Deleter.js, Typer.js Cloner.js, in these examples.
 
 It is a good practice to then have three test files -- one that only does template instantiation, one that does only live DOM tree manipulation, and one that does both.  The one that does both should be checked that the code doesn't unnecessarily get invoked twice, in both layers -- only once during template instantiation.  Only prop changes after the initial rendering should result in any code getting executed in the DOM live tree.
 
