@@ -1,6 +1,7 @@
 import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
-import {XE} from 'xtal-element/src/XE.js';
+//import {XE} from 'xtal-element/src/XE.js';
+import {CE} from 'trans-render/lib/CE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
@@ -9,7 +10,7 @@ import {grabTheBaton} from './relay.js';
 
 export {BeDecoratedProps, MinimalController} from './types';
 
-export const xe = new XE<BeDecoratedProps, BeDecoratedActions, PropInfo, Action<BeDecoratedProps>>();
+export const ce = new CE<BeDecoratedProps, BeDecoratedActions, PropInfo, Action<BeDecoratedProps>>();
 
 const reqVirtualProps = ['self', 'emitEvents'];
 
@@ -94,15 +95,15 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 if(actions !== undefined){
                     for(const methodName in actions){
                         const action = actions[methodName]!;
-                        const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as XAction<TControllerProps> : action as XAction<TControllerProps>;
-                        const props = xe.getProps(xe, typedAction); //TODO:  cache this
+                        const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
+                        const props = ce.getProps(ce, typedAction); //TODO:  cache this
                         //if(!props.has(key as string)) continue;
                         if(!intersection(queue, props)) continue;
-                        if(xe.pq(xe, typedAction, controller.proxy)){
+                        if(ce.pq(ce, typedAction, controller.proxy)){
                             filteredActions[methodName] = action;
                         }
                     }
-                    xe.doActions(xe, filteredActions, controller, controller.proxy);
+                    ce.doActions(ce, filteredActions, controller, controller.proxy);
                 }
             }
             return true;
@@ -138,16 +139,16 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         const filteredActions: any = {};
                         for(const methodName in actions){
                             const action = actions[methodName]!;
-                            const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as XAction<TControllerProps> : action as XAction<TControllerProps>;
-                            const props = xe.getProps(xe, typedAction); //TODO:  cache this
+                            const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
+                            const props = ce.getProps(ce, typedAction); //TODO:  cache this
                             if(!props.has(key as string)) continue;
-                            if(xe.pq(xe, typedAction, controllerInstance as any as BeDecoratedProps<any, any>)){
+                            if(ce.pq(ce, typedAction, controllerInstance as any as BeDecoratedProps<any, any>)){
                                 filteredActions[methodName] = action;
                             }
                         }
                         const nv = value;
                         const ov = controllerInstance[key];
-                        xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy); 
+                        ce.doActions(ce, filteredActions, controllerInstance, controllerInstance.proxy); 
                     }
                 }
                 if(emitEvents !== undefined){
@@ -156,7 +157,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         emitEvent = emitEvents.includes(key)
                     }
                     if(emitEvent){
-                        const name = `${ifWantsToBe}::${xe.toLisp(key)}-changed`;
+                        const name = `${ifWantsToBe}::${ce.toLisp(key)}-changed`;
                         const detail: CustomEventInit = {
                             detail:{
                                 value
@@ -184,7 +185,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const {proxy} = revocable;
         controllerInstance.proxy = revocable.proxy;
         if((<any>newTarget).beDecorated === undefined) (<any>newTarget).beDecorated = {};
-        const key = xe.toCamel(ifWantsToBe!);
+        const key = ce.toCamel(ifWantsToBe!);
         const existingProp = (<any>newTarget).beDecorated[key];
         if(existingProp !== undefined){
             Object.assign(proxy, existingProp);
@@ -238,7 +239,7 @@ export function define<
     TControllerActions = TControllerProps,
     TActions = Action<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfo, Action<TControllerProps>>){
     const rC = controllerConfig.config as WCConfig;
-    xe.def({
+    ce.def({
         config:{
             tagName: rC.tagName,
             propDefaults:{

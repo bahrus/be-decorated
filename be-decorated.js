@@ -1,9 +1,10 @@
 import { upgrade as upgr, getAttrInfo, doReplace } from './upgrade.js';
-import { XE } from 'xtal-element/src/XE.js';
+//import {XE} from 'xtal-element/src/XE.js';
+import { CE } from 'trans-render/lib/CE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
 import { grabTheBaton } from './relay.js';
-export const xe = new XE();
+export const ce = new CE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
@@ -84,15 +85,15 @@ export class BeDecoratedCore extends HTMLElement {
                     for (const methodName in actions) {
                         const action = actions[methodName];
                         const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
-                        const props = xe.getProps(xe, typedAction); //TODO:  cache this
+                        const props = ce.getProps(ce, typedAction); //TODO:  cache this
                         //if(!props.has(key as string)) continue;
                         if (!intersection(queue, props))
                             continue;
-                        if (xe.pq(xe, typedAction, controller.proxy)) {
+                        if (ce.pq(ce, typedAction, controller.proxy)) {
                             filteredActions[methodName] = action;
                         }
                     }
-                    xe.doActions(xe, filteredActions, controller, controller.proxy);
+                    ce.doActions(ce, filteredActions, controller, controller.proxy);
                 }
             }
             return true;
@@ -131,16 +132,16 @@ export class BeDecoratedCore extends HTMLElement {
                         for (const methodName in actions) {
                             const action = actions[methodName];
                             const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
-                            const props = xe.getProps(xe, typedAction); //TODO:  cache this
+                            const props = ce.getProps(ce, typedAction); //TODO:  cache this
                             if (!props.has(key))
                                 continue;
-                            if (xe.pq(xe, typedAction, controllerInstance)) {
+                            if (ce.pq(ce, typedAction, controllerInstance)) {
                                 filteredActions[methodName] = action;
                             }
                         }
                         const nv = value;
                         const ov = controllerInstance[key];
-                        xe.doActions(xe, filteredActions, controllerInstance, controllerInstance.proxy);
+                        ce.doActions(ce, filteredActions, controllerInstance, controllerInstance.proxy);
                     }
                 }
                 if (emitEvents !== undefined) {
@@ -149,7 +150,7 @@ export class BeDecoratedCore extends HTMLElement {
                         emitEvent = emitEvents.includes(key);
                     }
                     if (emitEvent) {
-                        const name = `${ifWantsToBe}::${xe.toLisp(key)}-changed`;
+                        const name = `${ifWantsToBe}::${ce.toLisp(key)}-changed`;
                         const detail = {
                             detail: {
                                 value
@@ -178,7 +179,7 @@ export class BeDecoratedCore extends HTMLElement {
         controllerInstance.proxy = revocable.proxy;
         if (newTarget.beDecorated === undefined)
             newTarget.beDecorated = {};
-        const key = xe.toCamel(ifWantsToBe);
+        const key = ce.toCamel(ifWantsToBe);
         const existingProp = newTarget.beDecorated[key];
         if (existingProp !== undefined) {
             Object.assign(proxy, existingProp);
@@ -224,7 +225,7 @@ export class BeDecoratedCore extends HTMLElement {
 // }
 export function define(controllerConfig) {
     const rC = controllerConfig.config;
-    xe.def({
+    ce.def({
         config: {
             tagName: rC.tagName,
             propDefaults: {
