@@ -2,7 +2,6 @@ import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
-//import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
 import {grabTheBaton} from './relay.js';
