@@ -6,7 +6,7 @@
 
 <a href="https://nodei.co/npm/be-decorated/"><img src="https://nodei.co/npm/be-decorated.png"></a>
 
-<img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/xtal-element?compression=gzip">
+<img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/be-decorated?compression=gzip">
 
 be-decorated provides a base class that enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm, based on cross-cutting custom attributes.
 
