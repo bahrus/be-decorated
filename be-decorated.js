@@ -1,9 +1,7 @@
 import { upgrade as upgr, getAttrInfo, doReplace } from './upgrade.js';
-//import {XE} from 'xtal-element/src/XE.js';
 import { CE } from 'trans-render/lib/CE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
-import { grabTheBaton } from './relay.js';
 export const ce = new CE();
 const reqVirtualProps = ['self', 'emitEvents'];
 export class BeDecoratedCore extends HTMLElement {
@@ -23,7 +21,7 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
         // register in the be-hive registry
     }
-    parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }) {
+    async parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }) {
         if (!this.#modifiedAttrs) {
             doReplace(newTarget, ifWantsToBe);
             this.#modifiedAttrs = true;
@@ -31,6 +29,7 @@ export class BeDecoratedCore extends HTMLElement {
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (batonPass) {
+                const { grabTheBaton } = await import('./relay.js');
                 const baton = grabTheBaton(ifWantsToBe, newTarget);
                 if (baton !== undefined) {
                     controller[batonPass](controller.proxy, newTarget, this, baton);
@@ -101,7 +100,7 @@ export class BeDecoratedCore extends HTMLElement {
         return false;
     }
     async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
-        if (this.parseAttr(this))
+        if (await this.parseAttr(this))
             return;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget, {
@@ -199,7 +198,7 @@ export class BeDecoratedCore extends HTMLElement {
             };
             newTarget.dispatchEvent(new CustomEvent(name, detail));
         }
-        this.parseAttr(this);
+        await this.parseAttr(this);
         onRemove(newTarget, async (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined) {
                 await controllerInstance[finale](proxy, removedEl, this);

@@ -1,11 +1,10 @@
 import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
-//import {XE} from 'xtal-element/src/XE.js';
 import {CE} from 'trans-render/lib/CE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
-import {grabTheBaton} from './relay.js';
+
 //be careful about adopting async with onRemove, intersection.  Test be-repeated, example IIb, make sure no repeated calls to renderlist.
 
 export {BeDecoratedProps, MinimalController} from './types';
@@ -36,7 +35,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     }
 
-    parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this){
+    async parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this){
         if(!this.#modifiedAttrs){
             doReplace(newTarget!, ifWantsToBe);
             this.#modifiedAttrs = true;
@@ -44,6 +43,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const controller = targetToController.get(newTarget);
         if(controller){
             if(batonPass){
+                const {grabTheBaton} = await import('./relay.js');
                 const baton = grabTheBaton(ifWantsToBe, newTarget!);
                 if(baton !== undefined){
                     controller[batonPass](controller.proxy, newTarget, this, baton);
@@ -112,7 +112,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     }
 
     async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
-        if(this.parseAttr(this)) return;
+        if(await this.parseAttr(this)) return;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
@@ -205,7 +205,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             };
             newTarget!.dispatchEvent(new CustomEvent(name, detail));
         }
-        this.parseAttr(this);
+        await this.parseAttr(this);
         onRemove(newTarget!, async (removedEl: Element) => {
             if(controllerInstance !== undefined && finale !== undefined){
                 await (<any>controllerInstance)[finale](proxy, removedEl, this);
