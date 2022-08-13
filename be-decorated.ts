@@ -1,8 +1,8 @@
 import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
 import {XE} from 'xtal-element/src/XE.js';
-import {DefineArgs, WCConfig} from 'trans-render/lib/types';
-import {XAction, PropInfoExt} from 'xtal-element/src/types';
+import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
+//import {XAction, PropInfoExt} from 'xtal-element/src/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
 import {grabTheBaton} from './relay.js';
@@ -10,7 +10,7 @@ import {grabTheBaton} from './relay.js';
 
 export {BeDecoratedProps, MinimalController} from './types';
 
-export const xe = new XE<BeDecoratedProps, BeDecoratedActions, PropInfoExt, XAction<BeDecoratedProps>>();
+export const xe = new XE<BeDecoratedProps, BeDecoratedActions, PropInfo, Action<BeDecoratedProps>>();
 
 const reqVirtualProps = ['self', 'emitEvents'];
 
@@ -237,7 +237,7 @@ export interface BeDecoratedCore<TControllerProps, TControllerActions> extends B
 export function define<
     TControllerProps = any, 
     TControllerActions = TControllerProps,
-    TActions = XAction<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfoExt<TControllerProps>, XAction<TControllerProps>>){
+    TActions = Action<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfo, Action<TControllerProps>>){
     const rC = controllerConfig.config as WCConfig;
     xe.def({
         config:{
