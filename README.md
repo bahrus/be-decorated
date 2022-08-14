@@ -331,6 +331,8 @@ For example, if a property "foo" is modified via the proxy on a decorator named 
 
 Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
 
+Since beDecorated based proxies are linked to a controller, users can also / alternatively subscribe to the controller, in which case the event name is simply foo-changed.
+
 ## be-noticed pattern
 
 Alternatively, more controversially, and in addition, [be-noticed](https://github.com/bahrus/be-noticed) provides a pattern as far as syntax, as well as reusable code, that can pass things more directly to the hosting (custom) element, or neighboring elements, similar to be-observant (but in the opposite direction).
