@@ -11,7 +11,7 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const ce = new CE<BeDecoratedProps, BeDecoratedActions, PropInfo, Action<BeDecoratedProps>>();
 
-const reqVirtualProps = ['self', 'emitEvents'];
+const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
@@ -28,11 +28,6 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             ifWantsToBe: ifWantsToBe!,
             forceVisible,
         }, callback);
-        // register in the be-hive registry
-
-
-
-
     }
 
     async parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this){
