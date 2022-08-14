@@ -321,6 +321,8 @@ Access to the controller can be made via element.beDecorated.reformable.controll
 
 Where this is applicable, the creator of a be-Decorated controller will need to extend the EventTarget class.
 
+Idea inspired by [this](https://infrequently.org/2021/03/reactive-data-modern-js/) and especially [this](https://twitter.com/LeaVerou/status/1557017895170969600).
+
 ## Event Notification, with breaking change [TODO]
 
 Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
@@ -333,7 +335,11 @@ For example, if a property "foo" is modified via the proxy on a decorator named 
 
 Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
 
-Since beDecorated based proxies are linked to a controller, users can also / alternatively subscribe to the controller, in which case the event name is simply foo-changed.
+Also, it seems natural for the event name to match the [fully namespaced] property name.  
+
+Change inspired by [this comment](https://twitter.com/justinfagnani/status/1552106587166085120)
+
+Since beDecorated based element behaviors are linked to a controller, users can also / alternatively subscribe to the controller, in which case the event name is simply foo-changed.
 
 ## be-noticed pattern
 
