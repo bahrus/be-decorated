@@ -319,7 +319,7 @@ The advantage of subscribing via the controller, is the event names will be much
 
 Access to the controller can be made via element.beDecorated.reformable.controller, but only once the component has upgraded.
 
-Where this is applicable, the creator of a be-Decorated controller will need to extend the EventTarget class.
+Where this is applicable, the creator of a be-Decorated controller will need to extend the EventTarget class, and also specify "controller" as a virtual property.
 
 ## Event Notification, with breaking change [TODO]
 
