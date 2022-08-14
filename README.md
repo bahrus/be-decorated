@@ -315,6 +315,10 @@ The detail of the event contains the proxy, and the controller instance.
 
 The subscriber can then opt to receive further events via the controller, rather than via the proxy [TODO] 
 
+The advantage of subscribing via the controller, is the event names will be much shorter.
+
+Access to the controller can be made via element.beDecorated.reformable.controller, but only once the component has upgraded.
+
 ## Event Notification, with breaking change [TODO]
 
 Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
