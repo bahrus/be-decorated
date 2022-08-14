@@ -295,18 +295,6 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ```
 
-## Event Notification, with breaking change [TODO]
-
-Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
-
-```JavaScript
-emitEvents: ['value', 'fetchInProgress'],
-```
-
-For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "beDecorated.spoke.foo-changed".
-
-Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
-
 
 ## Reserved, universal events [TODO]
 
@@ -325,7 +313,19 @@ will emit event "beDecorated.reformable.is-reformable" when the proxy has been c
 
 The detail of the event contains the proxy, and the controller instance.
 
-The subscriber can then opt to to receive further events via the controller, rather than via the proxy [TODO] 
+The subscriber can then opt to receive further events via the controller, rather than via the proxy [TODO] 
+
+## Event Notification, with breaking change [TODO]
+
+Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
+
+```JavaScript
+emitEvents: ['value', 'fetchInProgress'],
+```
+
+For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "beDecorated.spoke.foo-changed".
+
+Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
 
 ## be-noticed pattern
 
