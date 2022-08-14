@@ -308,11 +308,11 @@ For example, if a property "foo" is modified via the proxy on a decorator named 
 Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
 
 
-## Reserved, universal events
+## Reserved, universal events [TODO]
 
 **If** emitEvents is defined, then when the proxy has been established, the target element will emit event:
 
-"[if-wants-to-be]::is-[if-wants-to-be]".
+"beDecorated.[if-wants-to-be].is-[if-wants-to-be]".
 
 For example, this behavior:
 
@@ -321,9 +321,11 @@ For example, this behavior:
 </form>
 ```
 
-will emit event "reformable::is-reformable" when the proxy has been created.
+will emit event "beDecorated.reformable.is-reformable" when the proxy has been created.
 
 The detail of the event contains the proxy, and the controller instance.
+
+The subscriber can then opt to to receive further events via the controller, rather than via the proxy [TODO] 
 
 ## be-noticed pattern
 
