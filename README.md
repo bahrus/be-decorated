@@ -313,7 +313,7 @@ will emit event "be-decorated.reformable.is-reformable" when the proxy has been 
 
 The detail of the event contains the proxy, and the controller instance.
 
-The subscriber can then opt to receive further events via the controller, rather than via the proxy [TODO] 
+The subscriber can then opt to receive further events via the controller, rather than via the proxy. 
 
 The advantage of subscribing via the controller, is the event names will be much shorter.
 
