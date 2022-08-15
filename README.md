@@ -296,11 +296,11 @@ If you are concerned about using attributes that are prefixed with the non stand
 ```
 
 
-## Reserved, universal events [TODO]
+## Reserved, universal events
 
 **If** emitEvents is defined, then when the proxy has been established, the target element will emit event:
 
-"beDecorated.[if-wants-to-be].is-[if-wants-to-be]".
+"be-decorated.[if-wants-to-be].is-[if-wants-to-be]".
 
 For example, this behavior:
 
@@ -323,7 +323,7 @@ Where this is applicable, the creator of a be-decorated controller will need to 
 
 Idea inspired by [this](https://infrequently.org/2021/03/reactive-data-modern-js/) and especially [this](https://twitter.com/LeaVerou/status/1557017895170969600).
 
-## Event Notification, with breaking change [TODO]
+## Event Notification, with recent breaking change
 
 Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
 
