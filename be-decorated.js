@@ -3,7 +3,7 @@ import { CE } from 'trans-render/lib/CE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
 export const ce = new CE();
-const reqVirtualProps = ['self', 'emitEvents'];
+const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
     #modifiedAttrs = false;
@@ -19,7 +19,6 @@ export class BeDecoratedCore extends HTMLElement {
             ifWantsToBe: ifWantsToBe,
             forceVisible,
         }, callback);
-        // register in the be-hive registry
     }
     async parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }) {
         if (!this.#modifiedAttrs) {
@@ -99,6 +98,15 @@ export class BeDecoratedCore extends HTMLElement {
         }
         return false;
     }
+    #emitEvent(ifWantsToBe, name, detail, proxy, controller) {
+        const namespacedEventName = `be-decorated.${ifWantsToBe}.${name}`;
+        proxy.dispatchEvent(new CustomEvent(namespacedEventName, {
+            detail
+        }));
+        if (controller instanceof EventTarget) {
+            proxy.dispatchEvent(new CustomEvent(name));
+        }
+    }
     async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
         if (await this.parseAttr(this))
             return;
@@ -149,13 +157,8 @@ export class BeDecoratedCore extends HTMLElement {
                         emitEvent = emitEvents.includes(key);
                     }
                     if (emitEvent) {
-                        const name = `${ifWantsToBe}::${ce.toLisp(key)}-changed`;
-                        const detail = {
-                            detail: {
-                                value
-                            }
-                        };
-                        target.dispatchEvent(new CustomEvent(name, detail));
+                        const name = `${ce.toLisp(key)}-changed`;
+                        this.#emitEvent(ifWantsToBe, name, { value }, target, controllerInstance);
                     }
                 }
                 return true;
@@ -188,15 +191,10 @@ export class BeDecoratedCore extends HTMLElement {
         if (intro !== undefined) {
             await controllerInstance[intro](proxy, newTarget, this);
         }
+        proxy.self = proxy;
+        proxy.controller = controllerInstance;
         if (emitEvents !== undefined) {
-            const name = `${ifWantsToBe}::is-${ifWantsToBe}`;
-            const detail = {
-                detail: {
-                    proxy,
-                    controllerInstance
-                }
-            };
-            newTarget.dispatchEvent(new CustomEvent(name, detail));
+            this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, { proxy, controllerInstance }, proxy, controllerInstance);
         }
         await this.parseAttr(this);
         onRemove(newTarget, async (removedEl) => {

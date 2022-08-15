@@ -309,7 +309,7 @@ For example, this behavior:
 </form>
 ```
 
-will emit event "beDecorated.reformable.is-reformable" when the proxy has been created.
+will emit event "be-decorated.reformable.is-reformable" when the proxy has been created.
 
 The detail of the event contains the proxy, and the controller instance.
 
@@ -319,7 +319,7 @@ The advantage of subscribing via the controller, is the event names will be much
 
 Access to the controller can be made via element.beDecorated.reformable.controller, but only once the component has upgraded.
 
-Where this is applicable, the creator of a be-Decorated controller will need to extend the EventTarget class.
+Where this is applicable, the creator of a be-decorated controller will need to extend the EventTarget class.
 
 Idea inspired by [this](https://infrequently.org/2021/03/reactive-data-modern-js/) and especially [this](https://twitter.com/LeaVerou/status/1557017895170969600).
 
@@ -331,7 +331,7 @@ Any be-decorated-based decorator/behavior can be configured to emit namespaced e
 emitEvents: ['value', 'fetchInProgress'],
 ```
 
-For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "beDecorated.spoke.foo-changed".
+For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "be-decorated.spoke.foo-changed".
 
 Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
 

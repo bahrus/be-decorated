@@ -106,6 +106,16 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         return false;
     }
 
+    #emitEvent(ifWantsToBe: string, name: string, detail: any, proxy: Element, controller: EventTarget){
+        const namespacedEventName = `be-decorated.${ifWantsToBe}.${name}`;
+        proxy.dispatchEvent(new CustomEvent(namespacedEventName,{
+            detail
+        }));
+        if(controller instanceof EventTarget){
+            proxy.dispatchEvent(new CustomEvent(name));
+        } 
+    }
+
     async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
         if(await this.parseAttr(this)) return;
         const controllerInstance = new controller();
@@ -152,14 +162,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         emitEvent = emitEvents.includes(key)
                     }
                     if(emitEvent){
-                        const name = `${ifWantsToBe}::${ce.toLisp(key)}-changed`;
-                        const detail: CustomEventInit = {
-                            detail:{
-                                value
-                            }
-                        };
-                        target.dispatchEvent(new CustomEvent(name, detail));
-
+                        const name = `${ce.toLisp(key)}-changed`;
+                        this.#emitEvent(ifWantsToBe, name, {value}, target, controllerInstance as any as EventTarget);
                     }
                 }
                 return true;
@@ -190,15 +194,10 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         if(intro !== undefined){
             await (<any>controllerInstance)[intro](proxy, newTarget, this);
         }
+        (proxy as any).self = proxy;
+        (proxy as any).controller =  controllerInstance;  
         if(emitEvents !== undefined){
-            const name = `${ifWantsToBe}::is-${ifWantsToBe}`;
-            const detail: CustomEventInit = {
-                detail:{
-                    proxy,
-                    controllerInstance
-                }
-            };
-            newTarget!.dispatchEvent(new CustomEvent(name, detail));
+            this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, {proxy, controllerInstance}, proxy, controllerInstance as any as EventTarget);
         }
         await this.parseAttr(this);
         onRemove(newTarget!, async (removedEl: Element) => {
