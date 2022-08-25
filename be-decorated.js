@@ -10,6 +10,8 @@ export class BeDecoratedCore extends HTMLElement {
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const self = this;
         const callback = (target) => {
+            if (target.hasAttribute('debug'))
+                debugger;
             this.#modifiedAttrs = true;
             self.newTarget = target;
         };
@@ -21,6 +23,8 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
     }
     async parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }) {
+        if (newTarget.hasAttribute('debug'))
+            debugger;
         if (!this.#modifiedAttrs) {
             doReplace(newTarget, ifWantsToBe);
             this.#modifiedAttrs = true;
@@ -110,6 +114,8 @@ export class BeDecoratedCore extends HTMLElement {
     async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
         if (await this.parseAttr(this))
             return;
+        if (newTarget.hasAttribute('debug'))
+            debugger;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget, {
             set: (target, key, value) => {

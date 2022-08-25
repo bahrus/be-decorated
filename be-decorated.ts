@@ -19,6 +19,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const self = this;
         const callback = (target: Element) => {
+            if(target.hasAttribute('debug')) debugger;
             this.#modifiedAttrs = true;
             self.newTarget = target;
         }
@@ -31,6 +32,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     }
 
     async parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this){
+        if(newTarget!.hasAttribute('debug')) debugger;
         if(!this.#modifiedAttrs){
             doReplace(newTarget!, ifWantsToBe);
             this.#modifiedAttrs = true;
@@ -118,6 +120,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
         if(await this.parseAttr(this)) return;
+        if(newTarget!.hasAttribute('debug')) debugger;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
