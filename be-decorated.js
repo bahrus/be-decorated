@@ -1,4 +1,4 @@
-import { upgrade as upgr, getAttrInfo, doReplace } from './upgrade.js';
+import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { CE } from 'trans-render/lib/CE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
@@ -6,13 +6,11 @@ export const ce = new CE();
 const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
-    #modifiedAttrs = false;
+    //#modifiedAttrs = false;
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible, newTargets }) {
         const self = this;
         const callback = (target) => {
-            if (target.hasAttribute('debug'))
-                debugger;
-            this.#modifiedAttrs = true;
+            //this.#modifiedAttrs = true;
             self.newTargets = [...newTargets, target];
         };
         upgr({
@@ -23,14 +21,13 @@ export class BeDecoratedCore extends HTMLElement {
         }, callback);
     }
     async #parseAttr({ targetToController, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }, newTarget) {
-        if (newTarget.hasAttribute('debug'))
-            debugger;
-        if (!this.#modifiedAttrs) {
-            //do we ever hit this code?
-            console.log('iah');
-            doReplace(newTarget, ifWantsToBe);
-            this.#modifiedAttrs = true;
-        }
+        //I think this is residue from some old code
+        // if(!this.#modifiedAttrs){
+        //     //do we ever hit this code?
+        //     console.log('iah');
+        //     doReplace(newTarget!, ifWantsToBe);
+        //     this.#modifiedAttrs = true;
+        // }
         const controller = targetToController.get(newTarget);
         if (controller) {
             if (batonPass) {
@@ -116,8 +113,6 @@ export class BeDecoratedCore extends HTMLElement {
     async #pairTargetWithController({ actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }, newTarget) {
         if (await this.#parseAttr(this, newTarget))
             return;
-        if (newTarget.hasAttribute('debug'))
-            debugger;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget, {
             set: (target, key, value) => {

@@ -15,12 +15,11 @@ const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
-    #modifiedAttrs = false;
+    //#modifiedAttrs = false;
     watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible, newTargets}: this){
         const self = this;
         const callback = (target: Element) => {
-            if(target.hasAttribute('debug')) debugger;
-            this.#modifiedAttrs = true;
+            //this.#modifiedAttrs = true;
             self.newTargets = [...newTargets, target];
         }
         upgr({
@@ -32,13 +31,13 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     }
 
     async #parseAttr({targetToController, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this, newTarget: Element){
-        if(newTarget!.hasAttribute('debug')) debugger;
-        if(!this.#modifiedAttrs){
-            //do we ever hit this code?
-            console.log('iah');
-            doReplace(newTarget!, ifWantsToBe);
-            this.#modifiedAttrs = true;
-        }
+        //I think this is residue from some old code
+        // if(!this.#modifiedAttrs){
+        //     //do we ever hit this code?
+        //     console.log('iah');
+        //     doReplace(newTarget!, ifWantsToBe);
+        //     this.#modifiedAttrs = true;
+        // }
         const controller = targetToController.get(newTarget);
         if(controller){
             if(batonPass){
@@ -122,7 +121,6 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     async #pairTargetWithController({actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this, newTarget: Element){
         if(await this.#parseAttr(this, newTarget)) return;
-        if(newTarget!.hasAttribute('debug')) debugger;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
             set: (target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
