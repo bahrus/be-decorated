@@ -228,9 +228,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         for(const newTarget of newTargets){
             await this.#pairTargetWithController(this, newTarget);
         }
-        return {
-            newTargets: []
-        }
+        // return {
+        //     newTargets: []
+        // }
     }
 }
 
