@@ -225,9 +225,9 @@ export class BeDecoratedCore extends HTMLElement {
         for (const newTarget of newTargets) {
             this.#pairTargetWithController(this, newTarget);
         }
-        // return {
-        //     newTargets: []
-        // }
+        return {
+            newTargets: []
+        };
     }
 }
 // export function define<TControllerProps, TControllerActions>(metaConfig: BeDecoratedConfig<TControllerProps, TControllerActions>){
