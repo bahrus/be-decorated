@@ -221,8 +221,11 @@ export class BeDecoratedCore extends HTMLElement {
     }
     async pairTargetsWithController({ newTargets, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
         for (const newTarget of newTargets) {
-            this.#pairTargetWithController(this, newTarget);
+            await this.#pairTargetWithController(this, newTarget);
         }
+        return {
+            newTargets: []
+        };
     }
 }
 // export function define<TControllerProps, TControllerActions>(metaConfig: BeDecoratedConfig<TControllerProps, TControllerActions>){

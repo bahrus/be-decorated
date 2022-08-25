@@ -225,7 +225,10 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     async pairTargetsWithController({newTargets, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
         for(const newTarget of newTargets){
-            this.#pairTargetWithController(this, newTarget);
+            await this.#pairTargetWithController(this, newTarget);
+        }
+        return {
+            newTargets: []
         }
     }
 }
