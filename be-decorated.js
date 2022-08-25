@@ -223,7 +223,7 @@ export class BeDecoratedCore extends HTMLElement {
         if (newTargets.length === 0)
             return;
         for (const newTarget of newTargets) {
-            await this.#pairTargetWithController(this, newTarget);
+            this.#pairTargetWithController(this, newTarget);
         }
         return {
             newTargets: []
