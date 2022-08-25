@@ -7,13 +7,13 @@ const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
     #modifiedAttrs = false;
-    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
+    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible, newTargets }) {
         const self = this;
         const callback = (target) => {
             if (target.hasAttribute('debug'))
                 debugger;
             this.#modifiedAttrs = true;
-            self.newTarget = target;
+            self.newTargets = [...newTargets, target];
         };
         upgr({
             shadowDomPeer: this,
@@ -22,10 +22,12 @@ export class BeDecoratedCore extends HTMLElement {
             forceVisible,
         }, callback);
     }
-    async parseAttr({ targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }) {
+    async #parseAttr({ targetToController, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass }, newTarget) {
         if (newTarget.hasAttribute('debug'))
             debugger;
         if (!this.#modifiedAttrs) {
+            //do we ever hit this code?
+            console.log('iah');
             doReplace(newTarget, ifWantsToBe);
             this.#modifiedAttrs = true;
         }
@@ -111,8 +113,8 @@ export class BeDecoratedCore extends HTMLElement {
             proxy.dispatchEvent(new CustomEvent(name));
         }
     }
-    async pairTargetWithController({ newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
-        if (await this.parseAttr(this))
+    async #pairTargetWithController({ actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }, newTarget) {
+        if (await this.#parseAttr(this, newTarget))
             return;
         if (newTarget.hasAttribute('debug'))
             debugger;
@@ -202,7 +204,7 @@ export class BeDecoratedCore extends HTMLElement {
         if (emitEvents !== undefined) {
             this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, { proxy, controllerInstance }, proxy, controllerInstance);
         }
-        await this.parseAttr(this);
+        await this.#parseAttr(this, newTarget);
         onRemove(newTarget, async (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined) {
                 await controllerInstance[finale](proxy, removedEl, this);
@@ -222,6 +224,11 @@ export class BeDecoratedCore extends HTMLElement {
             revocable.revoke();
         });
     }
+    async pairTargetsWithController({ newTargets, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents }) {
+        for (const newTarget of newTargets) {
+            this.#pairTargetWithController(this, newTarget);
+        }
+    }
 }
 // export function define<TControllerProps, TControllerActions>(metaConfig: BeDecoratedConfig<TControllerProps, TControllerActions>){
 //     xe.def(metaConfig.wc)
@@ -232,22 +239,23 @@ export function define(controllerConfig) {
         config: {
             tagName: rC.tagName,
             propDefaults: {
+                newTargets: [],
                 actions: rC.actions,
                 ...rC.propDefaults,
                 isC: true,
             },
-            propInfo: {
-                newTarget: {
-                    dry: false,
-                }
-            },
+            // propInfo:{
+            //     newTargets:{
+            //         dry: false,
+            //     }
+            // },
             actions: {
                 watchForElementsToUpgrade: {
                     ifAllOf: ['isC', 'upgrade', 'ifWantsToBe'],
                     ifKeyIn: ['forceVisible'],
                 },
-                pairTargetWithController: {
-                    ifAllOf: ['newTarget', 'ifWantsToBe', 'controller'],
+                pairTargetsWithController: {
+                    ifAllOf: ['newTargets', 'ifWantsToBe', 'controller'],
                     ifKeyIn: ['finale', 'virtualProps', 'intro', 'actions']
                 },
             },

@@ -44,7 +44,9 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     controller: {new(): TControllerProps & TControllerActions & MinimalController};
 
-    newTarget: Element | undefined;
+    //newTarget: Element | undefined;
+
+    newTargets: Element[];
 
     forceVisible: string[];
 
@@ -67,7 +69,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
 export interface BeDecoratedActions{
     watchForElementsToUpgrade(self: this): void;
-    pairTargetWithController(self: this): void;
+    pairTargetsWithController(self: this): void;
 }
 
 

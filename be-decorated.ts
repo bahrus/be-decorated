@@ -16,12 +16,12 @@ const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
     #modifiedAttrs = false;
-    watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
+    watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible, newTargets}: this){
         const self = this;
         const callback = (target: Element) => {
             if(target.hasAttribute('debug')) debugger;
             this.#modifiedAttrs = true;
-            self.newTarget = target;
+            self.newTargets = [...newTargets, target];
         }
         upgr({
             shadowDomPeer: this,
@@ -31,9 +31,11 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         }, callback);
     }
 
-    async parseAttr({targetToController, newTarget, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this){
+    async #parseAttr({targetToController, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this, newTarget: Element){
         if(newTarget!.hasAttribute('debug')) debugger;
         if(!this.#modifiedAttrs){
+            //do we ever hit this code?
+            console.log('iah');
             doReplace(newTarget!, ifWantsToBe);
             this.#modifiedAttrs = true;
         }
@@ -118,8 +120,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         } 
     }
 
-    async pairTargetWithController({newTarget, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
-        if(await this.parseAttr(this)) return;
+    async #pairTargetWithController({actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this, newTarget: Element){
+        if(await this.#parseAttr(this, newTarget)) return;
         if(newTarget!.hasAttribute('debug')) debugger;
         const controllerInstance = new controller();
         const revocable = Proxy.revocable(newTarget! as Element & TControllerProps, {
@@ -202,7 +204,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         if(emitEvents !== undefined){
             this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, {proxy, controllerInstance}, proxy, controllerInstance as any as EventTarget);
         }
-        await this.parseAttr(this);
+        await this.#parseAttr(this, newTarget);
         onRemove(newTarget!, async (removedEl: Element) => {
             if(controllerInstance !== undefined && finale !== undefined){
                 await (<any>controllerInstance)[finale](proxy, removedEl, this);
@@ -220,6 +222,13 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             targetToController.delete(removedEl);
             revocable.revoke();
         });
+
+    }
+
+    async pairTargetsWithController({newTargets, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
+        for(const newTarget of newTargets){
+            this.#pairTargetWithController(this, newTarget);
+        }
     }
 }
 
@@ -240,22 +249,23 @@ export function define<
         config:{
             tagName: rC.tagName,
             propDefaults:{
+                newTargets: [],
                 actions: rC.actions,
                 ...rC.propDefaults,
                 isC: true,
             },
-            propInfo:{
-                newTarget:{
-                    dry: false,
-                }
-            },
+            // propInfo:{
+            //     newTargets:{
+            //         dry: false,
+            //     }
+            // },
             actions:{
                 watchForElementsToUpgrade:{
                     ifAllOf: ['isC', 'upgrade', 'ifWantsToBe'],
                     ifKeyIn: ['forceVisible'],
                 },
-                pairTargetWithController:{
-                    ifAllOf:['newTarget', 'ifWantsToBe', 'controller'],
+                pairTargetsWithController:{
+                    ifAllOf:['newTargets', 'ifWantsToBe', 'controller'],
                     ifKeyIn:['finale',  'virtualProps', 'intro', 'actions']
                 },             
             },
