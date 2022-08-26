@@ -27,13 +27,13 @@
   "types": "types.d.ts",
   "dependencies": {
     "xtal-element": "0.0.513",
-    "trans-render": "0.0.574"
+    "trans-render": "0.0.576"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
     "@playwright/test": "1.25.0",
     "may-it-serve": "0.0.2",
-    "xtal-editor": "0.0.177",
+    "xtal-editor": "0.0.186",
     "xtal-shell": "0.0.27"
   },
   "scripts": {
