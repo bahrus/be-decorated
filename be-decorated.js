@@ -217,11 +217,11 @@ export class BeDecoratedCore extends HTMLElement {
         });
     }
     async pairTargetsWithController({ newTargets }) {
-        if (newTargets.length === 0)
+        if (this.newTargets.length === 0)
             return;
-        const lastTarget = newTargets.pop();
-        this.newTargets = [...newTargets];
+        const lastTarget = this.newTargets.pop();
         await this.#pairTargetWithController(this, lastTarget);
+        this.newTargets = [...this.newTargets];
     }
 }
 export function define(controllerConfig) {

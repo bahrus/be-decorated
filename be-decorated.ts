@@ -221,10 +221,10 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
     }
 
     async pairTargetsWithController({newTargets}: this){
-        if(newTargets.length === 0) return;
-        const lastTarget = newTargets.pop();        
-        this.newTargets = [...newTargets];
+        if(this.newTargets.length === 0) return;
+        const lastTarget = this.newTargets.pop(); 
         await this.#pairTargetWithController(this, lastTarget!);
+        this.newTargets = [...this.newTargets];
     }
 }
 
