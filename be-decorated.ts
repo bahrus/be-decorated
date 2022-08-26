@@ -220,7 +220,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     }
 
-    async pairTargetsWithController({newTargets}: this){
+    async pairTargetsWithController({}: this){
         if(this.newTargets.length === 0) return;
         const lastTarget = this.newTargets.pop(); 
         await this.#pairTargetWithController(this, lastTarget!);

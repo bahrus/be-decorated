@@ -216,7 +216,7 @@ export class BeDecoratedCore extends HTMLElement {
             revocable.revoke();
         });
     }
-    async pairTargetsWithController({ newTargets }) {
+    async pairTargetsWithController({}) {
         if (this.newTargets.length === 0)
             return;
         const lastTarget = this.newTargets.pop();
