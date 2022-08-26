@@ -15,12 +15,10 @@ const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
-    //#modifiedAttrs = false;
     watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible, newTargets}: this){
         const self = this;
         const callback = (target: Element) => {
-            //this.#modifiedAttrs = true;
-            self.newTargets = [...newTargets, target];
+            self.newTargets = [...(self as any)._newTargets, target];
         }
         upgr({
             shadowDomPeer: this,
@@ -95,7 +93,6 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         const action = actions[methodName]!;
                         const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
                         const props = ce.getProps(ce, typedAction); //TODO:  cache this
-                        //if(!props.has(key as string)) continue;
                         if(!intersection(queue, props)) continue;
                         if(ce.pq(ce, typedAction, controller.proxy)){
                             filteredActions[methodName] = action;
@@ -223,14 +220,22 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
 
     }
 
-    async pairTargetsWithController({newTargets, actions, targetToController, virtualProps, controller, ifWantsToBe, noParse, finale, intro, nonDryProps, emitEvents}: this){
+    async pairTargetsWithController({newTargets}: this){
         if(newTargets.length === 0) return;
-        for(const newTarget of newTargets){
-            this.#pairTargetWithController(this, newTarget);
-        }
-        return {
-            newTargets: []
-        }
+        const lastTarget = newTargets.pop();        
+        this.newTargets = [...newTargets];
+        await this.#pairTargetWithController(this, lastTarget!);
+        // console.log({newTargets});
+        // for(const newTarget of newTargets){
+        //     if(newTarget.hasAttribute('debug')) {
+        //         console.log('pair debug');
+        //     }
+            
+        // }
+        //console.log({newTargets});
+        // return {
+        //     newTargets: [...newTargets]
+        // }
     }
 }
 
@@ -238,9 +243,6 @@ type BeDecoratedMC<TControllerProps, TControllerActions> =  BeDecoratedActions &
 
 export interface BeDecoratedCore<TControllerProps, TControllerActions> extends BeDecoratedMC<TControllerProps, TControllerActions>{}
 
-// export function define<TControllerProps, TControllerActions>(metaConfig: BeDecoratedConfig<TControllerProps, TControllerActions>){
-//     xe.def(metaConfig.wc)
-// }
 
 export function define<
     TControllerProps = any, 
