@@ -6,10 +6,10 @@ export const ce = new CE();
 const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
-    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible, newTargets }) {
+    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const self = this;
         const callback = (target) => {
-            self.newTargets = [...self._newTargets, target];
+            self.newTargets = [...self.newTargets, target];
         };
         upgr({
             shadowDomPeer: this,

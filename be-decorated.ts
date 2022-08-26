@@ -15,10 +15,10 @@ const reqVirtualProps = ['self', 'emitEvents', 'controller'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
-    watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible, newTargets}: this){
+    watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const self = this;
         const callback = (target: Element) => {
-            self.newTargets = [...(self as any)._newTargets, target];
+            self.newTargets = [...(self as any).newTargets, target];
         }
         upgr({
             shadowDomPeer: this,
