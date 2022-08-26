@@ -222,16 +222,6 @@ export class BeDecoratedCore extends HTMLElement {
         const lastTarget = newTargets.pop();
         this.newTargets = [...newTargets];
         await this.#pairTargetWithController(this, lastTarget);
-        // console.log({newTargets});
-        // for(const newTarget of newTargets){
-        //     if(newTarget.hasAttribute('debug')) {
-        //         console.log('pair debug');
-        //     }
-        // }
-        //console.log({newTargets});
-        // return {
-        //     newTargets: [...newTargets]
-        // }
     }
 }
 export function define(controllerConfig) {
