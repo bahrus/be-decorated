@@ -17,7 +17,6 @@
     ".": "./be-decorated.js",
     "./be-decorated.js": "./be-decorated.js",
     "./upgrade.js": "./upgrade.js",
-    "./doThen.js": "./doThen.js",
     "./relay.js": "./relay.js",
     "./findAdjacentElement.js": "./findAdjacentElement.js"
   },
