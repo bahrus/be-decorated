@@ -30,8 +30,8 @@ export interface MinimalController{
     //debug?: boolean;
 }
 
-export interface MinimalProxy{
-    self: Element,
+export interface MinimalProxy<TTargetElement = Element>{
+    self: TTargetElement,
     resolved: boolean | string | undefined;
     rejected: boolean | string | undefined;
     emitEvents?: boolean | string[];
