@@ -299,6 +299,56 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ```
 
+## The only uncertainty
+
+Using be-decorated to define an element decorator/behavior does impinge a bit on the developer's naming creativity:  There is a small number of reserved proxy prop names that has deep meaning to be-decorated, and thus should only be used in the prescribed manner.  They are listed below:
+
+<table>
+    <caption>Reserved Controller Properties / Proxy Virtual Property Names</caption>
+    <thead>
+        <th>Name</th>
+        <th>Meaning/usage</th>
+        <th>Scope</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>emitEvents</td>
+            <td>List of virtual properties that should emit an event when the reference or value changes</td>
+            <td>Virtual property of proxy</td>
+        </tr>
+        <tr>
+            <td>self</td>
+            <td>Reference to the proxy.  Allows for Python/Rust style programming.</td>
+            <td>Virtual property of proxy</td>
+        </tr>
+        <tr>
+            <td>proxy</td>
+            <td>The ES6 proxy wrapping the adorned element</td>
+            <td>Inherited property of controller</td>
+        </tr>
+        <tr>
+            <td>controller</td>
+            <td>The controller for the decorator/behavior</td>
+            <td>Virtual property of proxy</td>
+        </tr>
+        <tr>
+            <td>resolved [TODO]</td>
+            <td>
+                Standard way for a decorator/behavior to indicate it has "done its main task and is currently waiting on further instructions if any."  Critical for [be-promising](https://github.com/bahrus/be-promising).
+                The adorned element emits event "be-decorated.[if-wants-to-be].resolved when it is in resolved state.
+            </td>
+            <td>Virtual property of proxy.</td>
+        </tr>
+        <tr>
+            <td>rejected [TODO]</td>
+            <td>Standard way for a decorator/behavior to indicate it has "failed to do its main task and is currently waiting on further instructions if any."  Critical for [be-promising](https://github.com/bahrus/be-promising).
+                The adorned element emits event "be-decorated.[if-wants-to-be].rejected when it is in resolved state.
+            </td>
+            <td>Virtual property of proxy.</td>
+        </tr>  
+    </tbody>
+</table>
+
 
 ## Reserved, universal events
 
