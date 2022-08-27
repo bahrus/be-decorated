@@ -1,5 +1,5 @@
 import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
-import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig} from './types';
+import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig, MinimalProxy} from './types';
 import {CE} from 'trans-render/lib/CE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
@@ -11,7 +11,7 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const ce = new CE<BeDecoratedProps, BeDecoratedActions, PropInfo, Action<BeDecoratedProps>>();
 
-const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];
+const reqVirtualProps : (keyof MinimalProxy)[] = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
