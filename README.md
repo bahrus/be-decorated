@@ -313,7 +313,7 @@ Using be-decorated to define an element decorator/behavior does impinge a bit on
     <tbody>
         <tr>
             <td>emitEvents</td>
-            <td>List of virtual properties that should emit an event when the reference or value changes</td>
+            <td>List of virtual properties that should emit an event when the reference or value changes.  Discussed in more detail below</td>
             <td>Virtual property of proxy</td>
         </tr>
         <tr>
@@ -334,20 +334,37 @@ Using be-decorated to define an element decorator/behavior does impinge a bit on
         <tr>
             <td>resolved [TODO]</td>
             <td>
-                Standard way for a decorator/behavior to indicate it has "done its main task and is currently waiting on further instructions if any."  Critical for [be-promising](https://github.com/bahrus/be-promising).
-                The adorned element emits event "be-decorated.[if-wants-to-be].resolved when it is in resolved state.
+                Standard way for a decorator/behavior to indicate it has "done its main task and is currently waiting on further instructions if any."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.  The adorned element emits event "be-decorated.[if-wants-to-be].resolved when it is in resolved state.
             </td>
             <td>Virtual property of proxy.</td>
         </tr>
         <tr>
             <td>rejected [TODO]</td>
             <td>Standard way for a decorator/behavior to indicate it has "failed to do its main task and is currently waiting on further instructions if any."  Critical for [be-promising](https://github.com/bahrus/be-promising).
-                The adorned element emits event "be-decorated.[if-wants-to-be].rejected when it is in resolved state.
+                The adorned element emits event "be-decorated.[if-wants-to-be].rejected when it is in rejected state.
             </td>
             <td>Virtual property of proxy.</td>
         </tr>  
     </tbody>
 </table>
+
+## Event Notifications
+
+Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
+
+```JavaScript
+emitEvents: ['value', 'fetchInProgress'],
+```
+
+For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "be-decorated.spoke.foo-changed".
+
+Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
+
+Also, it seems natural for the event name to match the [fully namespaced] property name.  
+
+Change inspired by [this comment](https://twitter.com/justinfagnani/status/1552106587166085120)
+
+Since beDecorated based element behaviors are linked to a controller, users can also / alternatively subscribe to the controller, in which case the event name is simply foo-changed.
 
 
 ## Reserved, universal events
@@ -377,23 +394,7 @@ Where this is applicable, the creator of a be-decorated controller will need to 
 
 Idea inspired by [this](https://infrequently.org/2021/03/reactive-data-modern-js/) and especially [this](https://twitter.com/LeaVerou/status/1557017895170969600).
 
-## Event Notification, with recent breaking change
 
-Any be-decorated-based decorator/behavior can be configured to emit namespaced events via the emitEvents property.  An example can be [seen here](https://github.com/bahrus/be-looking-up/blob/baseline/be-looking-up.ts):
-
-```JavaScript
-emitEvents: ['value', 'fetchInProgress'],
-```
-
-For example, if a property "foo" is modified via the proxy on a decorator named be-spoke, and emitEvents is set to an array containing "foo", then an event will be dispatched from the adorned element with name "be-decorated.spoke.foo-changed".
-
-Other web components that provide element behavior in a different way from be-decorated could then emit its own events, and conflicts between them can be avoided in this way.
-
-Also, it seems natural for the event name to match the [fully namespaced] property name.  
-
-Change inspired by [this comment](https://twitter.com/justinfagnani/status/1552106587166085120)
-
-Since beDecorated based element behaviors are linked to a controller, users can also / alternatively subscribe to the controller, in which case the event name is simply foo-changed.
 
 ## be-noticed pattern
 
