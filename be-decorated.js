@@ -168,7 +168,7 @@ export class BeDecoratedCore extends HTMLElement {
             },
             get: (target, key) => {
                 let value; // = Reflect.get(target, key);
-                if (key === 'self' || (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key)) {
+                if ((virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key)) {
                     value = controllerInstance[key];
                 }
                 else {
@@ -194,7 +194,7 @@ export class BeDecoratedCore extends HTMLElement {
         if (intro !== undefined) {
             await controllerInstance[intro](proxy, newTarget, this);
         }
-        proxy.self = proxy;
+        proxy.self = newTarget;
         proxy.controller = controllerInstance;
         if (emitEvents !== undefined) {
             this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, { proxy, controllerInstance }, proxy, controllerInstance);
