@@ -299,7 +299,7 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ```
 
-## The only uncertainty
+## Reserved Props
 
 Using be-decorated to define an element decorator/behavior does impinge a bit on the developer's naming creativity:  There is a small number of reserved proxy prop names that has deep meaning to be-decorated, and thus should only be used in the prescribed manner.  They are listed below:
 
@@ -334,13 +334,13 @@ Using be-decorated to define an element decorator/behavior does impinge a bit on
         <tr>
             <td>resolved [TODO]</td>
             <td>
-                Standard way for a decorator/behavior to indicate it has "done its main task and is currently waiting on further instructions if any."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.  The adorned element emits event "be-decorated.[if-wants-to-be].resolved when it is in resolved state.
+                Standard way for a decorator/behavior to indicate it has "done its main task and is currently waiting on further instructions, if any."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.  The adorned element emits event "be-decorated.[if-wants-to-be].resolved when it is in resolved state.
             </td>
             <td>Virtual property of proxy.</td>
         </tr>
         <tr>
             <td>rejected [TODO]</td>
-            <td>Standard way for a decorator/behavior to indicate it has "failed to do its main task and is currently waiting on further instructions if any."  Critical for [be-promising](https://github.com/bahrus/be-promising).
+            <td>Standard way for a decorator/behavior to indicate it has "failed to do its main task and is currently waiting on further instructions if any."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.
                 The adorned element emits event "be-decorated.[if-wants-to-be].rejected when it is in rejected state.
             </td>
             <td>Virtual property of proxy.</td>

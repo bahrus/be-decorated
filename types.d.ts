@@ -60,6 +60,10 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     emitEvents: boolean | string[];
 
+    resolved: boolean | string | undefined;
+
+    rejected: boolean | string | undefined;
+
     primaryProp: string;
 
     isC: boolean;

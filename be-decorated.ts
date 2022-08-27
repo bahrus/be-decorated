@@ -11,7 +11,7 @@ export {BeDecoratedProps, MinimalController} from './types';
 
 export const ce = new CE<BeDecoratedProps, BeDecoratedActions, PropInfo, Action<BeDecoratedProps>>();
 
-const reqVirtualProps = ['self', 'emitEvents', 'controller'];
+const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
@@ -165,6 +165,9 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         const name = `${ce.toLisp(key)}-changed`;
                         this.#emitEvent(ifWantsToBe, name, {value}, target, controllerInstance as any as EventTarget);
                     }
+                }
+                if((key==='resolved' || key === 'rejected') && value){
+                    this.#emitEvent(ifWantsToBe, key, {value}, target, controllerInstance as any as EventTarget);
                 }
                 return true;
             },

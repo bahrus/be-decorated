@@ -3,7 +3,7 @@ import { CE } from 'trans-render/lib/CE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
 export const ce = new CE();
-const reqVirtualProps = ['self', 'emitEvents', 'controller'];
+const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
@@ -160,6 +160,9 @@ export class BeDecoratedCore extends HTMLElement {
                         const name = `${ce.toLisp(key)}-changed`;
                         this.#emitEvent(ifWantsToBe, name, { value }, target, controllerInstance);
                     }
+                }
+                if ((key === 'resolved' || key === 'rejected') && value) {
+                    this.#emitEvent(ifWantsToBe, key, { value }, target, controllerInstance);
                 }
                 return true;
             },
