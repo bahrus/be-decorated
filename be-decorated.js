@@ -206,6 +206,7 @@ export class BeDecoratedCore extends HTMLElement {
             }
             if (removedEl.beDecorated !== undefined)
                 delete removedEl.beDecorated[key];
+            proxy.self = undefined;
             // Commented out code below doesn't seem to work, so leaving out for now.
             // //element might come back -- need to reactivate if it does
             // const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);

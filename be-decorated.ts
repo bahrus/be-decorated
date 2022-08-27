@@ -208,6 +208,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 await (<any>controllerInstance)[finale](proxy, removedEl, this);
             }
             if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
+            (<any>proxy).self = undefined;
             // Commented out code below doesn't seem to work, so leaving out for now.
             // //element might come back -- need to reactivate if it does
             // const isAttr = removedEl.getAttribute('is-' + this.ifWantsToBe);
