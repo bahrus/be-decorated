@@ -30,6 +30,12 @@ export interface MinimalController{
     //debug?: boolean;
 }
 
+export interface MinimalProxy{
+    self: Element,
+    resolve: boolean | string | undefined;
+    reject: boolean | string | undefined;
+}
+
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{
     upgrade: string;
     ifWantsToBe: string;
