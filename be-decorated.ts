@@ -194,11 +194,12 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         }
         (<any>newTarget).beDecorated[key] = proxy;
         targetToController.set(newTarget, controllerInstance);
+        (proxy as any).self = newTarget;
+        (proxy as any).controller =  controllerInstance; 
         if(intro !== undefined){
             await (<any>controllerInstance)[intro](proxy, newTarget, this);
         }
-        (proxy as any).self = newTarget;
-        (proxy as any).controller =  controllerInstance;  
+        
         if(emitEvents !== undefined){
             this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, {proxy, controllerInstance}, proxy, controllerInstance as any as EventTarget);
         }

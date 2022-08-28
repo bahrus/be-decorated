@@ -191,11 +191,11 @@ export class BeDecoratedCore extends HTMLElement {
         }
         newTarget.beDecorated[key] = proxy;
         targetToController.set(newTarget, controllerInstance);
+        proxy.self = newTarget;
+        proxy.controller = controllerInstance;
         if (intro !== undefined) {
             await controllerInstance[intro](proxy, newTarget, this);
         }
-        proxy.self = newTarget;
-        proxy.controller = controllerInstance;
         if (emitEvents !== undefined) {
             this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, { proxy, controllerInstance }, proxy, controllerInstance);
         }
