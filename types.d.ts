@@ -32,8 +32,8 @@ export interface MinimalController{
 
 export interface MinimalProxy<TTargetElement = Element>{
     self: TTargetElement,
-    resolved: boolean | string | undefined;
-    rejected: boolean | string | undefined;
+    resolved?: boolean | string | undefined;
+    rejected?: boolean | string | undefined;
     emitEvents?: boolean | string[];
     controller: any;
 }
