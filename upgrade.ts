@@ -23,9 +23,10 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, 
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
     addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;
-        const target = e.target;
+        let target = e.target;
         if(!doReplace(target!, ifWantsToBe)) return;
         if(callback !== undefined) callback(target as T, true);
+        target = null;
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
             display:inline !important;

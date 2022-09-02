@@ -20,11 +20,12 @@ function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisib
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
         if (e.animationName !== id)
             return;
-        const target = e.target;
+        let target = e.target;
         if (!doReplace(target, ifWantsToBe))
             return;
         if (callback !== undefined)
             callback(target, true);
+        target = null;
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
             display:inline !important;
