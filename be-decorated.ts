@@ -19,6 +19,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const self = this;
         const callback = (target: Element) => {
             self.newTargets = [...(self as any).newTargets, target];
+            target = undefined as any as Element;
         }
         upgr({
             shadowDomPeer: this,

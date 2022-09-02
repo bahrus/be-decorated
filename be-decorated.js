@@ -10,6 +10,7 @@ export class BeDecoratedCore extends HTMLElement {
         const self = this;
         const callback = (target) => {
             self.newTargets = [...self.newTargets, target];
+            target = undefined;
         };
         upgr({
             shadowDomPeer: this,
