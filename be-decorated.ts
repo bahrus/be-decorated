@@ -132,7 +132,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     }
                 }
                 
-                if(reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))){
+                if(reqVirtualProps.includes(key as keyof MinimalProxy) || (virtualProps !== undefined && virtualProps.includes(key))){
                     controllerInstance[key] = value;
                 }else{
                     target[key] = value;
@@ -174,7 +174,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             },
             get:(target: Element & TControllerProps, key: string & keyof TControllerProps)=>{
                 let value;// = Reflect.get(target, key);
-                if( (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key)){
+                if( (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key as keyof MinimalProxy)){
                     value = controllerInstance[key];
                 }else{
                     value = target[key];// = value;
