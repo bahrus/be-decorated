@@ -4,6 +4,7 @@ import {CE} from 'trans-render/lib/CE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
 import {onRemove} from 'trans-render/lib/onRemove.js';
 import {intersection} from 'xtal-element/lib/intersection.js';
+import { doActions } from 'trans-render/lib/doActions.js';
 
 //be careful about adopting async with onRemove, intersection.  Test be-repeated, example IIb, make sure no repeated calls to renderlist.
 
@@ -99,7 +100,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                             filteredActions[methodName] = action;
                         }
                     }
-                    ce.doActions(ce, filteredActions, controller, controller.proxy);
+                    doActions(ce, filteredActions, controller, controller.proxy);
                 }
             }
             return true;

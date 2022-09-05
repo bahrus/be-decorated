@@ -2,6 +2,7 @@ import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { CE } from 'trans-render/lib/CE.js';
 import { onRemove } from 'trans-render/lib/onRemove.js';
 import { intersection } from 'xtal-element/lib/intersection.js';
+import { doActions } from 'trans-render/lib/doActions.js';
 export const ce = new CE();
 const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];
 export class BeDecoratedCore extends HTMLElement {
@@ -92,7 +93,7 @@ export class BeDecoratedCore extends HTMLElement {
                             filteredActions[methodName] = action;
                         }
                     }
-                    ce.doActions(ce, filteredActions, controller, controller.proxy);
+                    doActions(ce, filteredActions, controller, controller.proxy);
                 }
             }
             return true;
