@@ -139,40 +139,42 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     target[key] = value;
                 }
                 if(key === 'self') return true;
-                
-                if(propChangeQueue !== undefined){
-                    propChangeQueue.add(key);
-                }else{
-                    if(actions !== undefined){
-                        const filteredActions: any = {};
-                        for(const methodName in actions){
-                            const action = actions[methodName]!;
-                            const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
-                            const props = ce.getProps(ce, typedAction); //TODO:  cache this
-                            if(!props.has(key as string)) continue;
-                            if(ce.pq(ce, typedAction, controllerInstance as any as BeDecoratedProps<any, any>)){
-                                filteredActions[methodName] = action;
+                (async () => {
+                    if(propChangeQueue !== undefined){
+                        propChangeQueue.add(key);
+                    }else{
+                        if(actions !== undefined){
+                            const filteredActions: any = {};
+                            for(const methodName in actions){
+                                const action = actions[methodName]!;
+                                const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
+                                const props = ce.getProps(ce, typedAction); //TODO:  cache this
+                                if(!props.has(key as string)) continue;
+                                if(await ce.pq(ce, typedAction, controllerInstance as any as BeDecoratedProps<any, any>)){
+                                    filteredActions[methodName] = action;
+                                }
                             }
+                            const nv = value;
+                            const ov = controllerInstance[key];
+                            ce.doActions(ce, filteredActions, controllerInstance, controllerInstance.proxy); 
                         }
-                        const nv = value;
-                        const ov = controllerInstance[key];
-                        ce.doActions(ce, filteredActions, controllerInstance, controllerInstance.proxy); 
                     }
-                }
-                
-                if(emitEvents !== undefined){
-                    let emitEvent = true;
-                    if(Array.isArray(emitEvents)){
-                        emitEvent = emitEvents.includes(key)
+                    
+                    if(emitEvents !== undefined){
+                        let emitEvent = true;
+                        if(Array.isArray(emitEvents)){
+                            emitEvent = emitEvents.includes(key)
+                        }
+                        if(emitEvent){
+                            const name = `${ce.toLisp(key)}-changed`;
+                            this.#emitEvent(ifWantsToBe, name, {value}, target, controllerInstance as any as EventTarget);
+                        }
                     }
-                    if(emitEvent){
-                        const name = `${ce.toLisp(key)}-changed`;
-                        this.#emitEvent(ifWantsToBe, name, {value}, target, controllerInstance as any as EventTarget);
+                    if((key==='resolved' || key === 'rejected') && value){
+                        this.#emitEvent(ifWantsToBe, key, {value}, target, controllerInstance as any as EventTarget);
                     }
-                }
-                if((key==='resolved' || key === 'rejected') && value){
-                    this.#emitEvent(ifWantsToBe, key, {value}, target, controllerInstance as any as EventTarget);
-                }
+                })();
+
                 return true;
             },
             get:(target: Element & TControllerProps, key: string & keyof TControllerProps)=>{

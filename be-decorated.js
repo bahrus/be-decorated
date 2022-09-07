@@ -132,40 +132,42 @@ export class BeDecoratedCore extends HTMLElement {
                 }
                 if (key === 'self')
                     return true;
-                if (propChangeQueue !== undefined) {
-                    propChangeQueue.add(key);
-                }
-                else {
-                    if (actions !== undefined) {
-                        const filteredActions = {};
-                        for (const methodName in actions) {
-                            const action = actions[methodName];
-                            const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
-                            const props = ce.getProps(ce, typedAction); //TODO:  cache this
-                            if (!props.has(key))
-                                continue;
-                            if (ce.pq(ce, typedAction, controllerInstance)) {
-                                filteredActions[methodName] = action;
+                (async () => {
+                    if (propChangeQueue !== undefined) {
+                        propChangeQueue.add(key);
+                    }
+                    else {
+                        if (actions !== undefined) {
+                            const filteredActions = {};
+                            for (const methodName in actions) {
+                                const action = actions[methodName];
+                                const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
+                                const props = ce.getProps(ce, typedAction); //TODO:  cache this
+                                if (!props.has(key))
+                                    continue;
+                                if (await ce.pq(ce, typedAction, controllerInstance)) {
+                                    filteredActions[methodName] = action;
+                                }
                             }
+                            const nv = value;
+                            const ov = controllerInstance[key];
+                            ce.doActions(ce, filteredActions, controllerInstance, controllerInstance.proxy);
                         }
-                        const nv = value;
-                        const ov = controllerInstance[key];
-                        ce.doActions(ce, filteredActions, controllerInstance, controllerInstance.proxy);
                     }
-                }
-                if (emitEvents !== undefined) {
-                    let emitEvent = true;
-                    if (Array.isArray(emitEvents)) {
-                        emitEvent = emitEvents.includes(key);
+                    if (emitEvents !== undefined) {
+                        let emitEvent = true;
+                        if (Array.isArray(emitEvents)) {
+                            emitEvent = emitEvents.includes(key);
+                        }
+                        if (emitEvent) {
+                            const name = `${ce.toLisp(key)}-changed`;
+                            this.#emitEvent(ifWantsToBe, name, { value }, target, controllerInstance);
+                        }
                     }
-                    if (emitEvent) {
-                        const name = `${ce.toLisp(key)}-changed`;
-                        this.#emitEvent(ifWantsToBe, name, { value }, target, controllerInstance);
+                    if ((key === 'resolved' || key === 'rejected') && value) {
+                        this.#emitEvent(ifWantsToBe, key, { value }, target, controllerInstance);
                     }
-                }
-                if ((key === 'resolved' || key === 'rejected') && value) {
-                    this.#emitEvent(ifWantsToBe, key, { value }, target, controllerInstance);
-                }
+                })();
                 return true;
             },
             get: (target, key) => {
