@@ -89,7 +89,7 @@ export class BeDecoratedCore extends HTMLElement {
                         const props = ce.getProps(ce, typedAction); //TODO:  cache this
                         if (!intersection(queue, props))
                             continue;
-                        if (ce.pq(ce, typedAction, controller.proxy)) {
+                        if (await ce.pq(ce, typedAction, controller.proxy)) {
                             filteredActions[methodName] = action;
                         }
                     }

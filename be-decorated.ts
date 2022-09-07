@@ -96,7 +96,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
                         const props = ce.getProps(ce, typedAction); //TODO:  cache this
                         if(!intersection(queue, props)) continue;
-                        if(ce.pq(ce, typedAction, controller.proxy)){
+                        if(await ce.pq(ce, typedAction, controller.proxy)){
                             filteredActions[methodName] = action;
                         }
                     }
@@ -139,6 +139,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     target[key] = value;
                 }
                 if(key === 'self') return true;
+                
                 if(propChangeQueue !== undefined){
                     propChangeQueue.add(key);
                 }else{
@@ -158,6 +159,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         ce.doActions(ce, filteredActions, controllerInstance, controllerInstance.proxy); 
                     }
                 }
+                
                 if(emitEvents !== undefined){
                     let emitEvent = true;
                     if(Array.isArray(emitEvents)){
