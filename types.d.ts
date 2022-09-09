@@ -1,4 +1,4 @@
-import {XAction, PropInfoExt} from 'xtal-element/src/types';
+import {Action, PropInfo} from 'trans-render/lib/types';
 import {DefineArgs} from 'trans-render/lib/types';
 
 export interface BeDecoratedConfig<TControllerProps, TControllerActions = TControllerProps>{
@@ -48,7 +48,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     batonPass: keyof TControllerActions;
 
-    actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | XAction<TControllerProps>}>;
+    actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | Action<TControllerProps>}>;
 
     controller: {new(): TControllerProps & TControllerActions & MinimalController};
 
