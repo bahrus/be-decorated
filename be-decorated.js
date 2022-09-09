@@ -188,6 +188,11 @@ export class BeDecoratedCore extends HTMLElement {
         controllerInstance.proxy = revocable.proxy;
         if (newTarget.beDecorated === undefined)
             newTarget.beDecorated = {};
+        newTarget.dispatchEvent(new CustomEvent('be-decorated.resolved', {
+            detail: {
+                value: newTarget.beDecorated
+            }
+        }));
         const key = ce.toCamel(ifWantsToBe);
         const existingProp = newTarget.beDecorated[key];
         if (existingProp !== undefined) {

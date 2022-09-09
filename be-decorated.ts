@@ -193,6 +193,11 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         const {proxy} = revocable;
         controllerInstance.proxy = revocable.proxy;
         if((<any>newTarget).beDecorated === undefined) (<any>newTarget).beDecorated = {};
+        newTarget.dispatchEvent(new CustomEvent('be-decorated.resolved', {
+            detail:{
+                value: (<any>newTarget).beDecorated
+            }
+        }));
         const key = ce.toCamel(ifWantsToBe!);
         const existingProp = (<any>newTarget).beDecorated[key];
         if(existingProp !== undefined){

@@ -460,7 +460,6 @@ $ npm run serve
 Open http://localhost:3030/demo/ for a listing of examples.
 ```
 
-[TODO] emit event be-decorated.resolved when be-decorated prop is created.
 
 
 
