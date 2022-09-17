@@ -74,6 +74,8 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     primaryProp: string;
 
+    primaryPropReq: boolean;
+
     isC: boolean;
 
     virtualPropsMap: WeakMap<Element, any>;

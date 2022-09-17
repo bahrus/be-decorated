@@ -30,7 +30,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         }, callback);
     }
 
-    async #parseAttr({targetToController, noParse, ifWantsToBe, actions, proxyPropDefaults, primaryProp, batonPass}: this, newTarget: Element){
+    async #parseAttr(self: this, newTarget: Element){
         //I think this is residue from some old code
         // if(!this.#modifiedAttrs){
         //     //do we ever hit this code?
@@ -38,8 +38,10 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
         //     doReplace(newTarget!, ifWantsToBe);
         //     this.#modifiedAttrs = true;
         // }
+        const {targetToController} = self;
         const controller = targetToController.get(newTarget);
         if(controller){
+            const {noParse, ifWantsToBe, batonPass} = self;
             if(batonPass){
                 const {grabTheBaton} = await import('./relay.js');
                 const baton = grabTheBaton(ifWantsToBe, newTarget!);
@@ -48,7 +50,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                     return true;
                 }
             }
-            if(!noParse){
+            if(!noParse){ //Yes, parse!
+                const {actions, proxyPropDefaults, primaryProp} = self;
                 controller.propChangeQueue = new Set<string>();
                 if(proxyPropDefaults !== undefined){
                     Object.assign(controller.proxy, proxyPropDefaults);
@@ -60,31 +63,38 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                         Object.assign(controller.proxy, proxyPropDefaults);
                     }
                     let parsedObj: any;
+                    let err: any;
                     const json = attr[0]!.trim();
-                    const proxy = controller.proxy;
-                    if(primaryProp !== undefined && json[0] !== '{'){
-                        if(json[0] === '['){
-                            try{
-                                parsedObj = JSON.parse(json);
-                                proxy[primaryProp] = parsedObj;
-                            }catch(e){
-                                proxy[primaryProp] = json;
-                            }
-                        }else{
-                            proxy[primaryProp] = json;
-                        }
-                        
-                    }else{
+                    const firstChar = json[0];
+                    if(firstChar === '{' || firstChar === '['){
                         try{
                             parsedObj = JSON.parse(json);
-                            Object.assign(proxy, parsedObj)
                         }catch(e){
+                            err = e;
+                        }
+                    }
+                    const proxy = controller.proxy;
+                    if(primaryProp !== undefined){
+                        if(parsedObj === undefined){
+                            proxy[primaryProp] = json;
+                        }else{
+                            const {primaryPropReq} = self;
+                            if(Array.isArray(parsedObj) || (primaryPropReq && parsedObj[primaryProp] === undefined)){
+                                proxy[primaryProp] = parsedObj;
+                            }else{
+                                Object.assign(proxy, parsedObj);
+                            }
+                        }
+                    } else{
+                        if(parsedObj !== undefined){
+                            Object.assign(proxy, parsedObj);
+                        }else{
                             console.error({
                                 json,
-                                e,
+                                err,
                                 newTarget
                             })
-                        }
+                        };
                     }
                 }
                 const filteredActions: any = {};
