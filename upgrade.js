@@ -1,8 +1,7 @@
-import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
-export function upgrade(args, callback) {
+export async function upgrade(args, callback) {
     const beAttrib = `be-${args.ifWantsToBe}`;
     const id = 'a' + (new Date()).valueOf().toString();
-    monitor(id, beAttrib, args, callback);
+    await monitor(id, beAttrib, args, callback);
 }
 export function doReplace(target, ifWantsToBe) {
     const val = getAttrInfo(target, ifWantsToBe, false);
@@ -15,8 +14,16 @@ export function doReplace(target, ifWantsToBe) {
     target.removeAttribute(`${val[1]}be-${ifWantsToBe}`);
     return true;
 }
-function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
+async function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
+    const directSearch = shadowDomPeer.getRootNode().querySelectorAll(attribSelector);
+    directSearch.forEach(el => {
+        if (!doReplace(el, ifWantsToBe))
+            return;
+        if (callback !== undefined)
+            callback(el, true);
+    });
+    const { addCSSListener } = await import('xtal-element/lib/observeCssSelector.js');
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
         if (e.animationName !== id)
             return;

@@ -1,16 +1,16 @@
-import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { CE } from 'trans-render/lib/CE.js';
 export const ce = new CE();
 const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];
 export class BeDecoratedCore extends HTMLElement {
     targetToController = new WeakMap();
-    watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
+    async watchForElementsToUpgrade({ upgrade, ifWantsToBe, forceVisible }) {
         const self = this;
         const callback = (target) => {
             self.newTargets = [...self.newTargets, target];
             target = undefined;
         };
-        upgr({
+        const { upgrade: upgr } = await import('./upgrade.js');
+        await upgr({
             shadowDomPeer: this,
             upgrade: upgrade,
             ifWantsToBe: ifWantsToBe,
@@ -43,6 +43,7 @@ export class BeDecoratedCore extends HTMLElement {
                 if (proxyPropDefaults !== undefined) {
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
+                const { getAttrInfo } = await import('./upgrade.js');
                 const attr = getAttrInfo(newTarget, ifWantsToBe, true);
                 if (attr !== null && attr.length > 0 && attr[0].length > 0) {
                     if (proxyPropDefaults !== undefined) {

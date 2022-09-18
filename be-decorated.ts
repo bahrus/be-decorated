@@ -1,4 +1,4 @@
-import {upgrade as upgr, getAttrInfo} from './upgrade.js';
+//import {upgrade as upgr, getAttrInfo} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig, MinimalProxy} from './types';
 import {CE} from 'trans-render/lib/CE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
@@ -11,13 +11,14 @@ const reqVirtualProps : (keyof MinimalProxy)[] = ['self', 'emitEvents', 'control
 
 export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLElement implements BeDecoratedActions{
     targetToController: WeakMap<any, any> = new WeakMap();
-    watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
+    async watchForElementsToUpgrade({upgrade, ifWantsToBe, forceVisible}: this){
         const self = this;
         const callback = (target: Element) => {
             self.newTargets = [...(self as any).newTargets, target];
             target = undefined as any as Element;
         }
-        upgr({
+        const {upgrade: upgr} = await import('./upgrade.js');
+        await upgr({
             shadowDomPeer: this,
             upgrade: upgrade!,
             ifWantsToBe: ifWantsToBe!,
@@ -51,6 +52,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 if(proxyPropDefaults !== undefined){
                     Object.assign(controller.proxy, proxyPropDefaults);
                 }
+                const {getAttrInfo} = await import('./upgrade.js');
                 const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
                 if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
                     

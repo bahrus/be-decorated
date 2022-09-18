@@ -1,10 +1,10 @@
-import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
+
 import { UpgradeArg } from './types.d.js';
 
-export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
+export async function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
     const beAttrib = `be-${args.ifWantsToBe}`;
     const id = 'a' + (new Date()).valueOf().toString();
-    monitor(id, beAttrib, args, callback);
+    await monitor(id, beAttrib, args, callback);
 }
 
 export function doReplace(target: EventTarget, ifWantsToBe: string){
@@ -19,8 +19,14 @@ export function doReplace(target: EventTarget, ifWantsToBe: string){
     return true;
 }
 
-function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
+async function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
+    const directSearch = (shadowDomPeer.getRootNode() as DocumentFragment).querySelectorAll(attribSelector);
+    directSearch.forEach(el => {
+        if(!doReplace(el, ifWantsToBe)) return;
+        if(callback !== undefined) callback(el as any as T, true);
+    });
+    const { addCSSListener } = await  import('xtal-element/lib/observeCssSelector.js');
     addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         let target = e.target;
