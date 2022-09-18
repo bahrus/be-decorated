@@ -26,7 +26,7 @@
   "types": "types.d.ts",
   "dependencies": {
     "xtal-element": "0.0.524",
-    "trans-render": "0.0.605"
+    "trans-render": "0.0.606"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",

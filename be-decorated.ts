@@ -2,9 +2,8 @@ import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig, MinimalProxy} from './types';
 import {CE} from 'trans-render/lib/CE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
-import {onRemove} from 'trans-render/lib/onRemove.js';
-import {intersection} from 'xtal-element/lib/intersection.js';
-import { doActions } from 'trans-render/lib/doActions.js';
+import { doActions } from '../trans-render/lib/doActions.js';
+//import { doActions } from 'trans-render/lib/doActions.js';
 
 //be careful about adopting async with onRemove, intersection.  Test be-repeated, example IIb, make sure no repeated calls to renderlist.
 
@@ -101,6 +100,8 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
                 const queue = controller.propChangeQueue;
                 controller.propChangeQueue = undefined;
                 if(actions !== undefined){
+                    const {intersection} = await import('xtal-element/lib/intersection.js');
+                    const {doActions} = await import('trans-render/lib/doActions.js');
                     for(const methodName in actions){
                         const action = actions[methodName]!;
                         const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
@@ -225,6 +226,7 @@ export class BeDecoratedCore<TControllerProps, TControllerActions> extends HTMLE
             this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, {proxy, controllerInstance}, proxy, controllerInstance as any as EventTarget);
         }
         await this.#parseAttr(this, newTarget);
+        const {onRemove} = await import('trans-render/lib/onRemove.js')
         onRemove(newTarget!, async (removedEl: Element) => {
             if(controllerInstance !== undefined && finale !== undefined){
                 await (<any>controllerInstance)[finale](proxy, removedEl, this);

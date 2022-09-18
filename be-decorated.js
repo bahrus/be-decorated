@@ -1,8 +1,5 @@
 import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { CE } from 'trans-render/lib/CE.js';
-import { onRemove } from 'trans-render/lib/onRemove.js';
-import { intersection } from 'xtal-element/lib/intersection.js';
-import { doActions } from 'trans-render/lib/doActions.js';
 export const ce = new CE();
 const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];
 export class BeDecoratedCore extends HTMLElement {
@@ -96,6 +93,8 @@ export class BeDecoratedCore extends HTMLElement {
                 const queue = controller.propChangeQueue;
                 controller.propChangeQueue = undefined;
                 if (actions !== undefined) {
+                    const { intersection } = await import('xtal-element/lib/intersection.js');
+                    const { doActions } = await import('trans-render/lib/doActions.js');
                     for (const methodName in actions) {
                         const action = actions[methodName];
                         const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
@@ -222,6 +221,7 @@ export class BeDecoratedCore extends HTMLElement {
             this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, { proxy, controllerInstance }, proxy, controllerInstance);
         }
         await this.#parseAttr(this, newTarget);
+        const { onRemove } = await import('trans-render/lib/onRemove.js');
         onRemove(newTarget, async (removedEl) => {
             if (controllerInstance !== undefined && finale !== undefined) {
                 await controllerInstance[finale](proxy, removedEl, this);
