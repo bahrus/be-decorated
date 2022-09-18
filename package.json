@@ -33,7 +33,8 @@
     "@playwright/test": "1.25.2",
     "may-it-serve": "0.0.2",
     "xtal-editor": "0.0.196",
-    "xtal-shell": "0.0.27"
+    "xtal-shell": "0.0.27",
+    "xtal-side-nav": "0.0.95"
   },
   "scripts": {
     "serve": "node node_modules/may-it-serve",

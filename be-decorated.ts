@@ -1,11 +1,7 @@
-import {upgrade as upgr, getAttrInfo, doReplace} from './upgrade.js';
+import {upgrade as upgr, getAttrInfo} from './upgrade.js';
 import {BeDecoratedProps, BeDecoratedActions, BeDecoratedConfig, MinimalProxy} from './types';
 import {CE} from 'trans-render/lib/CE.js';
 import {DefineArgs, WCConfig, Action, PropInfo} from 'trans-render/lib/types';
-import { doActions } from '../trans-render/lib/doActions.js';
-//import { doActions } from 'trans-render/lib/doActions.js';
-
-//be careful about adopting async with onRemove, intersection.  Test be-repeated, example IIb, make sure no repeated calls to renderlist.
 
 export {BeDecoratedProps, MinimalController} from './types';
 
