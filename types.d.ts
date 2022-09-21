@@ -79,6 +79,16 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     isC: boolean;
 
     virtualPropsMap: WeakMap<Element, any>;
+
+    /**
+     * Do an aggressive querySelectorAll for the matching elements, prior to monitoring css animation
+     */
+    //doInitSearch: boolean;
+
+    /**
+     * Don't use css animation hack to monitor for matching elements appearing in Shadow DOM realm.
+     */
+    //searchOnce: boolean;
 }
 
 export interface BeDecoratedActions{

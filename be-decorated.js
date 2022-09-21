@@ -261,6 +261,8 @@ export function define(controllerConfig) {
                 actions: rC.actions,
                 ...rC.propDefaults,
                 isC: true,
+                //doInitSearch: false,
+                //searchOnce: false,
             },
             // propInfo:{
             //     newTargets:{

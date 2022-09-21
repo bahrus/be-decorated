@@ -16,13 +16,11 @@ export function doReplace(target, ifWantsToBe) {
 }
 async function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forceVisible }, callback) {
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
-    const directSearch = shadowDomPeer.getRootNode().querySelectorAll(attribSelector);
-    directSearch.forEach(el => {
-        if (!doReplace(el, ifWantsToBe))
-            return;
-        if (callback !== undefined)
-            callback(el, true);
-    });
+    // const directSearch = (shadowDomPeer.getRootNode() as DocumentFragment).querySelectorAll(attribSelector);
+    // directSearch.forEach(el => {
+    //     if(!doReplace(el, ifWantsToBe)) return;
+    //     if(callback !== undefined) callback(el as any as T, true);
+    // });
     const { addCSSListener } = await import('xtal-element/lib/observeCssSelector.js');
     addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
         if (e.animationName !== id)

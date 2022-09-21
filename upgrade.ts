@@ -21,11 +21,11 @@ export function doReplace(target: EventTarget, ifWantsToBe: string){
 
 async function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
-    const directSearch = (shadowDomPeer.getRootNode() as DocumentFragment).querySelectorAll(attribSelector);
-    directSearch.forEach(el => {
-        if(!doReplace(el, ifWantsToBe)) return;
-        if(callback !== undefined) callback(el as any as T, true);
-    });
+    // const directSearch = (shadowDomPeer.getRootNode() as DocumentFragment).querySelectorAll(attribSelector);
+    // directSearch.forEach(el => {
+    //     if(!doReplace(el, ifWantsToBe)) return;
+    //     if(callback !== undefined) callback(el as any as T, true);
+    // });
     const { addCSSListener } = await  import('xtal-element/lib/observeCssSelector.js');
     addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;

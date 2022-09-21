@@ -272,6 +272,8 @@ export function define<
                 actions: rC.actions,
                 ...rC.propDefaults,
                 isC: true,
+                //doInitSearch: false,
+                //searchOnce: false,
             },
             // propInfo:{
             //     newTargets:{
