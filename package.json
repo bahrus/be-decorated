@@ -11,14 +11,15 @@
     "directive"
   ],
   "description": "be-decorated provides a base class that enables attaching ES6 proxies onto other 'Shadow DOM peer citizens' -- native DOM or custom elements in the same Shadow DOM realm, based on cross-cutting custom attributes.",
-  "main": "be-decorated.js",
-  "module": "be-decorated.js",
+  "main": "DE.js",
+  "module": "DE.js",
   "exports": {
     ".": "./be-decorated.js",
     "./be-decorated.js": "./be-decorated.js",
     "./upgrade.js": "./upgrade.js",
     "./relay.js": "./relay.js",
-    "./findAdjacentElement.js": "./findAdjacentElement.js"
+    "./findAdjacentElement.js": "./findAdjacentElement.js",
+    "./DE.js": "./DE.js"
   },
   "files": [
     "*.*"
