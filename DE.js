@@ -25,10 +25,12 @@ export class DE extends HTMLElement {
                 }
             }
             const { nonDryProps, emitEvents } = propDefaults;
-            if (!noParse) { //yes, parse!
-                const { parse } = await import('./parse.js');
-                parse(this, propDefaults, target, controllerInstance);
-            }
+            if (target.beDecorated === undefined)
+                target.beDecorated = {};
+            const { lispToCamel } = await import('trans-render/lib/lispToCamel.js');
+            const key = lispToCamel(ifWantsToBe);
+            const existingProp = target.beDecorated[key];
+            console.log({ controllerInstance });
             const { propChangeQueue } = controllerInstance;
             const revocable = Proxy.revocable(target, {
                 set: (target, key, value) => {
@@ -107,12 +109,11 @@ export class DE extends HTMLElement {
                 }
             });
             const { proxy } = revocable;
-            controllerInstance.proxy = revocable.proxy;
-            if (target.beDecorated === undefined)
-                target.beDecorated = {};
-            const { lispToCamel } = await import('trans-render/lib/lispToCamel.js');
-            const key = lispToCamel(ifWantsToBe);
-            const existingProp = target.beDecorated[key];
+            controllerInstance.proxy = proxy;
+            if (!noParse) { //yes, parse!
+                const { parse } = await import('./parse.js');
+                await parse(this, propDefaults, target, controllerInstance);
+            }
             if (existingProp !== undefined) {
                 Object.assign(proxy, existingProp);
             }

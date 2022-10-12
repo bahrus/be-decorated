@@ -8,7 +8,6 @@ export class ButterbeerController{
     init(self: ButterbeerCounterProps, btn: HTMLButtonElement){
         this.#self = self;
         btn.addEventListener('click', this.handleClick)
-        self.count = 0;
         
     }
     onCountChange(){

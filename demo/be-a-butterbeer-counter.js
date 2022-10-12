@@ -5,7 +5,6 @@ export class ButterbeerController {
     init(self, btn) {
         this.#self = self;
         btn.addEventListener('click', this.handleClick);
-        self.count = 0;
     }
     onCountChange() {
         console.log(this.#self.count);
