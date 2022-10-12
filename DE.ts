@@ -1,5 +1,5 @@
 import {BeDecoratedProps, MinimalController, MinimalProxy} from './types';
-import {IActionProcessor, Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
+import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
 
 export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements IActionProcessor{
     static DA: DefineArgs;
@@ -10,7 +10,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         this.#upgrade = this.getAttribute('upgrade')!;
         this.#watchForElementsToUpgrade();
     }
-
+    #vals = new Map<string, any>();
     async #watchForElementsToUpgrade(){
         const da = (this.constructor as any).DA as DefineArgs;
         const controller = (da as any).complexPropDefaults.controller;
@@ -38,20 +38,20 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             const existingProp = (<any>target).beDecorated[key];
             const revocable = Proxy.revocable(target, {
                 set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
-                    const {virtualProps, actions} = propDefaults;
+                    const {virtualProps} = propDefaults;
+                    const {actions} = config as WCConfig;
+                    if(key === 'self') return true;
                     if(nonDryProps === undefined || !nonDryProps.includes(key)){
-                        if(controllerInstance[key] === value) {
+                        if(this.#vals.get(key) === value) {
                             return true;
                         }
-                        if(reqVirtualProps.includes(key as keyof MinimalProxy) || (virtualProps !== undefined && virtualProps.includes(key))){
-                            controllerInstance[key] = value;
-                        }else{
-                            target[key] = value;
-                        }
-                        if(key === 'self') return true;
+                    }
+                    if(reqVirtualProps.includes(key as keyof MinimalProxy) || (virtualProps !== undefined && virtualProps.includes(key))){
+                        this.#vals.set(key, value);
+                    }else{
+                        target[key] = value;
                     }
                     (async () => {
-
                         if(actions !== undefined){
                             const filteredActions: any = {};
                             const {getPropsFromActions} = await import('./parse.js');
@@ -61,13 +61,16 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                                 const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
                                 const props = getPropsFromActions(typedAction); //TODO:  cache this
                                 if(!props.has(key as string)) continue;
-                                if(await pq(typedAction, controllerInstance as any as BeDecoratedProps<any, any>)){
+                                if(await pq(typedAction, controllerInstance.proxy as any as BeDecoratedProps<any, any>)){
                                     filteredActions[methodName] = action;
                                 }
                             }
                             const nv = value;
                             const ov = controllerInstance[key];
-                            this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
+                            // const to = controllerInstance.proxy.to;
+                            // console.log({to});
+                            debugger;
+                            await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
                         }
                         
                         if(emitEvents !== undefined){
@@ -92,7 +95,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                     let value;// = Reflect.get(target, key);
                     const {virtualProps} = propDefaults;
                     if( (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key as keyof MinimalProxy)){
-                        value = controllerInstance[key];
+                        value = this.#vals.get(key);
                     }else{
                         value = target[key];// = value;
                     }
@@ -118,13 +121,16 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             (<any>target).beDecorated[key] = proxy;
             (proxy as any).self = target;
             (proxy as any).controller =  controllerInstance; 
+            (proxy as any).proxy = proxy;
             target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
                 detail:{
                     value: (<any>target).beDecorated
                 }
             }));
             const {intro, finale} = propDefaults;
+            console.log({intro, finale});
             if(intro !== undefined){
+                //TODO:  don't use await if not async
                 await (<any>controllerInstance)[intro](proxy, target, this);
             }
             
@@ -163,14 +169,27 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         } 
     }
 
-    async doActions(self: IActionProcessor, actions: {[methodName: string]: Action}, target: any, proxy?: any){
-        const {doActions} = await  import('trans-render/lib/doActions.js');
-        await doActions(self, actions, target, proxy);
+    async doActions(self: this, actions: {[methodName: string]: Action}, target: any, proxy?: any){
+        for(const methodName in actions){
+            const action = actions[methodName];
+            if(action.debug) debugger;
+            //https://lsm.ai/posts/7-ways-to-detect-javascript-async-function/#:~:text=There%205%20ways%20to%20detect%20an%20async%20function,name%20property%20of%20the%20AsyncFunction%20is%20%E2%80%9CAsyncFunction%E2%80%9D.%202.
+            const method = (<any>target)[methodName];
+            if(method === undefined){
+                throw {
+                    message: 404,
+                    methodName,
+                    target,
+                }
+            }
+            const isAsync = method.constructor.name === 'AsyncFunction';
+            const ret = isAsync ? await (<any>target)[methodName](proxy) : (<any>target)[methodName](proxy);
+            if(ret === undefined) continue;
+            
+        }
     }
 
-    postHoc(self: this, action: Action<any>, target: any, returnVal: any, proxy?: any): void {
-        
-    }
+
 }
 
 export function define<

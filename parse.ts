@@ -1,8 +1,9 @@
 import { BeDecoratedProps } from './types';
-import { Action, IActionProcessor } from 'trans-render/lib/types';
+import { Action} from 'trans-render/lib/types';
 
-export async function parse<TControllerProps = any>(self: IActionProcessor, props: BeDecoratedProps, newTarget: Element, controller: any) {
+export async function parse<TControllerProps = any>(self: any, props: BeDecoratedProps, newTarget: Element, controller: any) {
     const { actions, proxyPropDefaults, primaryProp, ifWantsToBe } = props;
+    console.log(props);
     controller.propChangeQueue = new Set<string>();
     if (proxyPropDefaults !== undefined) {
         Object.assign(controller.proxy, proxyPropDefaults);
@@ -10,7 +11,6 @@ export async function parse<TControllerProps = any>(self: IActionProcessor, prop
     const { getAttrInfo } = await import('./upgrade.js');
     const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
     if(attr === null || attr.length === 0 || attr[0]!.length === 0) return;
-
         if (proxyPropDefaults !== undefined) {
             Object.assign(controller.proxy, proxyPropDefaults);
         }

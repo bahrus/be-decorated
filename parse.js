@@ -1,5 +1,6 @@
 export async function parse(self, props, newTarget, controller) {
     const { actions, proxyPropDefaults, primaryProp, ifWantsToBe } = props;
+    console.log(props);
     controller.propChangeQueue = new Set();
     if (proxyPropDefaults !== undefined) {
         Object.assign(controller.proxy, proxyPropDefaults);

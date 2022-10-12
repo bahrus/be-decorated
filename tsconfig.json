@@ -12,6 +12,7 @@
 		"be-decorated.ts",
 		"upgrade.ts",
 		"demo/be-a-butterbeer-counter.ts",
+		"demo/be-committed.ts",
 		"findAdjacentElement.ts",
 		"relay.ts"
 		//"playwright.config.ts",

@@ -7,6 +7,7 @@ export class DE extends HTMLElement {
         this.#upgrade = this.getAttribute('upgrade');
         this.#watchForElementsToUpgrade();
     }
+    #vals = new Map();
     async #watchForElementsToUpgrade() {
         const da = this.constructor.DA;
         const controller = da.complexPropDefaults.controller;
@@ -32,19 +33,20 @@ export class DE extends HTMLElement {
             const existingProp = target.beDecorated[key];
             const revocable = Proxy.revocable(target, {
                 set: (target, key, value) => {
-                    const { virtualProps, actions } = propDefaults;
+                    const { virtualProps } = propDefaults;
+                    const { actions } = config;
+                    if (key === 'self')
+                        return true;
                     if (nonDryProps === undefined || !nonDryProps.includes(key)) {
-                        if (controllerInstance[key] === value) {
+                        if (this.#vals.get(key) === value) {
                             return true;
                         }
-                        if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
-                            controllerInstance[key] = value;
-                        }
-                        else {
-                            target[key] = value;
-                        }
-                        if (key === 'self')
-                            return true;
+                    }
+                    if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
+                        this.#vals.set(key, value);
+                    }
+                    else {
+                        target[key] = value;
                     }
                     (async () => {
                         if (actions !== undefined) {
@@ -57,13 +59,16 @@ export class DE extends HTMLElement {
                                 const props = getPropsFromActions(typedAction); //TODO:  cache this
                                 if (!props.has(key))
                                     continue;
-                                if (await pq(typedAction, controllerInstance)) {
+                                if (await pq(typedAction, controllerInstance.proxy)) {
                                     filteredActions[methodName] = action;
                                 }
                             }
                             const nv = value;
                             const ov = controllerInstance[key];
-                            this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
+                            // const to = controllerInstance.proxy.to;
+                            // console.log({to});
+                            debugger;
+                            await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
                         }
                         if (emitEvents !== undefined) {
                             let emitEvent = true;
@@ -86,7 +91,7 @@ export class DE extends HTMLElement {
                     let value; // = Reflect.get(target, key);
                     const { virtualProps } = propDefaults;
                     if ((virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key)) {
-                        value = controllerInstance[key];
+                        value = this.#vals.get(key);
                     }
                     else {
                         value = target[key]; // = value;
@@ -109,13 +114,16 @@ export class DE extends HTMLElement {
             target.beDecorated[key] = proxy;
             proxy.self = target;
             proxy.controller = controllerInstance;
+            proxy.proxy = proxy;
             target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
                 detail: {
                     value: target.beDecorated
                 }
             }));
             const { intro, finale } = propDefaults;
+            console.log({ intro, finale });
             if (intro !== undefined) {
+                //TODO:  don't use await if not async
                 await controllerInstance[intro](proxy, target, this);
             }
             if (emitEvents !== undefined) {
@@ -150,10 +158,24 @@ export class DE extends HTMLElement {
         }
     }
     async doActions(self, actions, target, proxy) {
-        const { doActions } = await import('trans-render/lib/doActions.js');
-        await doActions(self, actions, target, proxy);
-    }
-    postHoc(self, action, target, returnVal, proxy) {
+        for (const methodName in actions) {
+            const action = actions[methodName];
+            if (action.debug)
+                debugger;
+            //https://lsm.ai/posts/7-ways-to-detect-javascript-async-function/#:~:text=There%205%20ways%20to%20detect%20an%20async%20function,name%20property%20of%20the%20AsyncFunction%20is%20%E2%80%9CAsyncFunction%E2%80%9D.%202.
+            const method = target[methodName];
+            if (method === undefined) {
+                throw {
+                    message: 404,
+                    methodName,
+                    target,
+                };
+            }
+            const isAsync = method.constructor.name === 'AsyncFunction';
+            const ret = isAsync ? await target[methodName](proxy) : target[methodName](proxy);
+            if (ret === undefined)
+                continue;
+        }
     }
 }
 export function define(controllerConfig) {
