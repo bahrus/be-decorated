@@ -1,4 +1,5 @@
-import { define } from '../be-decorated.js';
+//import {define} from '../be-decorated.js';
+import { define } from '../DE.js';
 export class ButterbeerController {
     #self;
     init(self, btn) {

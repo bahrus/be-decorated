@@ -1,6 +1,7 @@
 import {ButterbeerCounterProps, ButterbeerCounterActions} from './types';
 import {BeDecoratedProps} from '../types';
-import {define} from '../be-decorated.js';
+//import {define} from '../be-decorated.js';
+import {define} from '../DE.js';
 
 export class ButterbeerController{
     #self: ButterbeerCounterProps | undefined;
