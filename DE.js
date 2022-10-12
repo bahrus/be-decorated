@@ -31,16 +31,11 @@ export class DE extends HTMLElement {
             const key = lispToCamel(ifWantsToBe);
             const existingProp = target.beDecorated[key];
             console.log({ controllerInstance });
-            const { propChangeQueue } = controllerInstance;
             const revocable = Proxy.revocable(target, {
                 set: (target, key, value) => {
-                    const { propChangeQueue } = controllerInstance;
                     const { virtualProps, actions } = propDefaults;
                     if (nonDryProps === undefined || !nonDryProps.includes(key)) {
                         if (controllerInstance[key] === value) {
-                            if (propChangeQueue !== undefined) {
-                                propChangeQueue.add(key);
-                            }
                             return true;
                         }
                         if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
@@ -53,28 +48,23 @@ export class DE extends HTMLElement {
                             return true;
                     }
                     (async () => {
-                        if (propChangeQueue !== undefined) {
-                            propChangeQueue.add(key);
-                        }
-                        else {
-                            if (actions !== undefined) {
-                                const filteredActions = {};
-                                const { getPropsFromActions } = await import('./parse.js');
-                                const { pq } = await import('trans-render/lib/pq.js');
-                                for (const methodName in actions) {
-                                    const action = actions[methodName];
-                                    const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
-                                    const props = getPropsFromActions(typedAction); //TODO:  cache this
-                                    if (!props.has(key))
-                                        continue;
-                                    if (await pq(typedAction, controllerInstance)) {
-                                        filteredActions[methodName] = action;
-                                    }
+                        if (actions !== undefined) {
+                            const filteredActions = {};
+                            const { getPropsFromActions } = await import('./parse.js');
+                            const { pq } = await import('trans-render/lib/pq.js');
+                            for (const methodName in actions) {
+                                const action = actions[methodName];
+                                const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
+                                const props = getPropsFromActions(typedAction); //TODO:  cache this
+                                if (!props.has(key))
+                                    continue;
+                                if (await pq(typedAction, controllerInstance)) {
+                                    filteredActions[methodName] = action;
                                 }
-                                const nv = value;
-                                const ov = controllerInstance[key];
-                                this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
                             }
+                            const nv = value;
+                            const ov = controllerInstance[key];
+                            this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
                         }
                         if (emitEvents !== undefined) {
                             let emitEvent = true;
