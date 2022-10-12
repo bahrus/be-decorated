@@ -24,7 +24,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 const baton = grabTheBaton(ifWantsToBe, target);
                 if(baton !== undefined){
                     throw 'NI'
-                    //controller[batonPass](controller.proxy, newTarget, this, baton);
                     return;
                 }
 
@@ -54,7 +53,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                     (async () => {
                         if(actions !== undefined){
                             const filteredActions: any = {};
-                            const {getPropsFromActions} = await import('./parse.js');
+                            const {getPropsFromActions} = await import('./init.js');
                             const {pq} = await import('trans-render/lib/pq.js');
                             for(const methodName in actions){
                                 const action = actions[methodName]!;
@@ -67,9 +66,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                             }
                             const nv = value;
                             const ov = controllerInstance[key];
-                            // const to = controllerInstance.proxy.to;
-                            // console.log({to});
-                            debugger;
                             await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
                         }
                         
@@ -111,13 +107,13 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             controllerInstance.proxy = proxy;
 
             if(!noParse){ //yes, parse!
-                const {parse} = await import('./parse.js');
-                await parse(this, propDefaults, target, controllerInstance); 
+                const {init} = await import('./init.js');
+                await init(this, propDefaults, target, controllerInstance, existingProp); 
             }
 
-            if(existingProp !== undefined){
-                Object.assign(proxy, existingProp);
-            }
+            // if(existingProp !== undefined){
+            //     Object.assign(proxy, existingProp);
+            // }
             (<any>target).beDecorated[key] = proxy;
             (proxy as any).self = target;
             (proxy as any).controller =  controllerInstance; 

@@ -1,19 +1,14 @@
 import { BeDecoratedProps } from './types';
 import { Action} from 'trans-render/lib/types';
 
-export async function parse<TControllerProps = any>(self: any, props: BeDecoratedProps, newTarget: Element, controller: any) {
+export async function init<TControllerProps = any>(self: any, props: BeDecoratedProps, newTarget: Element, controller: any, passedIn: any) {
     const { actions, proxyPropDefaults, primaryProp, ifWantsToBe } = props;
     console.log(props);
     controller.propChangeQueue = new Set<string>();
-    if (proxyPropDefaults !== undefined) {
-        Object.assign(controller.proxy, proxyPropDefaults);
-    }
+    const objToAssign = proxyPropDefaults !== undefined ? {...proxyPropDefaults} : {};
     const { getAttrInfo } = await import('./upgrade.js');
     const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
-    if(attr === null || attr.length === 0 || attr[0]!.length === 0) return;
-        if (proxyPropDefaults !== undefined) {
-            Object.assign(controller.proxy, proxyPropDefaults);
-        }
+    if(attr !== null && attr.length !== 0 && attr[0]!.length !== 0){
         let parsedObj: any;
         let err: any;
         const json = attr[0]!.trim();
@@ -32,14 +27,14 @@ export async function parse<TControllerProps = any>(self: any, props: BeDecorate
             } else {
                 const { primaryPropReq } = props;
                 if (Array.isArray(parsedObj) || (primaryPropReq && parsedObj[primaryProp] === undefined)) {
-                    proxy[primaryProp] = parsedObj;
+                    objToAssign[primaryProp] = parsedObj;
                 } else {
-                    Object.assign(proxy, parsedObj);
+                    Object.assign(objToAssign, parsedObj);
                 }
             }
         } else {
             if (parsedObj !== undefined) {
-                Object.assign(proxy, parsedObj);
+                Object.assign(objToAssign, parsedObj);
             } else {
                 console.error({
                     json,
@@ -48,24 +43,25 @@ export async function parse<TControllerProps = any>(self: any, props: BeDecorate
                 })
             };
         }
-    const filteredActions: any = {};
-    const queue = controller.propChangeQueue;
-    controller.propChangeQueue = undefined;
-    if (actions !== undefined) {
-        const { intersection } = await import('trans-render/lib/intersection.js');
-        const { doActions } = await import('trans-render/lib/doActions.js');
-        const { pq } = await import('trans-render/lib/pq.js');
-        for (const methodName in actions) {
-            const action = actions[methodName]!;
-            const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } as Action<TControllerProps> : action as Action<TControllerProps>;
-            const props = getPropsFromActions(typedAction); //TODO:  cache this
-            if (!intersection(queue, props)) continue;
-            if (await pq(typedAction, controller.proxy)) {
-                filteredActions[methodName] = action;
-            }
-        }
-        doActions(self, filteredActions, controller, controller.proxy);
+        Object.assign(controller.proxy, objToAssign);
     }
+
+    // const filteredActions: any = {};
+    // if (actions !== undefined) {
+    //     const { intersection } = await import('trans-render/lib/intersection.js');
+    //     const { doActions } = await import('trans-render/lib/doActions.js');
+    //     const { pq } = await import('trans-render/lib/pq.js');
+    //     for (const methodName in actions) {
+    //         const action = actions[methodName]!;
+    //         const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } as Action<TControllerProps> : action as Action<TControllerProps>;
+    //         const props = getPropsFromActions(typedAction); //TODO:  cache this
+    //         if (!intersection(queue, props)) continue;
+    //         if (await pq(typedAction, controller.proxy)) {
+    //             filteredActions[methodName] = action;
+    //         }
+    //     }
+    //     doActions(self, filteredActions, controller, controller.proxy);
+    // }
 }
 
     //better name:  getPropsFromActions
