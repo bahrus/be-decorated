@@ -36,7 +36,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             const {lispToCamel} = await import('trans-render/lib/lispToCamel.js');
             const key = lispToCamel(ifWantsToBe!);
             const existingProp = (<any>target).beDecorated[key];
-            console.log({controllerInstance});
             const revocable = Proxy.revocable(target, {
                 set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                     const {virtualProps, actions} = propDefaults;

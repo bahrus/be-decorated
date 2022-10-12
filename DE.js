@@ -30,7 +30,6 @@ export class DE extends HTMLElement {
             const { lispToCamel } = await import('trans-render/lib/lispToCamel.js');
             const key = lispToCamel(ifWantsToBe);
             const existingProp = target.beDecorated[key];
-            console.log({ controllerInstance });
             const revocable = Proxy.revocable(target, {
                 set: (target, key, value) => {
                     const { virtualProps, actions } = propDefaults;
