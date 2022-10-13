@@ -100,6 +100,10 @@ export class DE extends HTMLElement {
             });
             const { proxy } = revocable;
             controllerInstance.proxy = proxy;
+            target.beDecorated[key] = proxy;
+            proxy.self = target;
+            proxy.controller = controllerInstance;
+            proxy.proxy = proxy;
             if (!noParse) { //yes, parse!
                 const { init } = await import('./init.js');
                 await init(this, propDefaults, target, controllerInstance, existingProp);
@@ -107,10 +111,6 @@ export class DE extends HTMLElement {
             // if(existingProp !== undefined){
             //     Object.assign(proxy, existingProp);
             // }
-            target.beDecorated[key] = proxy;
-            proxy.self = target;
-            proxy.controller = controllerInstance;
-            proxy.proxy = proxy;
             target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
                 detail: {
                     value: target.beDecorated

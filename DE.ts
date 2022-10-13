@@ -1,7 +1,7 @@
 import {BeDecoratedProps, MinimalController, MinimalProxy} from './types';
 import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
-
-export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements IActionProcessor{
+export {BeDecoratedProps} from './types';
+export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement{
     static DA: DefineArgs;
     #ifWantsToBe!: string;
     #upgrade!: string;
@@ -105,7 +105,10 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
 
             const {proxy} = revocable;
             controllerInstance.proxy = proxy;
-
+            (<any>target).beDecorated[key] = proxy;
+            (proxy as any).self = target;
+            (proxy as any).controller =  controllerInstance; 
+            (proxy as any).proxy = proxy;
             if(!noParse){ //yes, parse!
                 const {init} = await import('./init.js');
                 await init(this, propDefaults, target, controllerInstance, existingProp); 
@@ -114,10 +117,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             // if(existingProp !== undefined){
             //     Object.assign(proxy, existingProp);
             // }
-            (<any>target).beDecorated[key] = proxy;
-            (proxy as any).self = target;
-            (proxy as any).controller =  controllerInstance; 
-            (proxy as any).proxy = proxy;
+            
             target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
                 detail:{
                     value: (<any>target).beDecorated
