@@ -41,23 +41,6 @@ export async function init(self, props, newTarget, controller, passedIn) {
     }
     Object.assign(controller.proxy, objToAssign);
 }
-// const filteredActions: any = {};
-// if (actions !== undefined) {
-//     const { intersection } = await import('trans-render/lib/intersection.js');
-//     const { doActions } = await import('trans-render/lib/doActions.js');
-//     const { pq } = await import('trans-render/lib/pq.js');
-//     for (const methodName in actions) {
-//         const action = actions[methodName]!;
-//         const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } as Action<TControllerProps> : action as Action<TControllerProps>;
-//         const props = getPropsFromActions(typedAction); //TODO:  cache this
-//         if (!intersection(queue, props)) continue;
-//         if (await pq(typedAction, controller.proxy)) {
-//             filteredActions[methodName] = action;
-//         }
-//     }
-//     doActions(self, filteredActions, controller, controller.proxy);
-// }
-//better name:  getPropsFromActions
 export function getPropsFromActions(action) {
     return typeof (action) === 'string' ? new Set([action]) : new Set([
         ...(action.ifAllOf || []),

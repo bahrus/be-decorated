@@ -42,25 +42,6 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
     Object.assign(controller.proxy, objToAssign);
 }
 
-    // const filteredActions: any = {};
-    // if (actions !== undefined) {
-    //     const { intersection } = await import('trans-render/lib/intersection.js');
-    //     const { doActions } = await import('trans-render/lib/doActions.js');
-    //     const { pq } = await import('trans-render/lib/pq.js');
-    //     for (const methodName in actions) {
-    //         const action = actions[methodName]!;
-    //         const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } as Action<TControllerProps> : action as Action<TControllerProps>;
-    //         const props = getPropsFromActions(typedAction); //TODO:  cache this
-    //         if (!intersection(queue, props)) continue;
-    //         if (await pq(typedAction, controller.proxy)) {
-    //             filteredActions[methodName] = action;
-    //         }
-    //     }
-    //     doActions(self, filteredActions, controller, controller.proxy);
-    // }
-
-
-    //better name:  getPropsFromActions
 export function getPropsFromActions(action: Action): Set<string>{
     return typeof(action) === 'string' ? new Set<string>([action]) : new Set<string>([
         ...(action.ifAllOf || []) as string[], 
