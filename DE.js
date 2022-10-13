@@ -20,7 +20,7 @@ export class DE extends HTMLElement {
                 const { grabTheBaton } = await import('./relay.js');
                 const baton = grabTheBaton(ifWantsToBe, target);
                 if (baton !== undefined) {
-                    throw 'NI';
+                    controllerInstance[batonPass](controller.proxy, target, this, baton);
                     return;
                 }
             }
