@@ -34,8 +34,6 @@ export class DE extends HTMLElement {
                 set: (target, key, value) => {
                     const { virtualProps } = propDefaults;
                     const { actions } = config;
-                    if (key === 'self')
-                        return true;
                     if (nonDryProps === undefined || !nonDryProps.includes(key)) {
                         if (this.#vals.get(key) === value) {
                             return true;
@@ -117,7 +115,6 @@ export class DE extends HTMLElement {
                 }
             }));
             const { intro, finale } = propDefaults;
-            console.log({ intro, finale });
             if (intro !== undefined) {
                 //TODO:  don't use await if not async
                 await controllerInstance[intro](proxy, target, this);

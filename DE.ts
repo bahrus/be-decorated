@@ -39,7 +39,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                     const {virtualProps} = propDefaults;
                     const {actions} = config as WCConfig;
-                    if(key === 'self') return true;
                     if(nonDryProps === undefined || !nonDryProps.includes(key)){
                         if(this.#vals.get(key) === value) {
                             return true;
@@ -124,7 +123,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 }
             }));
             const {intro, finale} = propDefaults;
-            console.log({intro, finale});
             if(intro !== undefined){
                 //TODO:  don't use await if not async
                 await (<any>controllerInstance)[intro](proxy, target, this);

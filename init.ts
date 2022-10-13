@@ -3,7 +3,6 @@ import { Action} from 'trans-render/lib/types';
 
 export async function init<TControllerProps = any>(self: any, props: BeDecoratedProps, newTarget: Element, controller: any, passedIn: any) {
     const { actions, proxyPropDefaults, primaryProp, ifWantsToBe } = props;
-    console.log(props);
     controller.propChangeQueue = new Set<string>();
     const objToAssign = proxyPropDefaults !== undefined ? {...proxyPropDefaults} : {};
     const { getAttrInfo } = await import('./upgrade.js');

@@ -1,6 +1,5 @@
 export async function init(self, props, newTarget, controller, passedIn) {
     const { actions, proxyPropDefaults, primaryProp, ifWantsToBe } = props;
-    console.log(props);
     controller.propChangeQueue = new Set();
     const objToAssign = proxyPropDefaults !== undefined ? { ...proxyPropDefaults } : {};
     const { getAttrInfo } = await import('./upgrade.js');
