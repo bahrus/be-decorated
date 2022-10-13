@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import "https://unpkg.com/open-props";
+        @import "https://unpkg.com/open-props/normalize.min.css";
+        @import "https://unpkg.com/open-props/buttons.min.css";
+        label{
+            display:block;
+            margin:10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>o2h service usage</h1>
+    <h2>Introduction</h2>
+    <div>The o2h service aims to provide a codeless way of integrating any third-party RESTful service that returns JSON, but providing it in a format most amenable to the browser -- the service provides a canonical HTML transformation,
+        based on a combination of reflection on the data, combined with a (customizable) configuration
+    </div>
+
+
+    <form
+        action="https://o2h-cw.bahrus.workers.dev/"
+        target="[-innerHTML]"
+        be-persistent='{
+            "where":{
+                "idb": true
+            },
+            "what":{
+                "innerHTML": {
+                    "beBeatified": true
+                }
+            },
+            "persistOnUnload": true
+        }' 
+        be-reformable='{
+            "autoSubmit": false,
+            "path": ["", "proxy-to"]
+        }'
+        be-valued
+    >
+        <label>
+            Proxy to: 
+            <input required name='proxy-to' type='url'>
+        </label>
+        <label be-typed be-clonable be-delible>[Click on gear/settings button to set name of first parameter]</label>
+        <button type='submit'>Submit</button>
+    </form> 
+    <div -innerHTML></div>
+    <script type=importmap>
+        {
+            "imports": {
+                "trans-render/": "../node_modules/trans-render/",
+                "xtal-element/": "../node_modules/xtal-element/",
+                "be-decorated/": "../node_modules/be-decorated/",
+                "be-hive/": "../node_modules/be-hive/"
+            }
+        }
+        </script>
+    <script type="module" crossorigin="anonymous" >
+        import "https://esm.run/be-persistent@0.0.21";
+        import "https://esm.run/be-typed@0.0.5";
+        import "../be-clonable.js";
+        //import "https://esm.run/be-clonable@0.0.5";
+        import "https://esm.run/be-delible@0.0.6";
+        import "https://esm.run/be-reformable@0.0.48";
+        import "https://esm.run/be-valued@0.0.1"
+    </script>
+</body>
+</html>
