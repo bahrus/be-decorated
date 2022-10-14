@@ -174,7 +174,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             const isAsync = method.constructor.name === 'AsyncFunction';
             const ret = isAsync ? await (<any>target)[methodName](proxy) : (<any>target)[methodName](proxy);
             if(ret === undefined) continue;
-            
+            Object.assign(proxy, ret);
         }
     }
 

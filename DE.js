@@ -164,6 +164,7 @@ export class DE extends HTMLElement {
             const ret = isAsync ? await target[methodName](proxy) : target[methodName](proxy);
             if (ret === undefined)
                 continue;
+            Object.assign(proxy, ret);
         }
     }
 }
