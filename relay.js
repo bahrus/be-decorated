@@ -6,8 +6,11 @@ export function passTheBaton(ifWantsToBe, element, isoHelper) {
     batonLookup.get(ifWantsToBe).set(element, isoHelper);
 }
 export function grabTheBaton(ifWantsToBe, element) {
-    if (batonLookup.has(ifWantsToBe)) {
-        return batonLookup.get(ifWantsToBe).get(element);
+    const lookup = batonLookup.get(ifWantsToBe);
+    if (lookup !== undefined) {
+        const result = lookup.get(element);
+        lookup.delete(element);
+        return result;
     }
     return undefined;
 }

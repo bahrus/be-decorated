@@ -7,7 +7,7 @@ export class DE extends HTMLElement {
         this.#upgrade = this.getAttribute('upgrade');
         this.#watchForElementsToUpgrade();
     }
-    #vals = new Map();
+    //#vals = new Map<string, any>();
     async #watchForElementsToUpgrade() {
         const da = this.constructor.DA;
         const controller = da.complexPropDefaults.controller;
@@ -15,15 +15,8 @@ export class DE extends HTMLElement {
         const propDefaults = config.propDefaults;
         const { upgrade, ifWantsToBe, forceVisible, batonPass, noParse } = propDefaults;
         const callback = async (target) => {
-            const controllerInstance = new controller();
-            if (batonPass) {
-                const { grabTheBaton } = await import('./relay.js');
-                const baton = grabTheBaton(ifWantsToBe, target);
-                if (baton !== undefined) {
-                    controllerInstance[batonPass](controller.proxy, target, this, baton);
-                    return;
-                }
-            }
+            let controllerInstance = new controller();
+            controllerInstance[sym] = new Map();
             const { nonDryProps, emitEvents } = propDefaults;
             if (target.beDecorated === undefined)
                 target.beDecorated = {};
@@ -35,12 +28,12 @@ export class DE extends HTMLElement {
                     const { virtualProps } = propDefaults;
                     const { actions } = config;
                     if (nonDryProps === undefined || !nonDryProps.includes(key)) {
-                        if (this.#vals.get(key) === value) {
+                        if (controllerInstance[sym].get(key) === value) {
                             return true;
                         }
                     }
                     if (reqVirtualProps.includes(key) || (virtualProps !== undefined && virtualProps.includes(key))) {
-                        this.#vals.set(key, value);
+                        controllerInstance[sym].set(key, value);
                     }
                     else {
                         target[key] = value;
@@ -85,7 +78,7 @@ export class DE extends HTMLElement {
                     let value; // = Reflect.get(target, key);
                     const { virtualProps } = propDefaults;
                     if ((virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key)) {
-                        value = this.#vals.get(key);
+                        value = controllerInstance[sym].get(key);
                     }
                     else {
                         value = target[key]; // = value;
@@ -102,6 +95,14 @@ export class DE extends HTMLElement {
             proxy.self = target;
             proxy.controller = controllerInstance;
             proxy.proxy = proxy;
+            if (batonPass) {
+                const { grabTheBaton } = await import('./relay.js');
+                const baton = grabTheBaton(ifWantsToBe, target);
+                if (baton !== undefined) {
+                    controllerInstance[batonPass](controller.proxy, target, this, baton);
+                    return;
+                }
+            }
             if (!noParse) { //yes, parse!
                 const { init } = await import('./init.js');
                 await init(this, propDefaults, target, controllerInstance, existingProp);
@@ -130,6 +131,7 @@ export class DE extends HTMLElement {
                 if (removedEl.beDecorated !== undefined)
                     delete removedEl.beDecorated[key];
                 proxy.self = undefined;
+                controllerInstance = undefined;
                 revocable.revoke();
             });
         };
@@ -181,4 +183,5 @@ export function define(controllerConfig) {
     DECO.DA = controllerConfig;
     customElements.define(tagName, DECO);
 }
+const sym = Symbol();
 const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];

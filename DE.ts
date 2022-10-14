@@ -10,7 +10,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         this.#upgrade = this.getAttribute('upgrade')!;
         this.#watchForElementsToUpgrade();
     }
-    #vals = new Map<string, any>();
+    //#vals = new Map<string, any>();
     async #watchForElementsToUpgrade(){
         const da = (this.constructor as any).DA as DefineArgs;
         const controller = (da as any).complexPropDefaults.controller;
@@ -18,16 +18,8 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const propDefaults = (<any>config).propDefaults as BeDecoratedProps;
         const {upgrade, ifWantsToBe, forceVisible, batonPass, noParse} = propDefaults;
         const callback = async (target: Element) => {
-            const controllerInstance = new controller();
-            if(batonPass){
-                const {grabTheBaton} = await import('./relay.js');
-                const baton = grabTheBaton(ifWantsToBe, target);
-                if(baton !== undefined){
-                    controllerInstance[batonPass](controller.proxy, target, this, baton);
-                    return;
-                }
-
-            }
+            let controllerInstance = new controller();
+            controllerInstance[sym] = new Map<string, any>();
             const {nonDryProps, emitEvents} = propDefaults;
 
 
@@ -40,12 +32,12 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                     const {virtualProps} = propDefaults;
                     const {actions} = config as WCConfig;
                     if(nonDryProps === undefined || !nonDryProps.includes(key)){
-                        if(this.#vals.get(key) === value) {
+                        if(controllerInstance[sym].get(key) === value) {
                             return true;
                         }
                     }
                     if(reqVirtualProps.includes(key as keyof MinimalProxy) || (virtualProps !== undefined && virtualProps.includes(key))){
-                        this.#vals.set(key, value);
+                        controllerInstance[sym].set(key, value);
                     }else{
                         target[key] = value;
                     }
@@ -90,7 +82,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                     let value;// = Reflect.get(target, key);
                     const {virtualProps} = propDefaults;
                     if( (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key as keyof MinimalProxy)){
-                        value = this.#vals.get(key);
+                        value = controllerInstance[sym].get(key);
                     }else{
                         value = target[key];// = value;
                     }
@@ -108,6 +100,15 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             (proxy as any).self = target;
             (proxy as any).controller =  controllerInstance; 
             (proxy as any).proxy = proxy;
+            if(batonPass){
+                const {grabTheBaton} = await import('./relay.js');
+                const baton = grabTheBaton(ifWantsToBe, target);
+                if(baton !== undefined){
+                    controllerInstance[batonPass](controller.proxy, target, this, baton);
+                    return;
+                }
+
+            }
             if(!noParse){ //yes, parse!
                 const {init} = await import('./init.js');
                 await init(this, propDefaults, target, controllerInstance, existingProp); 
@@ -138,6 +139,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 }
                 if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
                 (<any>proxy).self = undefined;
+                controllerInstance = undefined;
                 revocable.revoke();
             });
     
@@ -200,5 +202,5 @@ export function define<
     DECO.DA = controllerConfig;
     customElements.define(tagName!, DECO);
 }
-
+const sym = Symbol();
 const reqVirtualProps : (keyof MinimalProxy)[] = ['self', 'emitEvents', 'controller', 'resolved', 'rejected'];

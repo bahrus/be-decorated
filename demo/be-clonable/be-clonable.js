@@ -13,7 +13,6 @@ export class BeClonable extends EventTarget {
         this.#cloner = baton;
     }
     async onTriggerInsertPosition(pp) {
-        console.log('onTriggerInsertPosition');
         const { proxy } = pp;
         if (this.#cloner === undefined) {
             this.#cloner = new Cloner(proxy, pp);
