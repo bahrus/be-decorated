@@ -119,7 +119,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             const {intro, finale} = propDefaults;
             if(intro !== undefined){
                 //TODO:  don't use await if not async
-                await (<any>controllerInstance)[intro](proxy, target, this);
+                await (<any>controllerInstance)[intro](proxy, target, propDefaults);
             }
             
             if(emitEvents !== undefined){
@@ -128,7 +128,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             const {onRemove} = await import('trans-render/lib/onRemove.js')
             onRemove(target!, async (removedEl: Element) => {
                 if(controllerInstance !== undefined && finale !== undefined){
-                    await (<any>controllerInstance)[finale](proxy, removedEl, this);
+                    await (<any>controllerInstance)[finale](proxy, removedEl, propDefaults);
                 }
                 if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
                 (<any>proxy).self = undefined;

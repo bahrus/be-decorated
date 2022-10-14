@@ -7,7 +7,6 @@ export class DE extends HTMLElement {
         this.#upgrade = this.getAttribute('upgrade');
         this.#watchForElementsToUpgrade();
     }
-    //#vals = new Map<string, any>();
     async #watchForElementsToUpgrade() {
         const da = this.constructor.DA;
         const controller = da.complexPropDefaults.controller;
@@ -53,8 +52,6 @@ export class DE extends HTMLElement {
                                     filteredActions[methodName] = action;
                                 }
                             }
-                            const nv = value;
-                            const ov = controllerInstance[key];
                             await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
                         }
                         if (emitEvents !== undefined) {
@@ -99,7 +96,7 @@ export class DE extends HTMLElement {
                 const { grabTheBaton } = await import('./relay.js');
                 const baton = grabTheBaton(ifWantsToBe, target);
                 if (baton !== undefined) {
-                    controllerInstance[batonPass](controller.proxy, target, this, baton);
+                    controllerInstance[batonPass](controllerInstance.proxy, target, this, baton);
                     return;
                 }
             }
@@ -107,9 +104,6 @@ export class DE extends HTMLElement {
                 const { init } = await import('./init.js');
                 await init(this, propDefaults, target, controllerInstance, existingProp);
             }
-            // if(existingProp !== undefined){
-            //     Object.assign(proxy, existingProp);
-            // }
             target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
                 detail: {
                     value: target.beDecorated
@@ -118,7 +112,7 @@ export class DE extends HTMLElement {
             const { intro, finale } = propDefaults;
             if (intro !== undefined) {
                 //TODO:  don't use await if not async
-                await controllerInstance[intro](proxy, target, this);
+                await controllerInstance[intro](proxy, target, propDefaults);
             }
             if (emitEvents !== undefined) {
                 this.#emitEvent(ifWantsToBe, `is-${ifWantsToBe}`, { proxy, controllerInstance }, proxy, controllerInstance);
@@ -126,7 +120,7 @@ export class DE extends HTMLElement {
             const { onRemove } = await import('trans-render/lib/onRemove.js');
             onRemove(target, async (removedEl) => {
                 if (controllerInstance !== undefined && finale !== undefined) {
-                    await controllerInstance[finale](proxy, removedEl, this);
+                    await controllerInstance[finale](proxy, removedEl, propDefaults);
                 }
                 if (removedEl.beDecorated !== undefined)
                     delete removedEl.beDecorated[key];
