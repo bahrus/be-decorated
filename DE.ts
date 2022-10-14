@@ -1,8 +1,8 @@
-import {BeDecoratedProps, MinimalController, MinimalProxy} from './types';
+import {BeDecoratedProps, MinimalController, MinimalProxy, DA} from './types';
 import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
 export {BeDecoratedProps} from './types';
 export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement{
-    static DA: DefineArgs;
+    static DA: DA;
     #ifWantsToBe!: string;
     #upgrade!: string;
     connectedCallback(){
@@ -10,16 +10,15 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         this.#upgrade = this.getAttribute('upgrade')!;
         this.#watchForElementsToUpgrade();
     }
-    //#vals = new Map<string, any>();
     async #watchForElementsToUpgrade(){
-        const da = (this.constructor as any).DA as DefineArgs;
-        const controller = (da as any).complexPropDefaults.controller;
+        const da = (this.constructor as any).DA as DA;
+        const controller = da.complexPropDefaults.controller;
         const {config} = da;
-        const propDefaults = (<any>config).propDefaults as BeDecoratedProps;
+        const propDefaults = config.propDefaults;
         const {upgrade, ifWantsToBe, forceVisible, batonPass, noParse} = propDefaults;
         const callback = async (target: Element) => {
             let controllerInstance = new controller();
-            controllerInstance[sym] = new Map<string, any>();
+            (controllerInstance as any)[sym] = new Map<string, any>();
             const {nonDryProps, emitEvents} = propDefaults;
 
 
@@ -32,12 +31,12 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                     const {virtualProps} = propDefaults;
                     const {actions} = config as WCConfig;
                     if(nonDryProps === undefined || !nonDryProps.includes(key)){
-                        if(controllerInstance[sym].get(key) === value) {
+                        if((controllerInstance as any)[sym].get(key) === value) {
                             return true;
                         }
                     }
                     if(reqVirtualProps.includes(key as keyof MinimalProxy) || (virtualProps !== undefined && virtualProps.includes(key))){
-                        controllerInstance[sym].set(key, value);
+                        (controllerInstance as any)[sym].set(key, value);
                     }else{
                         target[key] = value;
                     }
@@ -55,8 +54,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                                     filteredActions[methodName] = action;
                                 }
                             }
-                            const nv = value;
-                            const ov = controllerInstance[key];
                             await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
                         }
                         
@@ -82,7 +79,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                     let value;// = Reflect.get(target, key);
                     const {virtualProps} = propDefaults;
                     if( (virtualProps !== undefined && virtualProps.includes(key)) || reqVirtualProps.includes(key as keyof MinimalProxy)){
-                        value = controllerInstance[sym].get(key);
+                        value = (controllerInstance as any)[sym].get(key);
                     }else{
                         value = target[key];// = value;
                     }
@@ -104,7 +101,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 const {grabTheBaton} = await import('./relay.js');
                 const baton = grabTheBaton(ifWantsToBe, target);
                 if(baton !== undefined){
-                    controllerInstance[batonPass](controller.proxy, target, this, baton);
+                    (controllerInstance as any)[batonPass](controllerInstance.proxy, target, this, baton);
                     return;
                 }
 
@@ -113,10 +110,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 const {init} = await import('./init.js');
                 await init(this, propDefaults, target, controllerInstance, existingProp); 
             }
-
-            // if(existingProp !== undefined){
-            //     Object.assign(proxy, existingProp);
-            // }
             
             target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
                 detail:{
@@ -139,7 +132,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 }
                 if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
                 (<any>proxy).self = undefined;
-                controllerInstance = undefined;
+                (controllerInstance as any) = undefined;
                 revocable.revoke();
             });
     
@@ -199,7 +192,7 @@ export function define<
     class DECO extends DE{
 
     }
-    DECO.DA = controllerConfig;
+    (DECO as any).DA = controllerConfig;
     customElements.define(tagName!, DECO);
 }
 const sym = Symbol();

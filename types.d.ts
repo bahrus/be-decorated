@@ -123,3 +123,14 @@ export interface EventHandler{
     elementToObserve: Element;
     fn: (e: Event) => void;
 }
+
+export interface DA<TControllerProps = any, TControllerActions=TControllerProps> {
+    
+    config:{
+        propDefaults: BeDecoratedProps<TControllerProps, TControllerActions>
+    },
+    complexPropDefaults: {
+        controller: {new(): MinimalController}
+    }
+    
+}
