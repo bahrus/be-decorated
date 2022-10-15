@@ -36,6 +36,7 @@ export interface MinimalProxy<TTargetElement = Element>{
     rejected?: boolean | string | undefined;
     emitEvents?: boolean | string[];
     controller: any;
+    proxy: TTargetElement;
 }
 
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{

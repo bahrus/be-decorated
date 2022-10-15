@@ -27,11 +27,11 @@ async function monitor<T extends EventTarget>(id: string, beAttrib: string, {upg
     //     if(callback !== undefined) callback(el as any as T, true);
     // });
     const { addCSSListener } = await  import('xtal-element/lib/observeCssSelector.js');
-    addCSSListener(id, shadowDomPeer, attribSelector, (e: AnimationEvent) => {
+    addCSSListener(id, shadowDomPeer, attribSelector, async (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         let target = e.target;
         if(!doReplace(target!, ifWantsToBe)) return;
-        if(callback !== undefined) callback(target as T, true);
+        if(callback !== undefined) await callback(target as T, true);
         target = null;
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{

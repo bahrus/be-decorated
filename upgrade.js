@@ -22,14 +22,14 @@ async function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forc
     //     if(callback !== undefined) callback(el as any as T, true);
     // });
     const { addCSSListener } = await import('xtal-element/lib/observeCssSelector.js');
-    addCSSListener(id, shadowDomPeer, attribSelector, (e) => {
+    addCSSListener(id, shadowDomPeer, attribSelector, async (e) => {
         if (e.animationName !== id)
             return;
         let target = e.target;
         if (!doReplace(target, ifWantsToBe))
             return;
         if (callback !== undefined)
-            callback(target, true);
+            await callback(target, true);
         target = null;
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
