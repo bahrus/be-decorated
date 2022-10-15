@@ -9,7 +9,8 @@
 		"strict": true,
 	},
 	"files":[
-		"be-decorated.ts",
+		"DE.ts",
+		"DEbug.ts",
 		"upgrade.ts",
 		"demo/be-a-butterbeer-counter.ts",
 		"demo/be-committed.ts",

@@ -14,7 +14,7 @@
   "main": "DE.js",
   "module": "DE.js",
   "exports": {
-    ".": "./be-decorated.js",
+    ".": "./DE.js",
     "./be-decorated.js": "./be-decorated.js",
     "./upgrade.js": "./upgrade.js",
     "./relay.js": "./relay.js",
