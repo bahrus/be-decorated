@@ -22,7 +22,8 @@ export async function init(self, props, newTarget, controller, passedIn) {
     const proxy = controller.proxy;
     if (primaryProp !== undefined) {
         if (parsedObj === undefined) {
-            objToAssign[primaryProp] = json;
+            if (json)
+                objToAssign[primaryProp] = json;
         }
         else {
             const { primaryPropReq } = props;
