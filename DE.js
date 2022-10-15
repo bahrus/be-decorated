@@ -20,8 +20,6 @@ export class DE extends HTMLElement {
             target.beDecorated = {};
         const { lispToCamel } = await import('trans-render/lib/lispToCamel.js');
         const key = lispToCamel(ifWantsToBe);
-        if (ifWantsToBe === 'exportable')
-            debugger;
         const existingProp = target.beDecorated[key];
         const revocable = Proxy.revocable(target, {
             set: (target, key, value) => {
@@ -43,6 +41,7 @@ export class DE extends HTMLElement {
                         const filteredActions = {};
                         const { getPropsFromActions } = await import('./init.js');
                         const { pq } = await import('trans-render/lib/pq.js');
+                        let foundAction = false;
                         for (const methodName in actions) {
                             const action = actions[methodName];
                             const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
@@ -51,9 +50,12 @@ export class DE extends HTMLElement {
                                 continue;
                             if (await pq(typedAction, controllerInstance.proxy)) {
                                 filteredActions[methodName] = action;
+                                foundAction = true;
                             }
                         }
-                        await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
+                        if (foundAction) {
+                            await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
+                        }
                     }
                     if (emitEvents !== undefined) {
                         let emitEvent = true;

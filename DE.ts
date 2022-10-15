@@ -24,7 +24,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         if((<any>target).beDecorated === undefined) (<any>target).beDecorated = {};
         const {lispToCamel} = await import('trans-render/lib/lispToCamel.js');
         const key = lispToCamel(ifWantsToBe!);
-        if(ifWantsToBe === 'exportable') debugger;
         const existingProp = (<any>target).beDecorated[key];
         const revocable = Proxy.revocable(target, {
             set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
@@ -45,6 +44,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                         const filteredActions: any = {};
                         const {getPropsFromActions} = await import('./init.js');
                         const {pq} = await import('trans-render/lib/pq.js');
+                        let foundAction = false;
                         for(const methodName in actions){
                             const action = actions[methodName]!;
                             const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
@@ -52,9 +52,13 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                             if(!props.has(key as string)) continue;
                             if(await pq(typedAction, controllerInstance.proxy as any as BeDecoratedProps<any, any>)){
                                 filteredActions[methodName] = action;
+                                foundAction = true;
                             }
                         }
-                        await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
+                        if(foundAction){
+                            await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
+                        }
+                        
                     }
                     
                     if(emitEvents !== undefined){
