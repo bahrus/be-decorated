@@ -21,7 +21,7 @@ async function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forc
     //     if(!doReplace(el, ifWantsToBe)) return;
     //     if(callback !== undefined) callback(el as any as T, true);
     // });
-    const { addCSSListener } = await import('xtal-element/lib/observeCssSelector.js');
+    const { addCSSListener } = await import('trans-render/lib/observeCssSelector.js');
     addCSSListener(id, shadowDomPeer, attribSelector, async (e) => {
         if (e.animationName !== id)
             return;
