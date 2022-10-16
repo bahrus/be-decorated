@@ -7,7 +7,7 @@ export class DE extends HTMLElement {
         this.#upgrade = this.getAttribute('upgrade');
         this.#watchForElementsToUpgrade();
     }
-    async #attachBehavior(target) {
+    async attach(target) {
         const da = this.constructor.DA;
         const controller = da.complexPropDefaults.controller;
         const { config } = da;
@@ -143,7 +143,7 @@ export class DE extends HTMLElement {
             upgrade,
             ifWantsToBe: ifWantsToBe,
             forceVisible,
-        }, this.#attachBehavior.bind(this));
+        }, this.attach.bind(this));
     }
     #emitEvent(ifWantsToBe, name, detail, proxy, controller) {
         const namespacedEventName = `be-decorated.${ifWantsToBe}.${name}`;

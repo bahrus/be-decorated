@@ -1,7 +1,7 @@
-import {BeDecoratedProps, MinimalController, MinimalProxy, DA} from './types';
+import {BeDecoratedProps, MinimalController, MinimalProxy, DA, DEMethods} from './types';
 import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
-export {BeDecoratedProps} from './types';
-export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement{
+export {BeDecoratedProps, DEMethods} from './types';
+export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
     static DA: DA;
     #ifWantsToBe!: string;
     #upgrade!: string;
@@ -10,7 +10,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         this.#upgrade = this.getAttribute('upgrade')!;
         this.#watchForElementsToUpgrade();
     }
-    async #attachBehavior(target: Element){
+    async attach(target: Element){
         const da = (this.constructor as any).DA as DA;
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
@@ -151,7 +151,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             upgrade,
             ifWantsToBe: ifWantsToBe!,
             forceVisible,
-        }, this.#attachBehavior.bind(this));
+        }, this.attach.bind(this));
     }
 
     #emitEvent(ifWantsToBe: string, name: string, detail: any, proxy: Element, controller: EventTarget){

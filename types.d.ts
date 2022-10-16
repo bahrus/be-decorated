@@ -97,6 +97,10 @@ export interface BeDecoratedActions{
     pairTargetsWithController(self: this): void;
 }
 
+export interface DEMethods{
+    attach(target: Element): Promise<void>;
+}
+
 
 export interface UpgradeArg<T extends Object>{
     /**
