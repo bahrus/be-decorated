@@ -455,9 +455,9 @@ Element decorators / behaviors built with be-decorated can consist of "action me
 
 These proxies can avoid taking any responsibility for causing side effects -- these action methods can pass back an object that should be shallow merged ("object.assigned") into the proxy.
 
-Or it can pass back a two-element tuple (for now),  [Props, Events], where the first element is just as before -- an object that should be shallow merged into the proxy, and the second element is an "event configuration" object, that the Froop orchestrator can use to wire events to other action methods, which recursively also have no side effects, because the FROOP orchestrator will merge whatever it returns as well. [TODO]
+Or it can pass back a two-element tuple (for now),  [Props, Events], where the first element is just as before -- an object that should be shallow merged into the proxy, and the second element is an "event configuration" object, that the FROOP orchestrator can use to wire events to other action methods, which recursively also have no side effects, because the FROOP orchestrator will merge whatever it returns as well. [TODO]
 
-This makes the code trivial to test, and each method can be quite loosely coupled with the other methods, as it will be rare that one action method needs to directly call another action method.
+This makes the code trivial to test, and each method can be quite loosely coupled with the other methods, as it will be rare that one action method needs to directly call another action method.  In addition, the code can become quite library neutral, as each action method  can only contain the base essentials of what needs to happen.  
 
 ## Viewing example from git clone or git fork:
 
