@@ -132,7 +132,7 @@ export class DE extends HTMLElement {
             if (controllerInstance !== undefined && finale !== undefined) {
                 await controllerInstance[finale](proxy, removedEl, propDefaults);
             }
-            this.#emitEvent(ifWantsToBe, `remove`, { proxy, controllerInstance }, proxy, controllerInstance);
+            this.#emitEvent(ifWantsToBe, `was-decorated`, { proxy, controllerInstance }, proxy, controllerInstance);
             if (removedEl.beDecorated !== undefined)
                 delete removedEl.beDecorated[key];
             proxy.self = undefined;
