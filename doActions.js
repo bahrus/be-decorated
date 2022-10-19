@@ -16,6 +16,12 @@ export async function doActions(actions, target, proxy) {
         const ret = isAsync ? await target[methodName](proxy) : target[methodName](proxy);
         if (ret === undefined)
             continue;
-        Object.assign(proxy, ret);
+        if (Array.isArray(ret)) {
+            const { PE } = await import('./PE.js');
+            const pe = new PE(proxy, ret);
+        }
+        else {
+            Object.assign(proxy, ret);
+        }
     }
 }

@@ -1,4 +1,5 @@
 import {Action} from 'trans-render/lib/types';
+import {EventConfigs} from './types';
 
 export async function  doActions(actions: {[methodName: string]: Action}, target: any, proxy?: any){
     for(const methodName in actions){
@@ -16,6 +17,12 @@ export async function  doActions(actions: {[methodName: string]: Action}, target
         const isAsync = method.constructor.name === 'AsyncFunction';
         const ret = isAsync ? await (<any>target)[methodName](proxy) : (<any>target)[methodName](proxy);
         if(ret === undefined) continue;
-        Object.assign(proxy, ret);
+        if(Array.isArray(ret)){
+            const {PE} = await import('./PE.js');
+            const pe = new PE(proxy, ret as [any, EventConfigs])
+        }else{
+            Object.assign(proxy, ret);
+        }
+        
     }
 }
