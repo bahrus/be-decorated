@@ -143,6 +143,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             if(controllerInstance !== undefined && finale !== undefined){
                 await (<any>controllerInstance)[finale](proxy, removedEl, propDefaults);
             }
+            controllerInstance.dispatchEvent('be-decorated.remove');
             if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
             (<any>proxy).self = undefined;
             (controllerInstance as any) = undefined;
