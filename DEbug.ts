@@ -27,9 +27,9 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const existingProp = (<any>target).beDecorated[key];
         const revocable = Proxy.revocable(target, {
             set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
-                console.log({key, value});
                 const {virtualProps} = propDefaults;
                 const {actions} = config as WCConfig;
+                console.log({key, value, nonDryProps, virtualProps, ci:(controllerInstance as any)[sym].get(key) });
                 if(nonDryProps === undefined || !nonDryProps.includes(key)){
                     if((controllerInstance as any)[sym].get(key) === value) {
                         return true;

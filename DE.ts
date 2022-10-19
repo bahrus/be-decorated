@@ -16,8 +16,9 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const {config} = da;
         const propDefaults = config.propDefaults;
         const {ifWantsToBe, batonPass, noParse} = propDefaults;
-        let controllerInstance = new controller();
-        (controllerInstance as any)[sym] = new Map<string, any>();
+        let controllerInstance = new controller() as any;
+        controllerInstance[sym] = new Map<string, any>();
+        controllerInstance[changedKeySym] = new Set<string>();
         const {nonDryProps, emitEvents} = propDefaults;
 
 
@@ -29,6 +30,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                 const {virtualProps} = propDefaults;
                 const {actions} = config as WCConfig;
+                
                 if(nonDryProps === undefined || !nonDryProps.includes(key)){
                     if((controllerInstance as any)[sym].get(key) === value) {
                         return true;
@@ -39,22 +41,28 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 }else{
                     target[key] = value;
                 }
+                controllerInstance[changedKeySym].add(key);
                 (async () => {
                     if(actions !== undefined){
                         const filteredActions: any = {};
                         const {getPropsFromActions} = await import('./init.js');
                         const {pq} = await import('trans-render/lib/pq.js');
+                        const {intersection} = await import('trans-render/lib/intersection.js');
+                        const changedKeys = controllerInstance[changedKeySym] as Set<string>;
+                        controllerInstance[changedKeySym] = new Set<string>();
                         let foundAction = false;
                         for(const methodName in actions){
                             const action = actions[methodName]!;
                             const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
                             const props = getPropsFromActions(typedAction); //TODO:  cache this
-                            if(!props.has(key as string)) continue;
+                            const int = intersection(props, changedKeys);
+                            if(int.size === 0) continue;
                             if(await pq(typedAction, controllerInstance.proxy as any as BeDecoratedProps<any, any>)){
                                 filteredActions[methodName] = action;
                                 foundAction = true;
                             }
                         }
+                        
                         if(foundAction){
                             await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
                         }
@@ -203,3 +211,5 @@ export function define<
 }
 const sym = Symbol();
 const reqVirtualProps : (keyof MinimalProxy)[] = ['self', 'emitEvents', 'controller', 'resolved', 'rejected', 'proxy'];
+
+const changedKeySym = Symbol();

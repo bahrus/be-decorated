@@ -15,6 +15,7 @@ export class DE extends HTMLElement {
         const { ifWantsToBe, batonPass, noParse } = propDefaults;
         let controllerInstance = new controller();
         controllerInstance[sym] = new Map();
+        controllerInstance[changedKeySym] = new Set();
         const { nonDryProps, emitEvents } = propDefaults;
         if (target.beDecorated === undefined)
             target.beDecorated = {};
@@ -36,17 +37,22 @@ export class DE extends HTMLElement {
                 else {
                     target[key] = value;
                 }
+                controllerInstance[changedKeySym].add(key);
                 (async () => {
                     if (actions !== undefined) {
                         const filteredActions = {};
                         const { getPropsFromActions } = await import('./init.js');
                         const { pq } = await import('trans-render/lib/pq.js');
+                        const { intersection } = await import('trans-render/lib/intersection.js');
+                        const changedKeys = controllerInstance[changedKeySym];
+                        controllerInstance[changedKeySym] = new Set();
                         let foundAction = false;
                         for (const methodName in actions) {
                             const action = actions[methodName];
                             const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
                             const props = getPropsFromActions(typedAction); //TODO:  cache this
-                            if (!props.has(key))
+                            const int = intersection(props, changedKeys);
+                            if (int.size === 0)
                                 continue;
                             if (await pq(typedAction, controllerInstance.proxy)) {
                                 filteredActions[methodName] = action;
@@ -188,3 +194,4 @@ export function define(controllerConfig) {
 }
 const sym = Symbol();
 const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected', 'proxy'];
+const changedKeySym = Symbol();

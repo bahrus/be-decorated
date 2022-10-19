@@ -23,9 +23,9 @@ export class DE extends HTMLElement {
         const existingProp = target.beDecorated[key];
         const revocable = Proxy.revocable(target, {
             set: (target, key, value) => {
-                console.log({ key, value });
                 const { virtualProps } = propDefaults;
                 const { actions } = config;
+                console.log({ key, value, nonDryProps, virtualProps, ci: controllerInstance[sym].get(key) });
                 if (nonDryProps === undefined || !nonDryProps.includes(key)) {
                     if (controllerInstance[sym].get(key) === value) {
                         return true;
