@@ -61,7 +61,7 @@ Differences to these solutions (perhaps):
 
 1. This can be used independently of any framework (web component based).
 2. Each decorator can be imported independently of others via an ES6 module.
-3. Definition is class-based.
+3. Definition is class-based, but with functional reactive ways of organizing the code ("FROOP")
 4. Applies exclusively within Shadow DOM realms.
 5. Reactive properties are managed declaratively via JSON syntax.
 6. Namespace collisions easily avoidable within each shadow DOM realm.
@@ -448,6 +448,16 @@ The first thing we observe is that we end up wanting a "diamond-shaped" dependen
 File index.js has two references that can load in parallel -- 1.  trPlugin.js that is used for template instantiation, and 2. be-*.js, used within the DOM tree.  But those two files have fairly minimal, mostly boilerplate code.  Most of the interesting logic, instead, is contained in a shared ("isomorphic") class -- Deleter.js, Typer.js Cloner.js, in these examples.
 
 It is a good practice to then have three test files -- one that only does template instantiation, one that does only live DOM tree manipulation, and one that does both.  The one that does both should be checked that the code doesn't unnecessarily get invoked twice, in both layers -- only once during template instantiation.  Only prop changes after the initial rendering should result in any code getting executed in the DOM live tree.
+
+## All about the FROOP orchestrator
+
+Element decorators / behaviors built with be-decorated can consist of "action methods" that react to state changes made to the proxy.
+
+These proxies can avoid taking any responsibility for causing side effects -- these action methods can pass back an object that should be shallow merged ("object.assigned") into the proxy.
+
+Or it can pass back a two-element tuple (for now),  [Props, Events], where the first element is just as before -- an object that should be shallow merged into the proxy, and the second element is an "event configuration" object, that the Froop orchestrator can use to wire events to other action methods, which recursively also have no side effects, because the FROOP orchestrator will merge whatever it returns as well. [TODO]
+
+This makes the code trivial to test, and each method can be quite loosely coupled with the other methods, as it will be rare that one action method needs to directly call another action method.
 
 ## Viewing example from git clone or git fork:
 
