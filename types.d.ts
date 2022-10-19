@@ -139,3 +139,9 @@ export interface DA<TControllerProps = any, TControllerActions=TControllerProps>
     }
     
 }
+
+export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Action>{
+    targetToObserve: EventTarget,
+    type: string,
+    actions?: Partial<{[key in keyof MCActions]: TAction | keyof MCProps}> 
+}
