@@ -169,7 +169,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             detail
         }));
         if(controller instanceof EventTarget){
-            proxy.dispatchEvent(new CustomEvent(name));
+            controller.dispatchEvent(new CustomEvent(name));
         } 
     }
 
