@@ -19,10 +19,13 @@ export async function  doActions(actions: {[methodName: string]: Action}, target
         if(ret === undefined) continue;
         if(Array.isArray(ret)){
             const {PE} = await import('./PE.js');
-            const pe = new PE(proxy, ret as [any, EventConfigs])
+            const pe = new PE();
+            pe.do(proxy, method, ret as [any, EventConfigs]);
         }else{
             Object.assign(proxy, ret);
         }
         
     }
 }
+
+const sym = Symbol();

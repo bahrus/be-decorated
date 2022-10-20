@@ -1,10 +1,11 @@
 export class PE {
-    #abortControllers = [];
-    constructor(proxy, vals) {
+    #abortControllers = new Map();
+    do(proxy, methodName, vals) {
+        this.disconnect(methodName);
         const controller = proxy.controller;
         if (!(controller instanceof EventTarget))
             throw ("Controller must extend EventTarget");
-        controller.addEventListener('was-decorated', this.disconnect, { once: true });
+        controller.addEventListener('was-decorated', this.disconnectAll, { once: true });
         if (vals[0] !== undefined) {
             Object.assign(proxy, vals[0]);
         }
@@ -12,28 +13,37 @@ export class PE {
             for (const key in vals[1]) {
                 const ec = vals[1][key];
                 const ac = new AbortController();
-                ec.targetToObserve.addEventListener(key, e => {
-                    const ret = controller[ec.actions](proxy, e);
-                    this.recurse(ret, proxy);
+                ec.observe.addEventListener(key, e => {
+                    const ret = controller[ec.action](proxy, e);
+                    this.recurse(ret, proxy, ec.action);
                 }, { signal: ac.signal });
-                this.#abortControllers.push(ac);
+                this.#abortControllers.get(methodName).push(ac);
                 if (ec.doInit) {
-                    const ret = controller[ec.actions](proxy);
-                    this.recurse(ret, proxy);
+                    const ret = controller[ec.action](proxy);
+                    this.recurse(ret, proxy, ec.action);
                 }
             }
         }
     }
-    recurse(ret, proxy) {
+    recurse(ret, proxy, methodName) {
         if (ret === undefined)
             return;
-        const arg = Array.isArray(ret) ? ret : [ret];
-        const pe = new PE(proxy, arg);
+        const arg = (Array.isArray(ret) ? ret : [ret]);
+        const pe = new PE();
+        pe.do(proxy, methodName, arg);
     }
-    disconnect() {
-        for (const c of this.#abortControllers) {
-            c.abort();
+    disconnectAll() {
+        for (const key of this.#abortControllers.keys()) {
+            this.disconnect(key);
         }
-        this.#abortControllers = [];
+    }
+    disconnect(methodName) {
+        if (this.#abortControllers.has(methodName)) {
+            const abortControllers = this.#abortControllers.get(methodName);
+            for (const c of abortControllers) {
+                c.abort();
+            }
+        }
+        this.#abortControllers.set(methodName, []);
     }
 }

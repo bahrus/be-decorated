@@ -18,10 +18,12 @@ export async function doActions(actions, target, proxy) {
             continue;
         if (Array.isArray(ret)) {
             const { PE } = await import('./PE.js');
-            const pe = new PE(proxy, ret);
+            const pe = new PE();
+            pe.do(proxy, method, ret);
         }
         else {
             Object.assign(proxy, ret);
         }
     }
 }
+const sym = Symbol();
