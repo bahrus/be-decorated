@@ -14,17 +14,17 @@ export class PE{
             for(const key in vals[1]){
                 const ec = vals[1][key];
                 const ac = new AbortController();
-                const method = (<any>controller)[ec.action!].bind(controller);
+                const method = (<any>controller)[ec.action!];
                 const isAsync = method.constructor.name === 'AsyncFunction';
                 console.log({method, isAsync, key, ec});
                 ec.observe.addEventListener(key, async e => {
-                    const ret = isAsync ? await method(proxy, e) : method(proxy, e);
+                    const ret = isAsync ? await (<any>controller)[ec.action!](proxy, e) : (<any>controller)[ec.action!](proxy, e);
                     console.log({ret});
                     this.recurse(ret, proxy, ec.action);
                 }, {signal: ac.signal});
                 this.#abortControllers.get(methodName)!.push(ac);
                 if(ec.doInit){
-                    const ret = isAsync ? await method(proxy) : method(proxy);
+                    const ret = isAsync ? await (<any>controller)[ec.action!](proxy) : (<any>controller)[ec.action!](proxy);
                     this.recurse(ret, proxy, ec.action);
                 }
             }
