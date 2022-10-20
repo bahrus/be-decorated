@@ -1,7 +1,7 @@
 export class PE {
     #abortControllers = new Map();
-    async do(proxy, methodName, vals) {
-        this.disconnect(methodName);
+    async do(proxy, originMethodName, vals) {
+        this.disconnect(originMethodName);
         const controller = proxy.controller;
         if (!(controller instanceof EventTarget))
             throw ("Controller must extend EventTarget");
@@ -10,31 +10,31 @@ export class PE {
             Object.assign(proxy, vals[0]);
         }
         if (vals[1] !== undefined) {
-            for (const key in vals[1]) {
-                const ec = vals[1][key];
+            for (const methodName in vals[1]) {
+                const ec = vals[1][methodName];
                 const ac = new AbortController();
-                const method = controller[ec.action];
+                const method = controller[methodName];
                 const isAsync = method.constructor.name === 'AsyncFunction';
-                console.log({ method, isAsync, key, ec });
-                ec.observe.addEventListener(key, async (e) => {
-                    const ret = isAsync ? await controller[ec.action](proxy, e) : controller[ec.action](proxy, e);
-                    console.log({ ret });
-                    this.recurse(ret, proxy, ec.action);
+                //console.log({method, isAsync, key, ec});
+                ec.of.addEventListener(ec.on, async (e) => {
+                    const ret = isAsync ? await controller[methodName](proxy, e) : controller[methodName](proxy, e);
+                    //console.log({ret});
+                    await this.recurse(ret, proxy, methodName);
                 }, { signal: ac.signal });
-                this.#abortControllers.get(methodName).push(ac);
+                this.#abortControllers.get(originMethodName).push(ac);
                 if (ec.doInit) {
-                    const ret = isAsync ? await controller[ec.action](proxy) : controller[ec.action](proxy);
-                    this.recurse(ret, proxy, ec.action);
+                    const ret = isAsync ? await controller[methodName](proxy) : controller[methodName](proxy);
+                    await this.recurse(ret, proxy, methodName);
                 }
             }
         }
     }
-    recurse(ret, proxy, methodName) {
+    async recurse(ret, proxy, methodName) {
         if (ret === undefined)
             return;
         const arg = (Array.isArray(ret) ? ret : [ret]);
         const pe = new PE();
-        pe.do(proxy, methodName, arg);
+        await pe.do(proxy, methodName, arg);
     }
     disconnectAll() {
         for (const key of this.#abortControllers.keys()) {
