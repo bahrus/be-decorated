@@ -19,19 +19,18 @@ export function doReplace(target: EventTarget, ifWantsToBe: string){
     return true;
 }
 
+export async function attach<T extends EventTarget>(target: EventTarget, ifWantsToBe: string, callback?: (t: T, replaced: boolean) => void){
+    if(!doReplace(target!, ifWantsToBe)) return;
+    if(callback !== undefined) await callback(target as T, true);
+}
+
 async function monitor<T extends EventTarget>(id: string, beAttrib: string, {upgrade, shadowDomPeer, ifWantsToBe, forceVisible}: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
     const attribSelector = `${upgrade}[${beAttrib}],${upgrade}[data-${beAttrib}]`;
-    // const directSearch = (shadowDomPeer.getRootNode() as DocumentFragment).querySelectorAll(attribSelector);
-    // directSearch.forEach(el => {
-    //     if(!doReplace(el, ifWantsToBe)) return;
-    //     if(callback !== undefined) callback(el as any as T, true);
-    // });
     const { addCSSListener } = await  import('trans-render/lib/observeCssSelector.js');
     addCSSListener(id, shadowDomPeer, attribSelector, async (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         let target = e.target;
-        if(!doReplace(target!, ifWantsToBe)) return;
-        if(callback !== undefined) await callback(target as T, true);
+        await attach(target as EventTarget, ifWantsToBe, callback);
         target = null;
     }, forceVisible !== undefined ? `
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
