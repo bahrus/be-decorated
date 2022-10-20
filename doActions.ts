@@ -20,7 +20,6 @@ export async function  doActions(actions: {[methodName: string]: Action}, target
         if(Array.isArray(ret)){
             const {PE} = await import('./PE.js');
             const pe = new PE();
-            console.log({proxy, method, ret})
             pe.do(proxy, method, ret as [any, EventConfigs]);
         }else{
             Object.assign(proxy, ret);

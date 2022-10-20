@@ -30,7 +30,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
                 const {virtualProps} = propDefaults;
                 const {actions} = config as WCConfig;
-                
+                //console.log({key, value, nonDryProps, virtualProps, ci:(controllerInstance as any)[sym].get(key) });
                 if(nonDryProps === undefined || !nonDryProps.includes(key)){
                     if((controllerInstance as any)[sym].get(key) === value) {
                         return true;
@@ -57,7 +57,9 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                             const props = getPropsFromActions(typedAction); //TODO:  cache this
                             const int = intersection(props, changedKeys);
                             if(int.size === 0) continue;
+                            //console.log({key, methodName, proxyVal: (controllerInstance.proxy as any)[key]});
                             if(await pq(typedAction, controllerInstance.proxy as any as BeDecoratedProps<any, any>)){
+                                //console.log('passedTest', {key, methodName, proxyVal: (controllerInstance.proxy as any)[key]});
                                 filteredActions[methodName] = action;
                                 foundAction = true;
                             }
@@ -174,26 +176,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         } 
     }
 
-    // async doActions(self: this, actions: {[methodName: string]: Action}, target: any, proxy?: any){
-    //     for(const methodName in actions){
-    //         const action = actions[methodName];
-    //         if(action.debug) debugger;
-    //         //https://lsm.ai/posts/7-ways-to-detect-javascript-async-function/#:~:text=There%205%20ways%20to%20detect%20an%20async%20function,name%20property%20of%20the%20AsyncFunction%20is%20%E2%80%9CAsyncFunction%E2%80%9D.%202.
-    //         const method = (<any>target)[methodName];
-    //         if(method === undefined){
-    //             throw {
-    //                 message: 404,
-    //                 methodName,
-    //                 target,
-    //             }
-    //         }
-    //         const isAsync = method.constructor.name === 'AsyncFunction';
-    //         const ret = isAsync ? await (<any>target)[methodName](proxy) : (<any>target)[methodName](proxy);
-    //         if(ret === undefined) continue;
-    //         Object.assign(proxy, ret);
-    //     }
-    // }
-
 
 }
 
@@ -205,9 +187,7 @@ export function define<
     const {config} = controllerConfig;
     const {tagName}  = config as WCConfig<TControllerProps, TControllerActions>;
     if(customElements.get(tagName!) !== undefined) return;
-    class DECO extends DE{
-
-    }
+    class DECO extends DE{}
     (DECO as any).DA = controllerConfig;
     customElements.define(tagName!, DECO);
 }

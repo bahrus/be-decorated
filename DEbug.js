@@ -7,7 +7,7 @@ export class DE extends HTMLElement {
         this.#upgrade = this.getAttribute('upgrade');
         this.#watchForElementsToUpgrade();
     }
-    async #attachBehavior(target) {
+    async attach(target) {
         const da = this.constructor.DA;
         const controller = da.complexPropDefaults.controller;
         const { config } = da;
@@ -15,6 +15,7 @@ export class DE extends HTMLElement {
         const { ifWantsToBe, batonPass, noParse } = propDefaults;
         let controllerInstance = new controller();
         controllerInstance[sym] = new Map();
+        controllerInstance[changedKeySym] = new Set();
         const { nonDryProps, emitEvents } = propDefaults;
         if (target.beDecorated === undefined)
             target.beDecorated = {};
@@ -37,17 +38,22 @@ export class DE extends HTMLElement {
                 else {
                     target[key] = value;
                 }
+                controllerInstance[changedKeySym].add(key);
                 (async () => {
                     if (actions !== undefined) {
                         const filteredActions = {};
                         const { getPropsFromActions } = await import('./init.js');
                         const { pq } = await import('trans-render/lib/pq.js');
+                        const { intersection } = await import('trans-render/lib/intersection.js');
+                        const changedKeys = controllerInstance[changedKeySym];
+                        controllerInstance[changedKeySym] = new Set();
                         let foundAction = false;
                         for (const methodName in actions) {
                             const action = actions[methodName];
                             const typedAction = (typeof action === 'string') ? { ifAllOf: [action] } : action;
                             const props = getPropsFromActions(typedAction); //TODO:  cache this
-                            if (!props.has(key))
+                            const int = intersection(props, changedKeys);
+                            if (int.size === 0)
                                 continue;
                             console.log({ key, methodName, proxyVal: controllerInstance.proxy[key] });
                             if (await pq(typedAction, controllerInstance.proxy)) {
@@ -57,7 +63,8 @@ export class DE extends HTMLElement {
                             }
                         }
                         if (foundAction) {
-                            await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy);
+                            const { doActions } = await import('./doActions.js');
+                            await doActions(filteredActions, controllerInstance, controllerInstance.proxy);
                         }
                     }
                     if (emitEvents !== undefined) {
@@ -128,6 +135,7 @@ export class DE extends HTMLElement {
             if (controllerInstance !== undefined && finale !== undefined) {
                 await controllerInstance[finale](proxy, removedEl, propDefaults);
             }
+            this.#emitEvent(ifWantsToBe, `was-decorated`, { proxy, controllerInstance }, proxy, controllerInstance);
             if (removedEl.beDecorated !== undefined)
                 delete removedEl.beDecorated[key];
             proxy.self = undefined;
@@ -146,7 +154,7 @@ export class DE extends HTMLElement {
             upgrade,
             ifWantsToBe: ifWantsToBe,
             forceVisible,
-        }, this.#attachBehavior.bind(this));
+        }, this.attach.bind(this));
     }
     #emitEvent(ifWantsToBe, name, detail, proxy, controller) {
         const namespacedEventName = `be-decorated.${ifWantsToBe}.${name}`;
@@ -154,28 +162,7 @@ export class DE extends HTMLElement {
             detail
         }));
         if (controller instanceof EventTarget) {
-            proxy.dispatchEvent(new CustomEvent(name));
-        }
-    }
-    async doActions(self, actions, target, proxy) {
-        for (const methodName in actions) {
-            const action = actions[methodName];
-            if (action.debug)
-                debugger;
-            //https://lsm.ai/posts/7-ways-to-detect-javascript-async-function/#:~:text=There%205%20ways%20to%20detect%20an%20async%20function,name%20property%20of%20the%20AsyncFunction%20is%20%E2%80%9CAsyncFunction%E2%80%9D.%202.
-            const method = target[methodName];
-            if (method === undefined) {
-                throw {
-                    message: 404,
-                    methodName,
-                    target,
-                };
-            }
-            const isAsync = method.constructor.name === 'AsyncFunction';
-            const ret = isAsync ? await target[methodName](proxy) : target[methodName](proxy);
-            if (ret === undefined)
-                continue;
-            Object.assign(proxy, ret);
+            controller.dispatchEvent(new CustomEvent(name));
         }
     }
 }
@@ -191,3 +178,4 @@ export function define(controllerConfig) {
 }
 const sym = Symbol();
 const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected', 'proxy'];
+const changedKeySym = Symbol();

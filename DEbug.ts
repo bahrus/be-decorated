@@ -1,7 +1,7 @@
-import {BeDecoratedProps, MinimalController, MinimalProxy, DA} from './types';
+import {BeDecoratedProps, MinimalController, MinimalProxy, DA, DEMethods} from './types';
 import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
-export {BeDecoratedProps} from './types';
-export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement{
+export {BeDecoratedProps, DEMethods} from './types';
+export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
     static DA: DA;
     #ifWantsToBe!: string;
     #upgrade!: string;
@@ -10,14 +10,15 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         this.#upgrade = this.getAttribute('upgrade')!;
         this.#watchForElementsToUpgrade();
     }
-    async #attachBehavior(target: Element){
+    async attach(target: Element){
         const da = (this.constructor as any).DA as DA;
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
         const propDefaults = config.propDefaults;
         const {ifWantsToBe, batonPass, noParse} = propDefaults;
-        let controllerInstance = new controller();
-        (controllerInstance as any)[sym] = new Map<string, any>();
+        let controllerInstance = new controller() as any;
+        controllerInstance[sym] = new Map<string, any>();
+        controllerInstance[changedKeySym] = new Set<string>();
         const {nonDryProps, emitEvents} = propDefaults;
 
 
@@ -40,26 +41,33 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
                 }else{
                     target[key] = value;
                 }
+                controllerInstance[changedKeySym].add(key);
                 (async () => {
                     if(actions !== undefined){
                         const filteredActions: any = {};
                         const {getPropsFromActions} = await import('./init.js');
                         const {pq} = await import('trans-render/lib/pq.js');
+                        const {intersection} = await import('trans-render/lib/intersection.js');
+                        const changedKeys = controllerInstance[changedKeySym] as Set<string>;
+                        controllerInstance[changedKeySym] = new Set<string>();
                         let foundAction = false;
                         for(const methodName in actions){
                             const action = actions[methodName]!;
                             const typedAction = (typeof action === 'string') ? {ifAllOf:[action]} as Action<TControllerProps> : action as Action<TControllerProps>;
                             const props = getPropsFromActions(typedAction); //TODO:  cache this
-                            if(!props.has(key as string)) continue;
-                            console.log({key, methodName, proxyVal: (controllerInstance.proxy as any)[key]})
+                            const int = intersection(props, changedKeys);
+                            if(int.size === 0) continue;
+                            console.log({key, methodName, proxyVal: (controllerInstance.proxy as any)[key]});
                             if(await pq(typedAction, controllerInstance.proxy as any as BeDecoratedProps<any, any>)){
-                                console.log('passedTest', {key, methodName, proxyVal: (controllerInstance.proxy as any)[key]})
+                                console.log('passedTest', {key, methodName, proxyVal: (controllerInstance.proxy as any)[key]});
                                 filteredActions[methodName] = action;
                                 foundAction = true;
                             }
                         }
+                        
                         if(foundAction){
-                            await this.doActions(this, filteredActions, controllerInstance, controllerInstance.proxy); 
+                            const {doActions} = await import('./doActions.js');
+                            await doActions(filteredActions, controllerInstance, controllerInstance.proxy); 
                         }
                         
                     }
@@ -137,6 +145,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             if(controllerInstance !== undefined && finale !== undefined){
                 await (<any>controllerInstance)[finale](proxy, removedEl, propDefaults);
             }
+            this.#emitEvent(ifWantsToBe, `was-decorated`, {proxy, controllerInstance}, proxy, controllerInstance as any as EventTarget);
             if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
             (<any>proxy).self = undefined;
             (controllerInstance as any) = undefined;
@@ -154,7 +163,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             upgrade,
             ifWantsToBe: ifWantsToBe!,
             forceVisible,
-        }, this.#attachBehavior.bind(this));
+        }, this.attach.bind(this));
     }
 
     #emitEvent(ifWantsToBe: string, name: string, detail: any, proxy: Element, controller: EventTarget){
@@ -163,29 +172,10 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             detail
         }));
         if(controller instanceof EventTarget){
-            proxy.dispatchEvent(new CustomEvent(name));
+            controller.dispatchEvent(new CustomEvent(name));
         } 
     }
 
-    async doActions(self: this, actions: {[methodName: string]: Action}, target: any, proxy?: any){
-        for(const methodName in actions){
-            const action = actions[methodName];
-            if(action.debug) debugger;
-            //https://lsm.ai/posts/7-ways-to-detect-javascript-async-function/#:~:text=There%205%20ways%20to%20detect%20an%20async%20function,name%20property%20of%20the%20AsyncFunction%20is%20%E2%80%9CAsyncFunction%E2%80%9D.%202.
-            const method = (<any>target)[methodName];
-            if(method === undefined){
-                throw {
-                    message: 404,
-                    methodName,
-                    target,
-                }
-            }
-            const isAsync = method.constructor.name === 'AsyncFunction';
-            const ret = isAsync ? await (<any>target)[methodName](proxy) : (<any>target)[methodName](proxy);
-            if(ret === undefined) continue;
-            Object.assign(proxy, ret);
-        }
-    }
 
 
 }
@@ -206,3 +196,5 @@ export function define<
 }
 const sym = Symbol();
 const reqVirtualProps : (keyof MinimalProxy)[] = ['self', 'emitEvents', 'controller', 'resolved', 'rejected', 'proxy'];
+
+const changedKeySym = Symbol();

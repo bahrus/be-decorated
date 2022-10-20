@@ -26,6 +26,7 @@ export class DE extends HTMLElement {
             set: (target, key, value) => {
                 const { virtualProps } = propDefaults;
                 const { actions } = config;
+                //console.log({key, value, nonDryProps, virtualProps, ci:(controllerInstance as any)[sym].get(key) });
                 if (nonDryProps === undefined || !nonDryProps.includes(key)) {
                     if (controllerInstance[sym].get(key) === value) {
                         return true;
@@ -54,7 +55,9 @@ export class DE extends HTMLElement {
                             const int = intersection(props, changedKeys);
                             if (int.size === 0)
                                 continue;
+                            //console.log({key, methodName, proxyVal: (controllerInstance.proxy as any)[key]});
                             if (await pq(typedAction, controllerInstance.proxy)) {
+                                //console.log('passedTest', {key, methodName, proxyVal: (controllerInstance.proxy as any)[key]});
                                 filteredActions[methodName] = action;
                                 foundAction = true;
                             }
