@@ -1,6 +1,6 @@
 export class PE {
     #abortControllers = new Map();
-    do(proxy, methodName, vals) {
+    async do(proxy, methodName, vals) {
         this.disconnect(methodName);
         const controller = proxy.controller;
         if (!(controller instanceof EventTarget))
@@ -13,13 +13,17 @@ export class PE {
             for (const key in vals[1]) {
                 const ec = vals[1][key];
                 const ac = new AbortController();
-                ec.observe.addEventListener(key, e => {
-                    const ret = controller[ec.action](proxy, e);
+                const method = controller[ec.action].bind(controller);
+                const isAsync = method.constructor.name === 'AsyncFunction';
+                console.log({ method, isAsync, key, ec });
+                ec.observe.addEventListener(key, async (e) => {
+                    const ret = isAsync ? await method(proxy, e) : method(proxy, e);
+                    console.log({ ret });
                     this.recurse(ret, proxy, ec.action);
                 }, { signal: ac.signal });
                 this.#abortControllers.get(methodName).push(ac);
                 if (ec.doInit) {
-                    const ret = controller[ec.action](proxy);
+                    const ret = isAsync ? await method(proxy) : method(proxy);
                     this.recurse(ret, proxy, ec.action);
                 }
             }

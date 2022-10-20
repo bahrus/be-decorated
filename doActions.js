@@ -19,6 +19,7 @@ export async function doActions(actions, target, proxy) {
         if (Array.isArray(ret)) {
             const { PE } = await import('./PE.js');
             const pe = new PE();
+            console.log({ proxy, method, ret });
             pe.do(proxy, method, ret);
         }
         else {
