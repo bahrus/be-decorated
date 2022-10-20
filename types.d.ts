@@ -142,8 +142,8 @@ export interface DA<TControllerProps = any, TControllerActions=TControllerProps>
 
 export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Action>{
     observe: EventTarget,
-    action: string, // |  Partial<{[key in keyof MCActions]: TAction | keyof MCProps}> , [TODO?]
+    action: keyof MCActions & string, // |  Partial<{[key in keyof MCActions]: TAction | keyof MCProps}> , [TODO?]
     doInit: boolean,
 }
 
-export type EventConfigs = {[key: string]: IEventConfig}
+export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = {[key: string]: IEventConfig<MCProps, MCActions, TAction>}
