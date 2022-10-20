@@ -1,41 +1,40 @@
-import {ButterbeerCounterProps, ButterbeerCounterActions} from './types';
-import {BeDecoratedProps} from '../types';
-//import {define} from '../be-decorated.js';
+import {PP, Proxy, Actions} from './types';
 import {define} from '../DE.js';
+import {BeDecoratedProps} from '../types';
 
-export class ButterbeerController{
-    #self: ButterbeerCounterProps | undefined;
-    init(self: ButterbeerCounterProps, btn: HTMLButtonElement){
-        this.#self = self;
-        btn.addEventListener('click', this.handleClick)
-        
+export class ButterbeerController implements Actions{
+    #ac: AbortController | undefined;
+    hydrate(pp: PP){
+        this.#ac = new AbortController();
+        const {self} = pp;
+        self.addEventListener('click', e => {
+            this.handleClick(pp, e);
+        }, {signal: this.#ac.signal});
     }
-    onCountChange(){
-        console.log(this.#self!.count);
+
+    onCountChange({count}: PP){
+        console.log(count);
     }
-    handleClick = (e: MouseEvent) => {
-        this.#self!.count++;
+    handleClick(pp: PP, e: Event){
+        pp.count++;
     }
 }
 
-//type ButterBeerCounterPropsExt = ButterbeerCounterProps & BeDecoratedProps
-
-export interface ButterbeerController extends ButterbeerCounterProps{}
-
-define<ButterbeerCounterProps & BeDecoratedProps, ButterbeerCounterActions>({
+define<Proxy & BeDecoratedProps<Proxy, Actions>, Actions>({
     config:{
         tagName: 'be-a-butterbeer-counter',
         propDefaults:{
             virtualProps: ['count'],
             upgrade: 'button',
             ifWantsToBe: 'a-butterbeer-counter',
-            intro: 'init',
             emitEvents: ['count'],
+            proxyPropDefaults:{
+                count: 0,
+                on: 'click'
+            }
         },
         actions:{
-            'onCountChange': {
-                ifKeyIn: ['count']
-            }
+            'hydrate': 'on'
         }
     },
     complexPropDefaults:{
