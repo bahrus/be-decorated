@@ -47,7 +47,6 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     finale: keyof TControllerActions;
 
-    batonPass: keyof TControllerActions;
 
     actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | Action<TControllerProps>}>;
 
@@ -143,7 +142,7 @@ export interface DA<TControllerProps = any, TControllerActions=TControllerProps>
 export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Action>{
     on: string,
     of: EventTarget,
-    doInit: boolean,
+    doInit?: boolean,
 }
 
 //export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = {[key: string]: IEventConfig<MCProps, MCActions, TAction>}

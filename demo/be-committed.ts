@@ -12,7 +12,7 @@ export class BeCommitted extends EventTarget implements Actions{
         proxy.resolved = true;
     }
 
-    async onTo({to, proxy, nudge: n}: PP){
+    async findTarget({to, proxy, nudge: n}: PP){
         console.log('onTo');
         const clickableElement = (proxy.getRootNode() as HTMLElement).querySelector('#' + to) as HTMLButtonElement;
         if(clickableElement === null){
@@ -57,7 +57,7 @@ define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
             primaryProp: 'to'
         },
         actions:{
-            'onTo': 'to',
+            'findTarget': 'to',
             'onNudge': 'nudge'
         }
     },

@@ -15,7 +15,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const {ifWantsToBe, batonPass, noParse} = propDefaults;
+        const {ifWantsToBe, noParse} = propDefaults;
         let controllerInstance = new controller() as any;
         controllerInstance[sym] = new Map<string, any>();
         controllerInstance[changedKeySym] = new Set<string>();
@@ -112,15 +112,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         (proxy as any).self = target;
         (proxy as any).controller =  controllerInstance; 
         (proxy as any).proxy = proxy;
-        if(batonPass){
-            const {grabTheBaton} = await import('./relay.js');
-            const baton = grabTheBaton(ifWantsToBe, target);
-            if(baton !== undefined){
-                (controllerInstance as any)[batonPass](controllerInstance.proxy, target, this, baton);
-                return;
-            }
-
-        }
         if(!noParse){ //yes, parse!
             const {init} = await import('./init.js');
             await init(this, propDefaults, target, controllerInstance, existingProp); 
