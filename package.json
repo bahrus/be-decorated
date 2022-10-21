@@ -16,7 +16,6 @@
   "exports": {
     ".": "./DE.js",
     "./upgrade.js": "./upgrade.js",
-    "./relay.js": "./relay.js",
     "./findAdjacentElement.js": "./findAdjacentElement.js",
     "./DE.js": "./DE.js"
   },
