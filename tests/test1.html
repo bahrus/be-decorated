@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id='test' be-counted='{"count": 30}'>Count</button>
+    <script type=importmap>
+        {
+            "imports":{
+                "trans-render/": "../node_modules/trans-render/",
+                "xtal-element/": "../node_modules/xtal-element/"
+            }
+        }
+    </script>
+    <div id=target></div>
+    <script type=module>
+        import '../demo/be-counted.js';
+    </script>
+    <script>
+        test.addEventListener('be-decorated.counted.count-changed', e => {
+            console.log(e.detail);
+            target.setAttribute('mark', 'good');
+        });
+    </script>
+</body>
+</html>
