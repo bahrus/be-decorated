@@ -105,14 +105,6 @@ export class DE extends HTMLElement {
         proxy.self = target;
         proxy.controller = controllerInstance;
         proxy.proxy = proxy;
-        if (batonPass) {
-            const { grabTheBaton } = await import('./relay.js');
-            const baton = grabTheBaton(ifWantsToBe, target);
-            if (baton !== undefined) {
-                controllerInstance[batonPass](controllerInstance.proxy, target, this, baton);
-                return;
-            }
-        }
         if (!noParse) { //yes, parse!
             const { init } = await import('./init.js');
             await init(this, propDefaults, target, controllerInstance, existingProp);

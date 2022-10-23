@@ -7,7 +7,7 @@ export class BeCommitted extends EventTarget {
         target.addEventListener('keyup', this.handleKeyup);
         proxy.resolved = true;
     }
-    async onTo({ to, proxy, nudge: n }) {
+    async findTarget({ to, proxy, nudge: n }) {
         console.log('onTo');
         const clickableElement = proxy.getRootNode().querySelector('#' + to);
         if (clickableElement === null) {
@@ -46,7 +46,7 @@ define({
             primaryProp: 'to'
         },
         actions: {
-            'onTo': 'to',
+            'findTarget': 'to',
             'onNudge': 'nudge'
         }
     },
