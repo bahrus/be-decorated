@@ -71,99 +71,70 @@ Differences to these solutions (perhaps):
 Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/wiki/HTML_Components).
 
 
-## Basic Syntax
+## Example
 
-To define a decorator, define a "controller" class.  The structure of the class is fairly wide open.  The lifecycle event methods can have any name you want.  For example:
+There are numerous useful element decorators/behaviors that provide a good introduction to what creating a be-decorated behavior/decorator.
+
+They all use a secondary dependency, be-hive.  So the example shown below indicates how to create one without [be-hive](https://github.com/bahrus/be-hive).
 
 ```TypeScript
-export class ButterbeerController{
-    #self: ButterbeerCounterProps | undefined;
-    init(self: ButterbeerCounterProps, btn: HTMLButtonElement){
-        this.#self = self;
-        btn.addEventListener('click', this.handleClick)
-        self.count = 0;
-        
+import { define } from 'be-decorated/DE.js';
+export class BeCounted extends EventTarget {
+    hydrate({ on, self }) {
+        return [{ resolved: true }, { handleClick: { on: on, of: self } }];
     }
-    onCountChange(){
-        console.log(this.#self!.count);
-    }
-    handleClick = (e: MouseEvent) => {
-        this.#self!.count++;
+    handleClick(pp, e) {
+        pp.count++;
     }
 }
-```
-
-Then use (mostly) JSON configuration to instruct be-decorated library how to apply the decorator onto elements:
-
-```JavaScript
-import {ButterbeerController} from '[wherever]';
-import {define} from 'be-decorated/be-decorate.js';
-
 define({
-    config:{
-        tagName: 'be-a-butterbeer-counter',
-        propDefaults:{
+    config: {
+        tagName: 'be-counted',
+        propDefaults: {
             virtualProps: ['count'],
             upgrade: 'button',
-            ifWantsToBe: 'a-butterbeer-counter',
-            intro: 'init'
-        },
-        actions:{
-            'onCountChange': {
-                ifKeyIn: ['count']
+            ifWantsToBe: 'counted',
+            emitEvents: ['count'],
+            proxyPropDefaults: {
+                on: 'click'
             }
+        },
+        actions: {
+            'hydrate': 'on'
         }
     },
-    complexPropDefaults:{
-        controller: ButterbeerController,
+    complexPropDefaults: {
+        controller: BeCounted,
     }
 });
+document.head.appendChild(document.createElement('be-counted'));
 ```
 
-> **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
+We can now active the behavior:
 
-<details>
-    <summary>Why not specify a specific interface for lifecycle event methods?</summary>
+```html
+<button id='test' be-counted='{"count": 30}'>Count</button>
+```
 
-Being a home-grown library, as opposed to a universal web standard, the advantage of not specifying the names of lifecycle event names (like init, for example) is that it provides developers the flexibility to work with other libraries that may also use the same method names for other purposes.
+Be default, the initial settings specified by the attribute are expected to be in JSON format.
 
-The disadvantage is it requires an additional step, providing the mapping between the internal name be-decorated uses for initialization (intro) and what the developer may prefer (which might be a different name, like init).  As a result, the following "boring" configuration has to be added to tap into the initialization method, assuming the developer is fine adopting the internal name of "intro":
+There is a way to allow for simpler attributes, by specifying the default prop name:
 
 ```JavaScript
-intro: 'intro'
+    propDefaults:{
+        ...
+        primaryProp: 'count'
+    }
 ```
-
-And of course the previous example indicates what the configuration looks like when the developer feels the need to adopt a different name.
-
-</details>
-
-Within each shadow DOM realm, our decorator web component will only have an effect if an instance of the web component is plopped somewhere inside that shadow DOM.
-
-Although it is a bit of a nuisance to remember to plop an instance in each shadow DOM realm, it does give us the ability to avoid name conflicts with other libraries that use custom attributes.  In the example above, if we plop an instance inside the shadow DOM with no overrides: 
 
 ```html
-<button be-a-butterbeer-counter-bahrus-github='{"count": 30}'>Count</button>
-...
-
-<be-a-butterbeer-counter-bahrus-github></be-a-butterbeer-counter-bahrus-github>
+<button id='test' be-counted=30'>Count</button>
 ```
 
-then it will affect all buttons with attribute be-a-butterbeer-counter-bahrus-github within that shadow DOM realm.
+Without using be-hive, the decorator won't apply within any ShadowDOM.
 
-To specify a different attribute, override the default "ifWantsToBe" property thusly:
 
-```html
-<button be-a-b-c='{"count": 30}'>Count</button>
-...
-
-<be-a-butterbeer-counter-bahrus-github if-wants-to-be=a-b-c></be-a-butterbeer-counter-bahrus-github>
-```
-
-Another silver lining to this nuisance:  It provides more transparency where the behavior modification is coming from.
-
-The [be-hive component](https://github.com/bahrus/be-hive) makes managing this nuisance almost seamless.  If developing a component that uses more than a few decorators, it is probably worth the extra dependency.
-
-Note the use of long names of the web component.  Since the key name used in the markup is configurable via if-wants-to-be, using long names for the web component, like guid's even, will really guarantee no namespace collisions, even without the help of pending standards.  If be-hive is used to help manage the integration, developers don't really need to care too much what the actual name of the web component is, only the value of if-wants-to-be, which is configurable within each shadow DOM realm.
+> **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element the decorator adorns be enhanced with a new property with the same name.
 
 
 ## Setting properties of the proxy externally
@@ -184,69 +155,7 @@ myElement.beDecorated.aButterbeerCounter.count = 7;
 
 The intention here is even if the element hasn't been upgraded yet, property settings made this way should be absorbed into the proxy once it becomes attached.  And if the proxy is already attached, then those undefined checks will be superfluous, but better to play it safe.
 
-
-###  Approach II. Setting properties via the controlling attribute:
-
-An alternative approach, which be-decorated also supports, is to pass in properties via its custom attribute:
-
-```html
-<list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>
-
-...
-
-<ul be-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
-    <li>
-        <span>Zorse</span>
-    </li>
-    <li>
-        <span>Aardvark</span>
-    </li>
-</ul>
-
-```
-
-
-After list-sorter does its thing, the attribute "be-sorted" switches to "is-sorted":
-
-```html
-
-<ul is-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
-    <li>
-        <span>Aardvark</span>
-    </li>
-    <li>
-        <span>Zorse</span>
-    </li>
-</ul>
-
-```
-
-You cannot pass in new values by using the is-sorted attribute.  Instead, you need to continue to use the be-sorted attribute:
-
-
-```html
-
-<ul id=list is-sorted>
-    <li>
-        <span>Aardvark</span>
-    </li>
-    <li>
-        <span>Zorse</span>
-    </li>
-</ul>
-
-<script>
-    list.setAttribute('be-sorted', JSON.stringify({direction: 'desc'}))
-</script>
-
-```
-
-The disadvantage of this approach is we are limited to JSON-serializable properties, and there is a cost to stringifying / parsing.
-
-By the way, a [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
-
-
-### Approach III.  Pulling, rather than pushing, props down.
+### Approach II.  Pulling, rather than pushing, props down.
 
 [be-observant](https://github.com/bahrus/be-observant) provides a pattern, and exposes some reusable functions, for "pulling-down" bindings from the host or neighboring siblings.  This can often be a sufficient and elegant way to deal with this concern.
 
@@ -284,10 +193,6 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 
 ```html
-<list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>
-
-...
-
 <ul data-be-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
     <li>
         <span>Zorse</span>
@@ -301,7 +206,7 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ## Reserved Props
 
-Using be-decorated to define an element decorator/behavior does impinge a bit on the developer's naming creativity:  There is a small number of reserved proxy prop names that has deep meaning to be-decorated, and thus should only be used in the prescribed manner.  They are listed below:
+Using be-decorated to define an element decorator/behavior does impinge a bit on the developer's naming creativity:  There is a small number of reserved proxy prop names that have deep meaning to be-decorated, and thus should only be used in the prescribed manner.  They are listed below:
 
 <table>
     <caption>Reserved Controller Properties / Proxy Virtual Property Names</caption>
@@ -334,13 +239,13 @@ Using be-decorated to define an element decorator/behavior does impinge a bit on
         <tr>
             <td>resolved</td>
             <td>
-                Standard way for a decorator/behavior to indicate it has "done its main task and is currently waiting on further instructions, if any."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.  The adorned element emits event "be-decorated.[if-wants-to-be].resolved when it is in resolved state.
+                Standard way for a decorator/behavior to indicate it has "hydrated and is currently waiting on further instructions, if any."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.  The adorned element emits event "be-decorated.[if-wants-to-be].resolved when it is in resolved state.
             </td>
             <td>Virtual property of proxy.</td>
         </tr>
         <tr>
             <td>rejected</td>
-            <td>Standard way for a decorator/behavior to indicate it has "failed to do its main task and is currently waiting on further instructions if any."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.
+            <td>Standard way for a decorator/behavior to indicate it has "failed to hydrate."  Critical for <a href=https://github.com/bahrus/be-promising>be-promising</a>.
                 The adorned element emits event "be-decorated.[if-wants-to-be].rejected when it is in rejected state.
             </td>
             <td>Virtual property of proxy.</td>
@@ -400,13 +305,6 @@ Idea inspired by [this](https://infrequently.org/2021/03/reactive-data-modern-js
 
 Alternatively, more controversially, and in addition, [be-noticed](https://github.com/bahrus/be-noticed) provides a pattern as far as syntax, as well as reusable code, that can pass things more directly to the hosting (custom) element, or neighboring elements, similar to be-observant (but in the opposite direction).
 
-## Primary prop
-
-Sometimes a decorator will only have a single, primitive-type property value to configure, at least for the time being.  Or maybe there are multiple props, but one property in particular is clearly the most important, and the other properties will rarely deviate from the default value.  In that case, the extra overhead from typing and parsing JSON just to read that value seems like overkill.  
-
-So be-decorated provides a way of defining a "primary" property, and just set it based on the string value, if the string value doesn't start with a { or a [.
-
-Name of the property:  "primaryProp"
 
 ## Lifecycle milestones
 
