@@ -138,7 +138,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             }
             this.#emitEvent(ifWantsToBe, `was-decorated`, {proxy, controllerInstance}, proxy, controllerInstance as any as EventTarget);
             if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
-            (<any>proxy).self = undefined;
+            //(<any>proxy).self = undefined;
             (controllerInstance as any) = undefined;
             revocable.revoke();
         });

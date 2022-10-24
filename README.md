@@ -20,11 +20,11 @@ In contrast to the "is" approach, we can apply multiple behaviors / decorators t
 
 ```html
 #shadow-root (open)
-    <black-eyed-peas 
-        be-on-the-next-level=11
-        be-rocking-over-that-bass-tremble
-        be-chilling-with-my-motherfuckin-crew
-    ></black-eyed-peas>
+<black-eyed-peas 
+    be-on-the-next-level=11
+    be-rocking-over-that-bass-tremble
+    be-chilling-with-my-motherfuckin-crew
+></black-eyed-peas>
 
 ```
 
@@ -44,11 +44,11 @@ Note that after upgrading,  the first example ends up upgrading to:
 
 ```html
 #shadow-root (open)
-    <black-eyed-peas 
-        is-on-the-next-level=11
-        is-rocking-over-that-bass-tremble
-        is-chilling-with-my-motherfuckin-crew
-    ></black-eyed-peas>
+<black-eyed-peas 
+    is-on-the-next-level=11
+    is-rocking-over-that-bass-tremble
+    is-chilling-with-my-motherfuckin-crew
+></black-eyed-peas>
 ```
 
 ## Priors
@@ -100,7 +100,9 @@ define({
             }
         },
         actions: {
-            'hydrate': 'on'
+            'hydrate': [
+                ifAllOf: ['on']
+            ]
         }
     },
     complexPropDefaults: {
@@ -110,13 +112,17 @@ define({
 document.head.appendChild(document.createElement('be-counted'));
 ```
 
-We can now active the behavior:
+We can now activate the behavior:
 
 ```html
 <button id='test' be-counted='{"count": 30}'>Count</button>
 ```
 
-Be default, the initial settings specified by the attribute are expected to be in JSON format.
+The actions section of the configuration routes property changes of the proxy to methods of the class, where the first argument of the class is passed in the proxy.
+
+So anytime property 'on' changes (which will happen during initialization of the properties via proxyPropDefaults which can be overridden by settings in the attribute).
+
+By default, the initial settings specified by the attribute are expected to be in JSON format.
 
 There is a way to allow for simpler attributes, by specifying the default prop name:
 
@@ -131,7 +137,7 @@ There is a way to allow for simpler attributes, by specifying the default prop n
 <button id='test' be-counted=30'>Count</button>
 ```
 
-Without using be-hive, the decorator won't apply within any ShadowDOM.
+Without use of [be-hive](https://github.com/bahrus/be-hive), the decorator won't apply within any ShadowDOM.
 
 
 > **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element the decorator adorns be enhanced with a new property with the same name.
@@ -267,8 +273,6 @@ Other web components that provide element behavior in a different way from be-de
 
 Also, it seems natural for the event name to match the [fully namespaced] property name.  
 
-Change inspired by [this comment](https://twitter.com/justinfagnani/status/1552106587166085120)
-
 Since beDecorated based element behaviors are linked to a controller, users can also / alternatively subscribe to the controller, in which case the event name is simply foo-changed.
 
 
@@ -296,9 +300,6 @@ The advantage of subscribing via the controller, is the event names will be much
 Access to the controller can be made via element.beDecorated.reformable.controller, but only once the component has upgraded.
 
 Where this is applicable, the creator of a be-decorated controller will need to extend the EventTarget class.
-
-Idea inspired by [this](https://infrequently.org/2021/03/reactive-data-modern-js/) and especially [this](https://twitter.com/LeaVerou/status/1557017895170969600).
-
 
 
 ## be-noticed pattern

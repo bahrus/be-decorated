@@ -130,7 +130,7 @@ export class DE extends HTMLElement {
             this.#emitEvent(ifWantsToBe, `was-decorated`, { proxy, controllerInstance }, proxy, controllerInstance);
             if (removedEl.beDecorated !== undefined)
                 delete removedEl.beDecorated[key];
-            proxy.self = undefined;
+            //(<any>proxy).self = undefined;
             controllerInstance = undefined;
             revocable.revoke();
         });
