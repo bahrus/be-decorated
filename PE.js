@@ -5,7 +5,9 @@ export class PE {
         const controller = proxy.controller;
         if (!(controller instanceof EventTarget))
             throw ("Controller must extend EventTarget");
-        controller.addEventListener('was-decorated', this.disconnectAll, { once: true });
+        controller.addEventListener('was-decorated', e => {
+            this.disconnectAll();
+        }, { once: true });
         if (vals[0] !== undefined) {
             Object.assign(proxy, vals[0]);
         }
