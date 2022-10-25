@@ -344,7 +344,7 @@ To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [
 
 The first thing we observe is that we end up wanting a "triangle-shaped" dependency graph of file dependencies:
 
-File index.js has two references that can load in parallel -- 1.  trPlugin.js that is used for template instantiation, and 2. be-*.js, a custom element used within the DOM tree.  The first file, trPlugin.js just has a little extra boilerplate code that connects the template instantiation to the be-*.js custom element, via the inherited "attach" method.  So developers can focus on developing a single controller class, and the trPlugin.js is just a matter of copy paste and search and replace the "if-wants-to-be" value.
+File index.js has two references that can load in parallel -- 1.  trPlugin.js that is used for template instantiation, and 2. be-[if-wants-to-be].js, a custom element used within the DOM tree.  The first file, trPlugin.js just has a little extra boilerplate code that connects the template instantiation to the be-*.js custom element, via the inherited "attach" method.  So developers can focus on developing a single controller class, and the trPlugin.js is just a matter of copy paste and search and replace the "if-wants-to-be" value.
 
 ## All about the FROOP orchestrator [Documentation in progress]
 
