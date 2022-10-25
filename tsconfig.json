@@ -13,10 +13,7 @@
 		"DEbug.ts",
 		"upgrade.ts",
 		"demo/be-counted.ts",
-		"demo/be-committed.ts",
-		"demo/be-clonable/index.ts",
 		"findAdjacentElement.ts",
-		"relay.ts"
 		//"playwright.config.ts",
 		//"tests/test1.spec.mts"
 	],

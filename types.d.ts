@@ -22,13 +22,13 @@ export interface BeDecoratedConfig<TControllerProps, TControllerActions = TContr
     controller: TControllerProps & TControllerActions;
 }
 
-export interface MinimalController{
-    propChangeQueue?: Set<string>;
-    proxy?: Element;
-    emitEvents?: boolean | string[];
-    beDecorated?: any;
-    //debug?: boolean;
-}
+// export interface MinimalController{
+//     propChangeQueue?: Set<string>;
+//     proxy?: Element;
+//     emitEvents?: boolean | string[];
+//     beDecorated?: any;
+//     //debug?: boolean;
+// }
 
 export interface MinimalProxy<TTargetElement = Element>{
     self: TTargetElement,
@@ -50,7 +50,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | Action<TControllerProps>}>;
 
-    controller: {new(): TControllerProps & TControllerActions & MinimalController};
+    controller: {new(): TControllerProps & TControllerActions};
 
     //newTarget: Element | undefined;
 
@@ -134,7 +134,7 @@ export interface DA<TControllerProps = any, TControllerActions=TControllerProps>
         propDefaults: BeDecoratedProps<TControllerProps, TControllerActions>
     },
     complexPropDefaults: {
-        controller: {new(): MinimalController}
+        controller: {new(): any}
     }
     
 }

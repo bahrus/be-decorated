@@ -327,7 +327,7 @@ There are three lifecycle milestones that be-decorated observes.  They are all o
     <td>finale</td><td>Occurs when the underlying element is removed from the DOM, and the proxy is destroyed.</td>
 </table>
 
-## Isomorphic logic -- baton passing [WIP]
+## Isomorphic logic
 
 In the grand scheme of things, in many cases it makes sense for the declarative HTML syntax that be-decorated-based decorators / behavior activates in the live DOM tree, to also be recognized beyond the confines of said tree.  The same syntax can potentially be applied in 4 "legs" of the journey from the server to the end user's screen, in a kind of "relay race", where the baton is passed during the pipeline of processing.
 
@@ -340,13 +340,11 @@ Those 4 "legs" are:
 
 These four legs may be subdivided into two halves -- the "back-end" two "legs" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the two "front-end" legs can share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.  The be-decorated library provides explicit support for this.
 
-~~To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [few](https://github.com/bahrus/be-typed) [examples](https://github.com/bahrus/be-clonable): ~~
+To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [few](https://github.com/bahrus/be-typed) [examples](https://github.com/bahrus/be-clonable):
 
-~~The first thing we observe is that we end up wanting a "diamond-shaped" dependency graph of file dependencies:~~~
+The first thing we observe is that we end up wanting a "triangle-shaped" dependency graph of file dependencies:
 
-~~File index.js has two references that can load in parallel -- 1.  trPlugin.js that is used for template instantiation, and 2. be-*.js, used within the DOM tree.  But those two files have fairly minimal, mostly boilerplate code.  Most of the interesting logic, instead, is contained in a shared ("isomorphic") class -- Deleter.js, Typer.js Cloner.js, in these examples.~~
-
-~~It is a good practice to then have three test files -- one that only does template instantiation, one that does only live DOM tree manipulation, and one that does both.  The one that does both should be checked that the code doesn't unnecessarily get invoked twice, in both layers -- only once during template instantiation.  Only prop changes after the initial rendering should result in any code getting executed in the DOM live tree.~~
+File index.js has two references that can load in parallel -- 1.  trPlugin.js that is used for template instantiation, and 2. be-*.js, a custom element used within the DOM tree.  The first file, trPlugin.js just has a little extra boilerplate code that connects the template instantiation to the be-*.js custom element, via the inherited "attach" method.  So developers can focus on developing a single controller class, and the trPlugin.js is just a matter of copy paste and search and replace the "if-wants-to-be" value.
 
 ## All about the FROOP orchestrator [Documentation in progress]
 
@@ -356,7 +354,7 @@ These action methods can often avoid taking any responsibility for causing side 
 
 Or it can pass back a two-element tuple (for now),  [Props, EventConfigs], where the first element is just as before -- an object that should be shallow merged into the proxy, and the second element is an "event configuration" object, that the FROOP orchestrator can use to wire events to other action methods, which recursively also have no side effects, because the FROOP orchestrator will merge whatever it returns as well.
 
-This makes the code trivial to test, and each method can be quite loosely coupled with the other methods, as it will be rare that one action method needs to directly call another action method.  In addition, the code can become quite library neutral, as each action method  can only contain the base essentials of what needs to happen.  
+This makes the code trivial to test, as each method will tend to be quite loosely coupled from the other methods.   It will be rare that one action method needs to directly call another action method.  In addition, the code can become quite library neutral, as each action method  can only contain the base essentials of what needs to happen.  
 
 ## Viewing example from git clone or git fork:
 

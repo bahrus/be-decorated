@@ -1,4 +1,4 @@
-import {BeDecoratedProps, MinimalController, MinimalProxy, DA, DEMethods} from './types';
+import {BeDecoratedProps, MinimalProxy, DA, DEMethods} from './types';
 import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
 export {BeDecoratedProps, DEMethods} from './types';
 export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
@@ -15,7 +15,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const {ifWantsToBe, batonPass, noParse} = propDefaults;
+        const {ifWantsToBe, noParse} = propDefaults;
         let controllerInstance = new controller() as any;
         controllerInstance[sym] = new Map<string, any>();
         controllerInstance[changedKeySym] = new Set<string>();

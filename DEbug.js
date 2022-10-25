@@ -12,7 +12,7 @@ export class DE extends HTMLElement {
         const controller = da.complexPropDefaults.controller;
         const { config } = da;
         const propDefaults = config.propDefaults;
-        const { ifWantsToBe, batonPass, noParse } = propDefaults;
+        const { ifWantsToBe, noParse } = propDefaults;
         let controllerInstance = new controller();
         controllerInstance[sym] = new Map();
         controllerInstance[changedKeySym] = new Set();

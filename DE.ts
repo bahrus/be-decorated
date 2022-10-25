@@ -1,4 +1,4 @@
-import {BeDecoratedProps, MinimalController, MinimalProxy, DA, DEMethods} from './types';
+import {BeDecoratedProps, MinimalProxy, DA, DEMethods} from './types';
 import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
 export {BeDecoratedProps, DEMethods} from './types';
 export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
