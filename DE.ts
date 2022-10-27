@@ -17,12 +17,21 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const overrides = {...propDefaults};
         
     }
+
+    #getAttrs(){
+        return {
+            ifWantsToBe: this.getAttribute('if-wants-to-be')!,
+            upgrade: this.getAttribute('upgrade')!
+        }
+    }
     async attach(target: Element){
         const da = (this.constructor as any).DA as DA;
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
-        const propDefaults = config.propDefaults;
-        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        const propDefaults = {...config.propDefaults};
+        const attr = this.#getAttrs();
+        const {ifWantsToBe} = attr;
+        Object.assign(propDefaults, attr);
         const {noParse} = propDefaults;
         let controllerInstance = new controller() as any;
         controllerInstance[sym] = new Map<string, any>();
@@ -32,7 +41,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
 
         if((<any>target).beDecorated === undefined) (<any>target).beDecorated = {};
         const {lispToCamel} = await import('trans-render/lib/lispToCamel.js');
-        const key = lispToCamel(ifWantsToBe!);
+        const key = lispToCamel(ifWantsToBe);
         const existingProp = (<any>target).beDecorated[key];
         const revocable = Proxy.revocable(target, {
             set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
@@ -155,8 +164,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const da = (this.constructor as any).DA as DA;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const upgrade = this.getAttribute('upgrade')!;
-        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        const {ifWantsToBe, upgrade} = this.#getAttrs();
         const {forceVisible} = propDefaults;
         const {upgrade : u} = await import('./upgrade.js');
         await u({
