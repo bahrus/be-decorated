@@ -1,8 +1,8 @@
 import { BeDecoratedProps } from './types';
 import { Action} from 'trans-render/lib/types';
 
-export async function init<TControllerProps = any>(self: any, props: BeDecoratedProps, newTarget: Element, controller: any, passedIn: any) {
-    const { actions, proxyPropDefaults, primaryProp, ifWantsToBe } = props;
+export async function init<TControllerProps = any>(self: any, props: BeDecoratedProps, newTarget: Element, controller: any, passedIn: any, ifWantsToBe: string) {
+    const { actions, proxyPropDefaults, primaryProp } = props;
     controller.propChangeQueue = new Set<string>();
     const objToAssign = proxyPropDefaults !== undefined ? {...proxyPropDefaults} : {};
     const { getAttrInfo } = await import('./upgrade.js');

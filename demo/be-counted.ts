@@ -17,8 +17,6 @@ define<Proxy & BeDecoratedProps<Proxy, Actions>, Actions>({
         tagName: 'be-counted',
         propDefaults:{
             virtualProps: ['count'],
-            upgrade: 'button',
-            ifWantsToBe: 'counted',
             emitEvents: ['count'],
             proxyPropDefaults:{
                 on: 'click'
@@ -32,4 +30,8 @@ define<Proxy & BeDecoratedProps<Proxy, Actions>, Actions>({
         controller: BeCounted,
     }
 });
-document.head.appendChild(document.createElement('be-counted'));
+const beCounted = document.createElement('be-counted');
+beCounted.setAttribute('if-wants-to-be', 'counted');
+beCounted.setAttribute('upgrade', '*');
+
+document.head.appendChild(beCounted);

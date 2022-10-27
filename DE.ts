@@ -13,12 +13,17 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         }
         
     }
+    #getPropDefaultOverrides(propDefaults: BeDecoratedProps){
+        const overrides = {...propDefaults};
+        
+    }
     async attach(target: Element){
         const da = (this.constructor as any).DA as DA;
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const {ifWantsToBe, noParse} = propDefaults;
+        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        const {noParse} = propDefaults;
         let controllerInstance = new controller() as any;
         controllerInstance[sym] = new Map<string, any>();
         controllerInstance[changedKeySym] = new Set<string>();
@@ -117,7 +122,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         (proxy as any).proxy = proxy;
         if(!noParse){ //yes, parse!
             const {init} = await import('./init.js');
-            await init(this, propDefaults, target, controllerInstance, existingProp); 
+            await init(this, propDefaults, target, controllerInstance, existingProp, ifWantsToBe); 
         }
         
         target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
@@ -150,12 +155,14 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const da = (this.constructor as any).DA as DA;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const {upgrade, ifWantsToBe, forceVisible} = propDefaults;
+        const upgrade = this.getAttribute('upgrade')!;
+        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        const {forceVisible} = propDefaults;
         const {upgrade : u} = await import('./upgrade.js');
         await u({
             shadowDomPeer: this,
             upgrade,
-            ifWantsToBe: ifWantsToBe!,
+            ifWantsToBe,
             forceVisible,
         }, this.attach.bind(this));
     }

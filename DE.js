@@ -9,12 +9,16 @@ export class DE extends HTMLElement {
             this.#watchForElementsToUpgrade();
         }
     }
+    #getPropDefaultOverrides(propDefaults) {
+        const overrides = { ...propDefaults };
+    }
     async attach(target) {
         const da = this.constructor.DA;
         const controller = da.complexPropDefaults.controller;
         const { config } = da;
         const propDefaults = config.propDefaults;
-        const { ifWantsToBe, noParse } = propDefaults;
+        const ifWantsToBe = this.getAttribute('if-wants-to-be');
+        const { noParse } = propDefaults;
         let controllerInstance = new controller();
         controllerInstance[sym] = new Map();
         controllerInstance[changedKeySym] = new Set();
@@ -109,7 +113,7 @@ export class DE extends HTMLElement {
         proxy.proxy = proxy;
         if (!noParse) { //yes, parse!
             const { init } = await import('./init.js');
-            await init(this, propDefaults, target, controllerInstance, existingProp);
+            await init(this, propDefaults, target, controllerInstance, existingProp, ifWantsToBe);
         }
         target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
             detail: {
@@ -141,12 +145,14 @@ export class DE extends HTMLElement {
         const da = this.constructor.DA;
         const { config } = da;
         const propDefaults = config.propDefaults;
-        const { upgrade, ifWantsToBe, forceVisible } = propDefaults;
+        const upgrade = this.getAttribute('upgrade');
+        const ifWantsToBe = this.getAttribute('if-wants-to-be');
+        const { forceVisible } = propDefaults;
         const { upgrade: u } = await import('./upgrade.js');
         await u({
             shadowDomPeer: this,
             upgrade,
-            ifWantsToBe: ifWantsToBe,
+            ifWantsToBe,
             forceVisible,
         }, this.attach.bind(this));
     }

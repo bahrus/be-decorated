@@ -40,8 +40,8 @@ export interface MinimalProxy<TTargetElement = Element>{
 }
 
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{
-    upgrade: string;
-    ifWantsToBe: string;
+    //upgrade: string;
+    //ifWantsToBe: string;
     disabled: boolean;
 
     intro: keyof TControllerActions;
@@ -53,7 +53,6 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     controller: {new(): TControllerProps & TControllerActions};
 
-    //newTarget: Element | undefined;
 
     newTargets: Element[];
 

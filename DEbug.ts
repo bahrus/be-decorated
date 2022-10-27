@@ -3,19 +3,27 @@ import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
 export {BeDecoratedProps, DEMethods} from './types';
 export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
     static DA: DA;
-    #ifWantsToBe!: string;
-    #upgrade!: string;
+    //#ifWantsToBe!: string;
+    //#upgrade!: string;
     connectedCallback(){
-        this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
-        this.#upgrade = this.getAttribute('upgrade')!;
-        this.#watchForElementsToUpgrade();
+        //this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        //this.#upgrade = this.getAttribute('upgrade')!;
+        if(!this.hasAttribute('disabled')){
+            this.#watchForElementsToUpgrade();
+        }
+        
+    }
+    #getPropDefaultOverrides(propDefaults: BeDecoratedProps){
+        const overrides = {...propDefaults};
+        
     }
     async attach(target: Element){
         const da = (this.constructor as any).DA as DA;
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const {ifWantsToBe, noParse} = propDefaults;
+        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        const {noParse} = propDefaults;
         let controllerInstance = new controller() as any;
         controllerInstance[sym] = new Map<string, any>();
         controllerInstance[changedKeySym] = new Set<string>();
@@ -114,7 +122,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         (proxy as any).proxy = proxy;
         if(!noParse){ //yes, parse!
             const {init} = await import('./init.js');
-            await init(this, propDefaults, target, controllerInstance, existingProp); 
+            await init(this, propDefaults, target, controllerInstance, existingProp, ifWantsToBe); 
         }
         
         target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
@@ -138,7 +146,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
             }
             this.#emitEvent(ifWantsToBe, `was-decorated`, {proxy, controllerInstance}, proxy, controllerInstance as any as EventTarget);
             if((<any>removedEl).beDecorated !== undefined) delete (<any>removedEl).beDecorated[key];
-            (<any>proxy).self = undefined;
+            //(<any>proxy).self = undefined;
             (controllerInstance as any) = undefined;
             revocable.revoke();
         });
@@ -147,12 +155,14 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const da = (this.constructor as any).DA as DA;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const {upgrade, ifWantsToBe, forceVisible} = propDefaults;
+        const upgrade = this.getAttribute('upgrade')!;
+        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        const {forceVisible} = propDefaults;
         const {upgrade : u} = await import('./upgrade.js');
         await u({
             shadowDomPeer: this,
             upgrade,
-            ifWantsToBe: ifWantsToBe!,
+            ifWantsToBe,
             forceVisible,
         }, this.attach.bind(this));
     }
@@ -168,7 +178,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
     }
 
 
-
 }
 
 export function define<
@@ -179,9 +188,7 @@ export function define<
     const {config} = controllerConfig;
     const {tagName}  = config as WCConfig<TControllerProps, TControllerActions>;
     if(customElements.get(tagName!) !== undefined) return;
-    class DECO extends DE{
-
-    }
+    class DECO extends DE{}
     (DECO as any).DA = controllerConfig;
     customElements.define(tagName!, DECO);
 }
