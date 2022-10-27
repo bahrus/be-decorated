@@ -42,6 +42,7 @@ export interface MinimalProxy<TTargetElement = Element>{
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{
     upgrade: string;
     ifWantsToBe: string;
+    disabled: boolean;
 
     intro: keyof TControllerActions;
 
@@ -76,9 +77,9 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     primaryPropReq: boolean;
 
-    isC: boolean;
+    //isC: boolean;
 
-    virtualPropsMap: WeakMap<Element, any>;
+    //virtualPropsMap: WeakMap<Element, any>;
 
     /**
      * Do an aggressive querySelectorAll for the matching elements, prior to monitoring css animation

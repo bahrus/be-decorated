@@ -1,11 +1,13 @@
 export class DE extends HTMLElement {
     static DA;
-    #ifWantsToBe;
-    #upgrade;
+    //#ifWantsToBe!: string;
+    //#upgrade!: string;
     connectedCallback() {
-        this.#ifWantsToBe = this.getAttribute('if-wants-to-be');
-        this.#upgrade = this.getAttribute('upgrade');
-        this.#watchForElementsToUpgrade();
+        //this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        //this.#upgrade = this.getAttribute('upgrade')!;
+        if (!this.hasAttribute('disabled')) {
+            this.#watchForElementsToUpgrade();
+        }
     }
     async attach(target) {
         const da = this.constructor.DA;

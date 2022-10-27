@@ -3,12 +3,15 @@ import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
 export {BeDecoratedProps, DEMethods} from './types';
 export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
     static DA: DA;
-    #ifWantsToBe!: string;
-    #upgrade!: string;
+    //#ifWantsToBe!: string;
+    //#upgrade!: string;
     connectedCallback(){
-        this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
-        this.#upgrade = this.getAttribute('upgrade')!;
-        this.#watchForElementsToUpgrade();
+        //this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        //this.#upgrade = this.getAttribute('upgrade')!;
+        if(!this.hasAttribute('disabled')){
+            this.#watchForElementsToUpgrade();
+        }
+        
     }
     async attach(target: Element){
         const da = (this.constructor as any).DA as DA;
