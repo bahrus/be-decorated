@@ -17,8 +17,12 @@ export async function doActions(actions, target, proxy) {
         if (ret === undefined)
             continue;
         if (Array.isArray(ret)) {
-            const { PE } = await import('./PE.js');
-            const pe = new PE();
+            let pe = proxy[peSym];
+            if (pe === undefined) {
+                const { PE } = await import('./PE.js');
+                pe = new PE();
+                proxy[peSym] = pe;
+            }
             pe.do(proxy, method, ret);
         }
         else {
@@ -26,4 +30,4 @@ export async function doActions(actions, target, proxy) {
         }
     }
 }
-const sym = Symbol();
+const peSym = Symbol();

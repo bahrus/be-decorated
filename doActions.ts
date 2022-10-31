@@ -1,4 +1,5 @@
 import {Action} from 'trans-render/lib/types';
+import { PE } from './PE.js';
 import {EventConfigs} from './types';
 
 export async function  doActions(actions: {[methodName: string]: Action}, target: any, proxy?: any){
@@ -18,8 +19,13 @@ export async function  doActions(actions: {[methodName: string]: Action}, target
         const ret = isAsync ? await (<any>target)[methodName](proxy) : (<any>target)[methodName](proxy);
         if(ret === undefined) continue;
         if(Array.isArray(ret)){
-            const {PE} = await import('./PE.js');
-            const pe = new PE();
+            let pe = proxy[peSym] as PE;
+            if(pe === undefined){
+                const {PE} = await import('./PE.js');
+                pe = new PE();
+                proxy[peSym] = pe;
+            }
+            
             pe.do(proxy, method, ret as [any, EventConfigs]);
         }else{
             Object.assign(proxy, ret);
@@ -28,4 +34,4 @@ export async function  doActions(actions: {[methodName: string]: Action}, target
     }
 }
 
-const sym = Symbol();
+const peSym = Symbol();
