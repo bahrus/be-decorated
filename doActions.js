@@ -23,7 +23,7 @@ export async function doActions(actions, target, proxy) {
                 pe = new PE();
                 proxy[peSym] = pe;
             }
-            pe.do(proxy, method, ret);
+            pe.do(proxy, methodName, ret);
         }
         else {
             Object.assign(proxy, ret);

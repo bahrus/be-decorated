@@ -9,7 +9,6 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
     const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
     let parsedObj: any;
     let json: string | undefined;
-    let err: any;
     if(attr !== null && attr.length !== 0 && attr[0]!.length !== 0){
         
         json = attr[0]!.trim();
@@ -18,7 +17,7 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
             try {
                 parsedObj = JSON.parse(json);
             } catch (e) {
-                err = e;
+                console.error(e);
             }
         }
     }

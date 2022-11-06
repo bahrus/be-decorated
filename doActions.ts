@@ -26,7 +26,7 @@ export async function  doActions(actions: {[methodName: string]: Action}, target
                 proxy[peSym] = pe;
             }
             
-            pe.do(proxy, method, ret as [any, EventConfigs]);
+            pe.do(proxy, methodName, ret as [any, EventConfigs]);
         }else{
             Object.assign(proxy, ret);
         }

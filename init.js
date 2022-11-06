@@ -6,7 +6,6 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
     const attr = getAttrInfo(newTarget, ifWantsToBe, true);
     let parsedObj;
     let json;
-    let err;
     if (attr !== null && attr.length !== 0 && attr[0].length !== 0) {
         json = attr[0].trim();
         const firstChar = json[0];
@@ -15,7 +14,7 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
                 parsedObj = JSON.parse(json);
             }
             catch (e) {
-                err = e;
+                console.error(e);
             }
         }
     }
