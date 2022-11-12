@@ -24,12 +24,12 @@
   ],
   "types": "types.d.ts",
   "dependencies": {
-    "trans-render": "0.0.637"
+    "trans-render": "0.0.641"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
     "@playwright/test": "1.27.1",
-    "may-it-serve": "0.0.3",
+    "may-it-serve": "0.0.4",
     "xtal-shell": "0.0.27"
   },
   "scripts": {
