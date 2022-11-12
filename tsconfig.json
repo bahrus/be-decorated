@@ -11,6 +11,7 @@
 	"files":[
 		"DE.ts",
 		"DEbug.ts",
+		"isOrWillBe.ts",
 		"upgrade.ts",
 		"demo/be-counted.ts",
 		"findAdjacentElement.ts",

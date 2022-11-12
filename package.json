@@ -17,7 +17,8 @@
     ".": "./DE.js",
     "./upgrade.js": "./upgrade.js",
     "./findAdjacentElement.js": "./findAdjacentElement.js",
-    "./DE.js": "./DE.js"
+    "./DE.js": "./DE.js",
+    "./isOrWillBe.js": "./isOrWillBe.js"
   },
   "files": [
     "*.*"
