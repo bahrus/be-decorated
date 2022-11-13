@@ -140,7 +140,8 @@ export interface DA<TControllerProps = any, TControllerActions=TControllerProps>
 }
 
 export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Action>{
-    on: string,
+    on?: string,
+    abort?: string,
     of: EventTarget,
     doInit?: boolean,
 }

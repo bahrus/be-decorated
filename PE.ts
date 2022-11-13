@@ -15,20 +15,25 @@ export class PE{
         if(vals[1] !== undefined){
             for(const methodName in vals[1]){
                 const ec = vals[1][methodName]!;
-                const ac = new AbortController();
-                const method = (<any>controller)[methodName];
-                const isAsync = method.constructor.name === 'AsyncFunction';
-                //console.log({method, isAsync, key, ec});
-                ec.of.addEventListener(ec.on, async e => {
-                    const ret = isAsync ? await (<any>controller)[methodName](proxy, e) : (<any>controller)[methodName](proxy, e);
-                    //console.log({ret});
-                    await this.recurse(ret, proxy, methodName);
-                }, {signal: ac.signal});
-                this.#abortControllers.get(originMethodName)!.push(ac);
-                if(ec.doInit){
-                    const ret = isAsync ? await (<any>controller)[methodName](proxy) : (<any>controller)[methodName](proxy);
-                    await this.recurse(ret, proxy, methodName);
+                if(ec.on !== undefined){
+                    const ac = new AbortController();
+                    const method = (<any>controller)[methodName];
+                    const isAsync = method.constructor.name === 'AsyncFunction';
+                    //console.log({method, isAsync, key, ec});
+                    ec.of.addEventListener(ec.on, async e => {
+                        const ret = isAsync ? await (<any>controller)[methodName](proxy, e) : (<any>controller)[methodName](proxy, e);
+                        //console.log({ret});
+                        await this.recurse(ret, proxy, methodName);
+                    }, {signal: ac.signal});
+                    this.#abortControllers.get(originMethodName)!.push(ac);
+                    if(ec.doInit){
+                        const ret = isAsync ? await (<any>controller)[methodName](proxy) : (<any>controller)[methodName](proxy);
+                        await this.recurse(ret, proxy, methodName);
+                    }
+                }else if(ec.abort !== undefined){
+                    this.disconnect(originMethodName);
                 }
+
             }
         }
         
