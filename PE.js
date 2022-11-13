@@ -1,7 +1,8 @@
 export class PE {
-    #abortControllers = new Map();
+    #abortControllers = [];
+    #evTg2DMN2OMN2ET2AC = new WeakMap();
     async do(proxy, originMethodName, vals) {
-        this.disconnect(originMethodName);
+        //this.disconnect(originMethodName);
         const controller = proxy.controller;
         if (!(controller instanceof EventTarget))
             throw ("Controller must extend EventTarget");
@@ -14,24 +15,47 @@ export class PE {
         if (vals[1] !== undefined) {
             for (const methodName in vals[1]) {
                 const ec = vals[1][methodName];
-                if (ec.on !== undefined) {
-                    const ac = new AbortController();
+                const { on, abort } = ec;
+                if (on !== undefined) {
+                    const { of, doInit } = ec;
+                    let dmn2omn2et2ac = this.#evTg2DMN2OMN2ET2AC.get(of);
+                    if (dmn2omn2et2ac === undefined) {
+                        dmn2omn2et2ac = new Map();
+                        this.#evTg2DMN2OMN2ET2AC.set(of, dmn2omn2et2ac);
+                    }
+                    let omn2et2ac = dmn2omn2et2ac.get(methodName);
+                    if (omn2et2ac === undefined) {
+                        omn2et2ac = new Map();
+                        dmn2omn2et2ac.set(methodName, omn2et2ac);
+                    }
+                    let et2ac = omn2et2ac.get(originMethodName);
+                    if (et2ac === undefined) {
+                        et2ac = new Map();
+                        omn2et2ac.set(originMethodName, et2ac);
+                    }
+                    let ac = et2ac.get(on);
+                    if (ac === undefined) {
+                        ac = new AbortController();
+                        this.#abortControllers.push(ac);
+                        et2ac.set(on, ac);
+                    }
                     const method = controller[methodName];
                     const isAsync = method.constructor.name === 'AsyncFunction';
                     //console.log({method, isAsync, key, ec});
-                    ec.of.addEventListener(ec.on, async (e) => {
+                    of.addEventListener(on, async (e) => {
                         const ret = isAsync ? await controller[methodName](proxy, e) : controller[methodName](proxy, e);
                         //console.log({ret});
                         await this.recurse(ret, proxy, methodName);
                     }, { signal: ac.signal });
-                    this.#abortControllers.get(originMethodName).push(ac);
-                    if (ec.doInit) {
+                    if (doInit) {
                         const ret = isAsync ? await controller[methodName](proxy) : controller[methodName](proxy);
                         await this.recurse(ret, proxy, methodName);
                     }
                 }
-                else if (ec.abort !== undefined) {
-                    this.disconnect(originMethodName);
+                if (abort !== undefined) {
+                    const ac = this.#evTg2DMN2OMN2ET2AC.get(abort.of)?.get(abort.destMethName)?.get(abort.origMethName)?.get(abort.on);
+                    if (ac !== undefined)
+                        ac.abort();
                 }
             }
         }
@@ -44,17 +68,8 @@ export class PE {
         await pe.do(proxy, methodName, arg);
     }
     disconnectAll() {
-        for (const key of this.#abortControllers.keys()) {
-            this.disconnect(key);
+        for (const ac of this.#abortControllers) {
+            ac.abort();
         }
-    }
-    disconnect(methodName) {
-        if (this.#abortControllers.has(methodName)) {
-            const abortControllers = this.#abortControllers.get(methodName);
-            for (const c of abortControllers) {
-                c.abort();
-            }
-        }
-        this.#abortControllers.set(methodName, []);
     }
 }

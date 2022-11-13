@@ -141,7 +141,12 @@ export interface DA<TControllerProps = any, TControllerActions=TControllerProps>
 
 export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Action>{
     on?: string,
-    abort?: string,
+    abort?: {
+        origMethName: string & keyof MCActions,
+        destMethName: string & keyof MCActions,
+        of: EventTarget,
+        on: string, 
+    },
     of: EventTarget,
     doInit?: boolean,
 }
@@ -149,3 +154,25 @@ export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Acti
 //export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = {[key: string]: IEventConfig<MCProps, MCActions, TAction>}
 
 export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = Partial<{[key in keyof MCActions]: IEventConfig<MCProps, MCActions, TAction>}>
+
+export type OriginatingMethodName = string;
+
+export type OMN = OriginatingMethodName;
+
+export type EventType = string;
+
+export type ET = EventType;
+
+export type EventType2AbortController = Map<EventType, AbortController>;
+
+export type ET2AC = EventType2AbortController;
+
+export type OMN2ET2AC = Map<OMN, ET2AC>;
+
+export type DestinationMethodName = string;
+
+export type DMN = DestinationMethodName;
+
+export type DMN2OMN2ET2AC = Map<DMN, OMN2ET2AC>;
+
+export type EvTg2DMN2OMN2ET2AC = WeakMap<EventTarget, DMN2OMN2ET2AC>;
