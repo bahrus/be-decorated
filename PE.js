@@ -53,9 +53,12 @@ export class PE {
                     }
                 }
                 if (abort !== undefined) {
-                    const ac = this.#evTg2DMN2OMN2ET2AC.get(abort.of)?.get(abort.destMethName)?.get(abort.origMethName)?.get(abort.on);
-                    if (ac !== undefined)
+                    const et2ac = this.#evTg2DMN2OMN2ET2AC.get(abort.of)?.get(abort.destMethName)?.get(abort.origMethName);
+                    const ac = et2ac?.get(abort.on);
+                    if (ac !== undefined) {
                         ac.abort();
+                        et2ac?.set(abort.on, new AbortController());
+                    }
                 }
             }
         }
