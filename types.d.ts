@@ -143,7 +143,7 @@ export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Acti
     on?: string,
     abort?: {
         origMethName: string & keyof MCActions,
-        destMethName: string & keyof MCActions,
+        //destMethName: string & keyof MCActions,
         of: EventTarget,
         on: string, 
     },

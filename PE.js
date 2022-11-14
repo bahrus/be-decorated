@@ -53,7 +53,7 @@ export class PE {
                     }
                 }
                 if (abort !== undefined) {
-                    const et2ac = this.#evTg2DMN2OMN2ET2AC.get(abort.of)?.get(abort.destMethName)?.get(abort.origMethName);
+                    const et2ac = this.#evTg2DMN2OMN2ET2AC.get(abort.of)?.get(methodName)?.get(abort.origMethName);
                     const ac = et2ac?.get(abort.on);
                     if (ac !== undefined) {
                         ac.abort();
