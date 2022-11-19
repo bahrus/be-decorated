@@ -43,8 +43,20 @@ export class PE {
                     const isAsync = method.constructor.name === 'AsyncFunction';
                     //console.log({method, isAsync, key, ec});
                     of.addEventListener(on, async (e) => {
+                        const { composedPathMatches } = ec;
+                        if (composedPathMatches !== undefined) {
+                            const composedPath = e.composedPath(); // as Element[];
+                            let found = false;
+                            for (const el of composedPath) {
+                                if ((el instanceof Element) && el.matches(composedPathMatches)) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                                return;
+                        }
                         const ret = isAsync ? await controller[methodName](proxy, e) : controller[methodName](proxy, e);
-                        //console.log({ret});
                         await this.recurse(ret, proxy, methodName);
                     }, { signal: ac.signal });
                     if (doInit) {

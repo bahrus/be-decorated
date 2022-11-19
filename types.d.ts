@@ -149,6 +149,7 @@ export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Acti
     },
     of: EventTarget,
     doInit?: boolean,
+    composedPathMatches?: string,
 }
 
 //export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = {[key: string]: IEventConfig<MCProps, MCActions, TAction>}
