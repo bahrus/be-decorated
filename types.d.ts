@@ -64,7 +64,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     noParse: boolean;
 
-    proxyPropDefaults: Partial<{[key in keyof TControllerProps]: any}>;
+    proxyPropDefaults: Partial<TControllerProps>;
 
     emitEvents: boolean | string[];
 
