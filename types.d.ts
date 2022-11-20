@@ -1,5 +1,5 @@
-import {Action, PropInfo} from 'trans-render/lib/types';
-import {DefineArgs} from 'trans-render/lib/types';
+import {Action, PropInfo, DefineArgs} from 'trans-render/lib/types';
+import {IEventConfig as IBaseEventConfig} from 'trans-render/froop/types';
 
 export interface BeDecoratedConfig<TControllerProps, TControllerActions = TControllerProps>{
     config: {
@@ -39,6 +39,10 @@ export interface MinimalProxy<TTargetElement = Element>{
     proxy: TTargetElement;
 }
 
+export interface ActionExt<TControllerProps = any, TControllerActions = TControllerProps> extends Action<TControllerProps, TControllerActions>{
+    returnObjMold?: Partial<TControllerProps> | [Partial<TControllerProps> | undefined, EventConfigs<TControllerProps, TControllerActions> | undefined]
+}
+
 export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{
     upgrade: string;
     ifWantsToBe: string;
@@ -49,7 +53,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     finale: keyof TControllerActions;
 
 
-    actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | Action<TControllerProps>}>;
+    actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | ActionExt<TControllerProps, TControllerActions>}>;
 
     controller: {new(): TControllerProps & TControllerActions};
 
@@ -116,9 +120,6 @@ export interface UpgradeArg<T extends Object>{
     ifWantsToBe: string,
 
     forceVisible: string[],
-
-    
-
     
 }
 
@@ -139,16 +140,15 @@ export interface DA<TControllerProps = any, TControllerActions=TControllerProps>
     
 }
 
-export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Action>{
-    on?: string,
+export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Action>
+    extends IBaseEventConfig<MCProps, MCActions, TAction>
+{
     abort?: {
         origMethName: string & keyof MCActions,
         //destMethName: string & keyof MCActions,
         of: EventTarget,
         on: string, 
     },
-    of: EventTarget,
-    doInit?: boolean,
     composedPathMatches?: string,
 }
 

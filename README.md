@@ -1,13 +1,9 @@
 # be-decorated
 
 [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/be-decorated)
-
 [![Playwright Tests](https://github.com/bahrus/be-decorated/actions/workflows/CI.yml/badge.svg?branch=baseline)](https://github.com/bahrus/be-decorated/actions/workflows/CI.yml)
-
-<a href="https://nodei.co/npm/be-decorated/"><img src="https://nodei.co/npm/be-decorated.png"></a>
-
+[![NPM version](https://badge.fury.io/js/be-decorated.png)](http://badge.fury.io/js/be-decorated)
 [![How big is this package in your project?](https://img.shields.io/bundlephobia/minzip/be-decorated?style=for-the-badge)](https://bundlephobia.com/result?p=be-decorated)
-
 <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/be-decorated?compression=gzip">
 
 

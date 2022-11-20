@@ -18,6 +18,8 @@ export class PE {
                 const { on, abort } = ec;
                 if (on !== undefined) {
                     const { of, doInit } = ec;
+                    if (!(of instanceof EventTarget))
+                        throw { of, msg: 'not an EventTarget' };
                     let dmn2omn2et2ac = this.#evTg2DMN2OMN2ET2AC.get(of);
                     if (dmn2omn2et2ac === undefined) {
                         dmn2omn2et2ac = new Map();

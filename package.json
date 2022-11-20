@@ -25,7 +25,7 @@
   ],
   "types": "types.d.ts",
   "dependencies": {
-    "trans-render": "0.0.644"
+    "trans-render": "0.0.646"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
