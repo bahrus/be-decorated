@@ -1,4 +1,4 @@
-export function inject(into, me) {
+export function inject(into, me, of) {
     const me0 = me[0];
     const into0 = into[0];
     if (into0 !== undefined)
@@ -12,6 +12,16 @@ export function inject(into, me) {
         }
         else {
             into1[key] = me1[key];
+        }
+    }
+    if (of !== undefined) {
+        for (const val of Object.values(into1)) {
+            if (val?.of === 'tbd') {
+                val.of = of;
+            }
+            if (val?.abort?.of === 'tbd') {
+                val.abort.of = of;
+            }
         }
     }
     return into;

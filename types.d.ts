@@ -146,7 +146,7 @@ export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Acti
     abort?: {
         origMethName: string & keyof MCActions,
         //destMethName: string & keyof MCActions,
-        of: EventTarget,
+        of: 'tbd' | EventTarget,
         on: string, 
     },
     composedPathMatches?: string,
