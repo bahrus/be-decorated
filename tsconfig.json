@@ -15,6 +15,7 @@
 		"upgrade.ts",
 		"demo/be-counted.ts",
 		"findAdjacentElement.ts",
+		"inject.ts"
 	],
 	"exclude":[
 		"build",

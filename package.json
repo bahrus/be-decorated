@@ -18,7 +18,8 @@
     "./upgrade.js": "./upgrade.js",
     "./findAdjacentElement.js": "./findAdjacentElement.js",
     "./DE.js": "./DE.js",
-    "./isOrWillBe.js": "./isOrWillBe.js"
+    "./isOrWillBe.js": "./isOrWillBe.js",
+    "./inject.js": "./inject.js"
   },
   "files": [
     "*.*"
