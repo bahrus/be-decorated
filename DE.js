@@ -1,21 +1,14 @@
 export class DE extends HTMLElement {
     static DA;
-    //#ifWantsToBe!: string;
-    //#upgrade!: string;
     connectedCallback() {
-        //this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
-        //this.#upgrade = this.getAttribute('upgrade')!;
         if (!this.hasAttribute('disabled')) {
             this.#watchForElementsToUpgrade();
         }
     }
-    #getPropDefaultOverrides(propDefaults) {
-        const overrides = { ...propDefaults };
-    }
-    #getAttrs() {
+    #getAttrs(upDef, iwtbDef) {
         return {
-            ifWantsToBe: this.getAttribute('if-wants-to-be'),
-            upgrade: this.getAttribute('upgrade')
+            ifWantsToBe: this.getAttribute('if-wants-to-be') || iwtbDef,
+            upgrade: this.getAttribute('upgrade') || upDef,
         };
     }
     async attach(target) {
@@ -23,7 +16,8 @@ export class DE extends HTMLElement {
         const controller = da.complexPropDefaults.controller;
         const { config } = da;
         const propDefaults = { ...config.propDefaults };
-        const attr = this.#getAttrs();
+        const { ifWantsToBe: iwtbDef, upgrade: upDef } = propDefaults;
+        const attr = this.#getAttrs(upDef, iwtbDef);
         const { ifWantsToBe } = attr;
         Object.assign(propDefaults, attr);
         const { noParse } = propDefaults;
@@ -153,8 +147,9 @@ export class DE extends HTMLElement {
         const da = this.constructor.DA;
         const { config } = da;
         const propDefaults = config.propDefaults;
-        const { ifWantsToBe, upgrade } = this.#getAttrs();
-        const { forceVisible } = propDefaults;
+        const { upgrade: upDef, ifWantsToBe: iwtbDef } = propDefaults;
+        const { ifWantsToBe, upgrade } = this.#getAttrs(upDef, iwtbDef);
+        const { forceVisible, upgrade: udef, ifWantsToBe: idef } = propDefaults;
         const { upgrade: u } = await import('./upgrade.js');
         await u({
             shadowDomPeer: this,

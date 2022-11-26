@@ -3,25 +3,17 @@ import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
 export {BeDecoratedProps, DEMethods} from './types';
 export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
     static DA: DA;
-    //#ifWantsToBe!: string;
-    //#upgrade!: string;
     connectedCallback(){
-        //this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
-        //this.#upgrade = this.getAttribute('upgrade')!;
         if(!this.hasAttribute('disabled')){
             this.#watchForElementsToUpgrade();
         }
         
     }
-    #getPropDefaultOverrides(propDefaults: BeDecoratedProps){
-        const overrides = {...propDefaults};
-        
-    }
 
-    #getAttrs(){
+    #getAttrs(upDef: string, iwtbDef: string){
         return {
-            ifWantsToBe: this.getAttribute('if-wants-to-be')!,
-            upgrade: this.getAttribute('upgrade')!
+            ifWantsToBe: this.getAttribute('if-wants-to-be') || iwtbDef,
+            upgrade: this.getAttribute('upgrade') || upDef,
         }
     }
     async attach(target: Element){
@@ -29,7 +21,8 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
         const propDefaults = {...config.propDefaults};
-        const attr = this.#getAttrs();
+        const {ifWantsToBe: iwtbDef, upgrade: upDef} = propDefaults;
+        const attr = this.#getAttrs(upDef, iwtbDef);
         const {ifWantsToBe} = attr;
         Object.assign(propDefaults, attr);
         const {noParse} = propDefaults;
@@ -164,8 +157,9 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const da = (this.constructor as any).DA as DA;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const {ifWantsToBe, upgrade} = this.#getAttrs();
-        const {forceVisible} = propDefaults;
+        const {upgrade: upDef, ifWantsToBe: iwtbDef} = propDefaults;
+        const {ifWantsToBe, upgrade} = this.#getAttrs(upDef, iwtbDef);
+        const {forceVisible, upgrade: udef, ifWantsToBe: idef} = propDefaults;
         const {upgrade : u} = await import('./upgrade.js');
         await u({
             shadowDomPeer: this,
