@@ -48,18 +48,19 @@ export class PE{
                     //console.log({method, isAsync, key, ec});
                     of.addEventListener(on, async e => {
                         const {composedPathMatches} = ec;
+                        let foundEl: Element | undefined;
                         if(composedPathMatches !== undefined){
                             const composedPath = e.composedPath();// as Element[];
-                            let found = false;
+                            
                             for(const el of composedPath){
                                 if((el instanceof Element) && el.matches(composedPathMatches)){
-                                    found = true;
+                                    foundEl = el;
                                     break;
                                 }
                             }
-                            if(!found) return;
+                            if(foundEl === undefined) return;
                         }
-                        const ret = isAsync ? await (<any>controller)[methodName](proxy, e) : (<any>controller)[methodName](proxy, e);
+                        const ret = isAsync ? await (<any>controller)[methodName](proxy, e, foundEl) : (<any>controller)[methodName](proxy, e, foundEl);
                         
                         await this.recurse(ret, proxy, methodName);
                     }, {signal: ac.signal});
@@ -69,11 +70,13 @@ export class PE{
                     }
                 }
                 if(abort !== undefined){
-                    const et2ac = this.#evTg2DMN2OMN2ET2AC.get(abort.of)?.get(methodName)?.get(abort.origMethName);
-                    const ac = et2ac?.get(abort.on);
+                    const {of, origMethName, on} = abort;
+                    if(!(of instanceof EventTarget)) throw {of, msg: 'not an EventTarget'};
+                    const et2ac = this.#evTg2DMN2OMN2ET2AC.get(of)?.get(methodName)?.get(origMethName);
+                    const ac = et2ac?.get(on);
                     if(ac !== undefined) {
                         ac.abort();
-                        et2ac?.set(abort.on, new AbortController());
+                        et2ac?.set(on, new AbortController());
                     }
                 }
 
