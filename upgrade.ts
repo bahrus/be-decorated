@@ -20,7 +20,10 @@ export function doReplace(target: EventTarget, ifWantsToBe: string){
 }
 
 export async function attach<T extends EventTarget>(target: EventTarget, ifWantsToBe: string, callback?: (t: T, replaced: boolean) => void){
-    if(!doReplace(target!, ifWantsToBe)) return;
+    if(!doReplace(target!, ifWantsToBe)) {
+        const beDeco = (<any>target).beDecorated;
+        if(!beDeco || beDeco[ifWantsToBe] === undefined) return;
+    }
     if(callback !== undefined) await callback(target as T, true);
 }
 

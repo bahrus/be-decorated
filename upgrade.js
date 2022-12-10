@@ -15,8 +15,11 @@ export function doReplace(target, ifWantsToBe) {
     return true;
 }
 export async function attach(target, ifWantsToBe, callback) {
-    if (!doReplace(target, ifWantsToBe))
-        return;
+    if (!doReplace(target, ifWantsToBe)) {
+        const beDeco = target.beDecorated;
+        if (!beDeco || beDeco[ifWantsToBe] === undefined)
+            return;
+    }
     if (callback !== undefined)
         await callback(target, true);
 }
