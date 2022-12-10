@@ -39,6 +39,9 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
             Object.assign(objToAssign, parsedObj);
         }
     }
+    if (passedIn !== undefined) {
+        Object.assign(objToAssign, passedIn);
+    }
     Object.assign(controller.proxy, objToAssign);
 }
 export function getPropsFromActions(action) {

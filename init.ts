@@ -38,6 +38,9 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
             Object.assign(objToAssign, parsedObj);
         }
     }
+    if(passedIn !== undefined){
+        Object.assign(objToAssign, passedIn);
+    }
     Object.assign(controller.proxy, objToAssign);
 }
 
