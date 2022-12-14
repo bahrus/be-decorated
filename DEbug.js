@@ -1,23 +1,25 @@
 export class DE extends HTMLElement {
     static DA;
-    //#ifWantsToBe!: string;
-    //#upgrade!: string;
     connectedCallback() {
-        //this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
-        //this.#upgrade = this.getAttribute('upgrade')!;
         if (!this.hasAttribute('disabled')) {
             this.#watchForElementsToUpgrade();
         }
     }
-    #getPropDefaultOverrides(propDefaults) {
-        const overrides = { ...propDefaults };
+    #getAttrs(upDef, iwtbDef) {
+        return {
+            ifWantsToBe: this.getAttribute('if-wants-to-be') || iwtbDef,
+            upgrade: this.getAttribute('upgrade') || upDef,
+        };
     }
     async attach(target) {
         const da = this.constructor.DA;
         const controller = da.complexPropDefaults.controller;
         const { config } = da;
-        const propDefaults = config.propDefaults;
-        const ifWantsToBe = this.getAttribute('if-wants-to-be');
+        const propDefaults = { ...config.propDefaults };
+        const { ifWantsToBe: iwtbDef, upgrade: upDef } = propDefaults;
+        const attr = this.#getAttrs(upDef, iwtbDef);
+        const { ifWantsToBe } = attr;
+        Object.assign(propDefaults, attr);
         const { noParse } = propDefaults;
         let controllerInstance = new controller();
         controllerInstance[sym] = new Map();
@@ -145,9 +147,9 @@ export class DE extends HTMLElement {
         const da = this.constructor.DA;
         const { config } = da;
         const propDefaults = config.propDefaults;
-        const upgrade = this.getAttribute('upgrade');
-        const ifWantsToBe = this.getAttribute('if-wants-to-be');
-        const { forceVisible } = propDefaults;
+        const { upgrade: upDef, ifWantsToBe: iwtbDef } = propDefaults;
+        const { ifWantsToBe, upgrade } = this.#getAttrs(upDef, iwtbDef);
+        const { forceVisible, upgrade: udef, ifWantsToBe: idef } = propDefaults;
         const { upgrade: u } = await import('./upgrade.js');
         await u({
             shadowDomPeer: this,

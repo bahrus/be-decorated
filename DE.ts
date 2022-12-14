@@ -1,7 +1,7 @@
-import {BeDecoratedProps, MinimalProxy, DA, DEMethods, ActionExt} from './types';
-import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
-export {BeDecoratedProps, DEMethods} from './types';
-export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
+import {BeDecoratedProps, MinimalProxy, DA, ActionExt} from './types';
+import {Action, DefineArgs, PropInfo, WCConfig, Attachable} from 'trans-render/lib/types';
+export {BeDecoratedProps} from './types';
+export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements Attachable{
     static DA: DA;
     connectedCallback(){
         if(!this.hasAttribute('disabled')){

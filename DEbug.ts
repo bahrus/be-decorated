@@ -1,28 +1,30 @@
-import {BeDecoratedProps, MinimalProxy, DA, DEMethods} from './types';
-import {Action, DefineArgs, PropInfo, WCConfig} from 'trans-render/lib/types';
-export {BeDecoratedProps, DEMethods} from './types';
-export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements DEMethods{
+import {BeDecoratedProps, MinimalProxy, DA, ActionExt} from './types';
+import {Action, DefineArgs, PropInfo, WCConfig, Attachable} from 'trans-render/lib/types';
+export {BeDecoratedProps} from './types';
+export class DE<TControllerProps=any, TControllerActions=TControllerProps> extends HTMLElement implements Attachable{
     static DA: DA;
-    //#ifWantsToBe!: string;
-    //#upgrade!: string;
     connectedCallback(){
-        //this.#ifWantsToBe = this.getAttribute('if-wants-to-be')!;
-        //this.#upgrade = this.getAttribute('upgrade')!;
         if(!this.hasAttribute('disabled')){
             this.#watchForElementsToUpgrade();
         }
         
     }
-    #getPropDefaultOverrides(propDefaults: BeDecoratedProps){
-        const overrides = {...propDefaults};
-        
+
+    #getAttrs(upDef: string, iwtbDef: string){
+        return {
+            ifWantsToBe: this.getAttribute('if-wants-to-be') || iwtbDef,
+            upgrade: this.getAttribute('upgrade') || upDef,
+        }
     }
     async attach(target: Element){
         const da = (this.constructor as any).DA as DA;
         const controller = da.complexPropDefaults.controller;
         const {config} = da;
-        const propDefaults = config.propDefaults;
-        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
+        const propDefaults = {...config.propDefaults};
+        const {ifWantsToBe: iwtbDef, upgrade: upDef} = propDefaults;
+        const attr = this.#getAttrs(upDef, iwtbDef);
+        const {ifWantsToBe} = attr;
+        Object.assign(propDefaults, attr);
         const {noParse} = propDefaults;
         let controllerInstance = new controller() as any;
         controllerInstance[sym] = new Map<string, any>();
@@ -32,7 +34,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
 
         if((<any>target).beDecorated === undefined) (<any>target).beDecorated = {};
         const {lispToCamel} = await import('trans-render/lib/lispToCamel.js');
-        const key = lispToCamel(ifWantsToBe!);
+        const key = lispToCamel(ifWantsToBe);
         const existingProp = (<any>target).beDecorated[key];
         const revocable = Proxy.revocable(target, {
             set:(target: Element & TControllerProps, key: string & keyof TControllerProps, value) => {
@@ -155,9 +157,9 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const da = (this.constructor as any).DA as DA;
         const {config} = da;
         const propDefaults = config.propDefaults;
-        const upgrade = this.getAttribute('upgrade')!;
-        const ifWantsToBe = this.getAttribute('if-wants-to-be')!;
-        const {forceVisible} = propDefaults;
+        const {upgrade: upDef, ifWantsToBe: iwtbDef} = propDefaults;
+        const {ifWantsToBe, upgrade} = this.#getAttrs(upDef, iwtbDef);
+        const {forceVisible, upgrade: udef, ifWantsToBe: idef} = propDefaults;
         const {upgrade : u} = await import('./upgrade.js');
         await u({
             shadowDomPeer: this,
@@ -183,7 +185,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
 export function define<
     TControllerProps = any, 
     TControllerActions = TControllerProps,
-    TActions = Action<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfo, Action<TControllerProps>>){
+    TActions = Action<TControllerProps>>(controllerConfig: DefineArgs<TControllerProps, TControllerActions, PropInfo, ActionExt<TControllerProps, TControllerActions>>){
     
     const {config} = controllerConfig;
     const {tagName}  = config as WCConfig<TControllerProps, TControllerActions>;
