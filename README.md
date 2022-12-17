@@ -163,6 +163,7 @@ The intention here is even if the element hasn't been upgraded yet, property set
 
 [be-observant](https://github.com/bahrus/be-observant) provides a pattern, and exposes some reusable functions, for "pulling-down" bindings from the host or neighboring siblings.  This can often be a sufficient and elegant way to deal with this concern.
 
+
 ## API
 
 This web component base class builds on the provided api:
@@ -338,13 +339,7 @@ Those 4 "legs" are:
 
 These four legs may be subdivided into two halves -- the "back-end" two "legs" could, w3c willing, contain ["isomorphic"](https://medium.com/airbnb-engineering/isomorphic-javascript-the-future-of-web-apps-10882b7a2ebc) (i.e. shared) code.  Likewise, the two "front-end" legs can share code, as the api's available during template instantiation are quite similar to the api's available within the live DOM tree.  The be-decorated library provides explicit support for this.
 
-To see this in action, let's look at [a](https://github.com/bahrus/be-delible) [few](https://github.com/bahrus/be-typed) [examples](https://github.com/bahrus/be-clonable):
-
-The first thing we observe is that we end up wanting a "triangle-shaped" dependency graph of file dependencies:
-
-File index.js has two references that can load in parallel -- 1.  trPlugin.js that is used for template instantiation, and 2. be-[if-wants-to-be].js, a custom element used within the DOM tree.  The first file, trPlugin.js just has a little extra boilerplate code that connects the template instantiation to the be-*.js custom element, via the inherited "attach" method.  So developers can focus on developing a single controller class, and the trPlugin.js is just a matter of copy, paste and search and replace the "if-wants-to-be" value (easily automated, I suppose).
-
-[TODO] create a cli to create these three starter files (actually, five, counting types.d.ts and a manifest file that will always be the same).
+In fact, if used with the [trans-render](https://github.com/bahrus/trans-render) template instantiating library, be-decorated decorators can also be used, with no changes / additions needed, during [template instantiation](https://github.com/bahrus/trans-render#extending-tr-dtr-horizontally).
 
 ## All about the FROOP orchestrator [Documentation in progress]
 
