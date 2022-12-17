@@ -8,9 +8,9 @@
 
 
 
-be-decorated provides a base class that enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm, based on cross-cutting custom attributes.
+be-decorated provides a base class that enables "casting spells" on server-rendered DOM elements, by attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm, based on cross-cutting custom attributes.  These base classes can also be used during template instantiation for a more optimal repeated web component scenario. 
 
-be-decorated provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial "is"-based customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).
+be-decorated provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial "is"-based customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).  There are, however, a small number of use cases where the is-based built-in approach [may be](https://github.com/WebKit/standards-positions/issues/97) the preferred one.
 
 In contrast to the "is" approach, we can apply multiple behaviors / decorators to the same element:
 
@@ -35,6 +35,8 @@ which seems [more readable](https://opensource.com/article/19/12/zen-python-flat
     </is-rocking-over-that-base-tremble>
 </is-on-the-next-level>
 ```
+
+Not to mention [concerns about performance](https://sitebulb.com/hints/performance/avoid-excessive-dom-depth/).  And then there's [this](https://github.com/WICG/webcomponents/issues/809)
 
 Note that after upgrading,  the first example ends up upgrading to:
 
