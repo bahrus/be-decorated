@@ -16,6 +16,10 @@ export class PE{
         if(vals[1] !== undefined){
             for(const methodName in vals[1]){
                 const ec = vals[1][methodName]!;
+                if(ec === true){
+                    await (<any>controller)[methodName](proxy)
+                    return;
+                }
                 const {on, abort, options} = ec;
                 if(on !== undefined){
                     const {of, doInit} = ec;

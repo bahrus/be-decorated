@@ -155,7 +155,7 @@ export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Acti
 
 //export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = {[key: string]: IEventConfig<MCProps, MCActions, TAction>}
 
-export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = Partial<{[key in keyof MCActions]: IEventConfig<MCProps, MCActions, TAction>}>
+export type EventConfigs<MCProps = any, MCActions = MCProps, TAction = Action> = Partial<{[key in keyof MCActions]: true | IEventConfig<MCProps, MCActions, TAction>}>
 
 export type OriginatingMethodName = string;
 
