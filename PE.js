@@ -15,7 +15,7 @@ export class PE {
         if (vals[1] !== undefined) {
             for (const methodName in vals[1]) {
                 const ec = vals[1][methodName];
-                const { on, abort } = ec;
+                const { on, abort, options } = ec;
                 if (on !== undefined) {
                     const { of, doInit } = ec;
                     if (!(of instanceof EventTarget))
@@ -44,6 +44,8 @@ export class PE {
                     const method = controller[methodName];
                     const isAsync = method.constructor.name === 'AsyncFunction';
                     //console.log({method, isAsync, key, ec});
+                    const addEventListenerOptions = options || {};
+                    addEventListenerOptions.signal = ac.signal;
                     of.addEventListener(on, async (e) => {
                         const { composedPathMatches } = ec;
                         let foundEl;
@@ -60,7 +62,7 @@ export class PE {
                         }
                         const ret = isAsync ? await controller[methodName](proxy, e, foundEl) : controller[methodName](proxy, e, foundEl);
                         await this.recurse(ret, proxy, methodName);
-                    }, { signal: ac.signal });
+                    }, addEventListenerOptions);
                     if (doInit) {
                         const ret = isAsync ? await controller[methodName](proxy) : controller[methodName](proxy);
                         await this.recurse(ret, proxy, methodName);

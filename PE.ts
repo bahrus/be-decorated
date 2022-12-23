@@ -16,7 +16,7 @@ export class PE{
         if(vals[1] !== undefined){
             for(const methodName in vals[1]){
                 const ec = vals[1][methodName]!;
-                const {on, abort} = ec;
+                const {on, abort, options} = ec;
                 if(on !== undefined){
                     const {of, doInit} = ec;
                     if(!(of instanceof EventTarget)) throw {of, msg: 'not an EventTarget'};
@@ -46,6 +46,8 @@ export class PE{
                     const method = (<any>controller)[methodName];
                     const isAsync = method.constructor.name === 'AsyncFunction';
                     //console.log({method, isAsync, key, ec});
+                    const addEventListenerOptions : AddEventListenerOptions = options || {};
+                    addEventListenerOptions.signal = ac.signal; 
                     of.addEventListener(on, async e => {
                         const {composedPathMatches} = ec;
                         let foundEl: Element | undefined;
@@ -63,7 +65,7 @@ export class PE{
                         const ret = isAsync ? await (<any>controller)[methodName](proxy, e, foundEl) : (<any>controller)[methodName](proxy, e, foundEl);
                         
                         await this.recurse(ret, proxy, methodName);
-                    }, {signal: ac.signal});
+                    }, addEventListenerOptions);
                     if(doInit){
                         const ret = isAsync ? await (<any>controller)[methodName](proxy) : (<any>controller)[methodName](proxy);
                         await this.recurse(ret, proxy, methodName);

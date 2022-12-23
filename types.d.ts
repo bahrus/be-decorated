@@ -148,6 +148,7 @@ export interface IEventConfig<MCProps = any, MCActions = MCProps, TAction = Acti
         //destMethName: string & keyof MCActions,
         of: 'tbd' | EventTarget,
         on: string, 
+        
     },
     composedPathMatches?: string,
 }
