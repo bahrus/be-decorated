@@ -125,6 +125,13 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         if(!noParse){ //yes, parse!
             const {init} = await import('./init.js');
             await init(this, propDefaults, target, controllerInstance, existingProp, ifWantsToBe); 
+        }else{
+            const {proxyPropDefaults} = propDefaults;
+            const objToAssign = proxyPropDefaults !== undefined ? {...proxyPropDefaults} : {};
+            if(existingProp !== undefined){
+                Object.assign(objToAssign, existingProp);
+            }
+            (<any>target).beDecorated[key + 'Props'] = objToAssign;
         }
         
         target.dispatchEvent(new CustomEvent('be-decorated.resolved', {
