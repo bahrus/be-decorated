@@ -22,7 +22,8 @@ export class PE{
             for(const methodName in vals[1]){
                 const ec = vals[1][methodName]!;
                 if(ec === true){
-                    await (<any>controller)[methodName](proxy)
+                    const ret = await (<any>controller)[methodName](proxy);
+                    this.recurse(ret, proxy, methodName);
                     return;
                 }
                 const {on, abort, options} = ec;
