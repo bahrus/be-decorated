@@ -76,7 +76,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     rejected: boolean | string | undefined;
 
-    primaryProp: string;
+    primaryProp: (keyof TControllerProps);
 
     primaryPropReq: boolean;
 
