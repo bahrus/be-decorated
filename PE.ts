@@ -3,13 +3,18 @@ import {MinimalProxy, IEventConfig, EventConfigs, EvTg2DMN2OMN2ET2AC, OMN2ET2AC,
 export class PE{
     #abortControllers: AbortController[] = [];
     #evTg2DMN2OMN2ET2AC: EvTg2DMN2OMN2ET2AC = new WeakMap<EventTarget, DMN2OMN2ET2AC>();
+    #waitingForDisconnect = new WeakSet<EventTarget>();
     async do(proxy: MinimalProxy, originMethodName: string, vals: [any, EventConfigs]){
         //this.disconnect(originMethodName);
         const controller = proxy.controller;
         if(!(controller instanceof EventTarget)) throw ("Controller must extend EventTarget");
-        controller.addEventListener('was-decorated', e=> {
-            this.disconnectAll();
-        } , {once: true});
+        if(!this.#waitingForDisconnect.has(controller)){
+            controller.addEventListener('was-decorated', e=> {
+                this.disconnectAll();
+            } , {once: true});
+            this.#waitingForDisconnect.add(controller);
+        }
+
         if(vals[0] !== undefined){
             Object.assign(proxy, vals[0]);
         }

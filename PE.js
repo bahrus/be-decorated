@@ -1,14 +1,18 @@
 export class PE {
     #abortControllers = [];
     #evTg2DMN2OMN2ET2AC = new WeakMap();
+    #waitingForDisconnect = new WeakSet();
     async do(proxy, originMethodName, vals) {
         //this.disconnect(originMethodName);
         const controller = proxy.controller;
         if (!(controller instanceof EventTarget))
             throw ("Controller must extend EventTarget");
-        controller.addEventListener('was-decorated', e => {
-            this.disconnectAll();
-        }, { once: true });
+        if (!this.#waitingForDisconnect.has(controller)) {
+            controller.addEventListener('was-decorated', e => {
+                this.disconnectAll();
+            }, { once: true });
+            this.#waitingForDisconnect.add(controller);
+        }
         if (vals[0] !== undefined) {
             Object.assign(proxy, vals[0]);
         }
