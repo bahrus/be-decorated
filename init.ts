@@ -24,11 +24,11 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
     const proxy = controller.proxy;
     if (primaryProp !== undefined) {
         if (parsedObj === undefined) {
-            if(json) objToAssign[primaryProp] = json;
+            if(json) objToAssign[primaryProp as string] = json;
         } else {
             const { primaryPropReq } = props;
             if (Array.isArray(parsedObj) || (primaryPropReq && parsedObj[primaryProp] === undefined)) {
-                objToAssign[primaryProp] = parsedObj;
+                objToAssign[primaryProp as string] = parsedObj;
             } else {
                 Object.assign(objToAssign, parsedObj);
             }
