@@ -10,7 +10,7 @@ export async function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callba
 export function doReplace(target: EventTarget, ifWantsToBe: string){
     const val = getAttrInfo(target as Element, ifWantsToBe, false);
     if(val === null) {
-        //console.warn("Mismatch found.");
+        //console.debug("Mismatch found.");
         //TODO:  investigate this scenario more.
         return false;
     }
@@ -33,6 +33,8 @@ async function monitor<T extends EventTarget>(id: string, beAttrib: string, {upg
     addCSSListener(id, shadowDomPeer, attribSelector, async (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         let target = e.target;
+        const val = getAttrInfo(target as Element, ifWantsToBe, false);
+        if(val === null) return; //not sure why this happens.
         await attach(target as EventTarget, ifWantsToBe, callback);
         target = null;
     }, forceVisible !== undefined ? `
