@@ -3,7 +3,7 @@ import { UpgradeArg } from './types.d.js';
 
 export async function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T, replaced: boolean) => void){
     const beAttrib = `be-${args.ifWantsToBe}`;
-    const id = 'a' + (new Date()).valueOf().toString();
+    const id = 'a-' + crypto.randomUUID();
     await monitor(id, beAttrib, args, callback);
 }
 
@@ -33,8 +33,8 @@ async function monitor<T extends EventTarget>(id: string, beAttrib: string, {upg
     addCSSListener(id, shadowDomPeer, attribSelector, async (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         let target = e.target;
-        const val = getAttrInfo(target as Element, ifWantsToBe, false);
-        if(val === null) return; //not sure why this happens.
+        // const val = getAttrInfo(target as Element, ifWantsToBe, false);
+        // if(val === null) return; //not sure why this happens.
         await attach(target as EventTarget, ifWantsToBe, callback);
         target = null;
     }, forceVisible !== undefined ? `

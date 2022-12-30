@@ -1,6 +1,6 @@
 export async function upgrade(args, callback) {
     const beAttrib = `be-${args.ifWantsToBe}`;
-    const id = 'a' + (new Date()).valueOf().toString();
+    const id = 'a-' + crypto.randomUUID();
     await monitor(id, beAttrib, args, callback);
 }
 export function doReplace(target, ifWantsToBe) {
@@ -30,9 +30,8 @@ async function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forc
         if (e.animationName !== id)
             return;
         let target = e.target;
-        const val = getAttrInfo(target, ifWantsToBe, false);
-        if (val === null)
-            return; //not sure why this happens.
+        // const val = getAttrInfo(target as Element, ifWantsToBe, false);
+        // if(val === null) return; //not sure why this happens.
         await attach(target, ifWantsToBe, callback);
         target = null;
     }, forceVisible !== undefined ? `
