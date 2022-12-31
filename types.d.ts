@@ -70,7 +70,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     proxyPropDefaults: Partial<TControllerProps>;
 
-    emitEvents: boolean | string[];
+    emitEvents: boolean | (keyof TControllerProps)[];
 
     resolved: boolean | string | undefined;
 
