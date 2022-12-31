@@ -38,7 +38,10 @@ async function monitor(id, beAttrib, { upgrade, shadowDomPeer, ifWantsToBe, forc
         ${forceVisible.map(s => `${s}[${beAttrib}],${s}[data-${beAttrib}]`).join(',')}{
             display:inline !important;
             position:absolute;
-            left:-1000px;
+            height: 0px;
+            width: 0px;
+            overflow: hidden;
+            left:-1000000px;
         }
     ` : undefined, true);
 }
