@@ -1,5 +1,6 @@
 import { BeDecoratedProps } from './types';
 import { Action} from 'trans-render/lib/types';
+declare const Sanitizer: any;
 
 export async function init<TControllerProps = any>(self: any, props: BeDecoratedProps, newTarget: Element, controller: any, passedIn: any, ifWantsToBe: string) {
     const { actions, proxyPropDefaults, primaryProp } = props;
@@ -14,8 +15,12 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
         json = attr[0]!.trim();
         const firstChar = json[0];
         if (firstChar === '{' || firstChar === '[') {
+            if(typeof Sanitizer !== undefined){
+                const sanitizer = new Sanitizer();
+                json = sanitizer.sanitizeFor('template', json);
+            }
             try {
-                parsedObj = JSON.parse(json);
+                parsedObj = JSON.parse(json!);
             } catch (e) {
                 console.error(e);
             }

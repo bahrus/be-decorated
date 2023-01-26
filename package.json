@@ -26,18 +26,19 @@
   ],
   "types": "types.d.ts",
   "dependencies": {
-    "trans-render": "0.0.663"
+    "trans-render": "0.0.664"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
-    "@playwright/test": "1.29.2",
+    "@playwright/test": "1.30.0",
     "may-it-serve": "0.0.4",
     "xtal-shell": "0.0.27"
   },
   "scripts": {
     "serve": "node node_modules/may-it-serve",
     "test": "playwright test",
-    "package-check": "package-check"
+    "package-check": "package-check",
+    "safari": "npx playwright wk http://localhost:3030"
   },
   "repository": {
     "type": "git",
