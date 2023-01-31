@@ -9,6 +9,7 @@
 		"strict": true,
 	},
 	"files":[
+		"attachAndResolve.ts",
 		"DE.ts",
 		"DEbug.ts",
 		"isOrWillBe.ts",
