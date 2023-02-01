@@ -29,7 +29,23 @@ export class DE extends HTMLElement {
             target.beDecorated = {};
         const { lispToCamel } = await import('trans-render/lib/lispToCamel.js');
         const key = lispToCamel(ifWantsToBe);
-        const existingProp = target.beDecorated[key];
+        let existingProp = target.beDecorated[key];
+        //console.log({propDefaults});
+        const { primaryProp, primaryPropReq } = propDefaults;
+        if (existingProp !== undefined && primaryProp) {
+            if (primaryPropReq) {
+                if (existingProp[primaryProp] === undefined) {
+                    existingProp = {
+                        [primaryProp]: existingProp,
+                    };
+                }
+            }
+            else if (typeof existingProp !== 'object') {
+                existingProp = {
+                    [primaryProp]: existingProp,
+                };
+            }
+        }
         const revocable = Proxy.revocable(target, {
             set: (target, key, value) => {
                 const { virtualProps } = propDefaults;
