@@ -17,7 +17,7 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
         if (firstChar === '{' || firstChar === '[') {
             if(typeof Sanitizer !== undefined){
                 const sanitizer = new Sanitizer();
-                json = sanitizer.sanitizeFor('template', json);
+                json = sanitizer.sanitizeFor('template', json).innerHTML;
             }
             try {
                 parsedObj = JSON.parse(json!);

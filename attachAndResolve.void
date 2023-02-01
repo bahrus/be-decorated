@@ -1,19 +1,19 @@
 import {Attachable} from  'trans-render/lib/types';
 import {lispToCamel} from 'trans-render/lib/lispToCamel.js';
 
-export function attachAndResolve(target: Element, behaviorName: string, defaultVals: any): Promise<void>{
+export function attachAndResolve(target: Element, behaviorName: string, defaultVals?: any): Promise<void>{
     return new Promise(async resolve => {
         const ifWantsToBe = behaviorName.replace('be-', '');
         const camel = lispToCamel(ifWantsToBe);
-        
+        const vals = defaultVals === undefined ? {} : defaultVals;
         if((<any>target).beDecorated === undefined){
             (<any>target).beDecorated = {}
         }
         const bed = (<any>target).beDecorated;
         if(bed[camel] === undefined){
-            bed[camel] === defaultVals;
+            bed[camel] === vals;
         }else{
-            Object.assign(bed[camel], defaultVals);
+            Object.assign(bed[camel], vals);
         }
         const bc = bed[camel];
         if(bc.self === target){

@@ -12,7 +12,7 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
         if (firstChar === '{' || firstChar === '[') {
             if (typeof Sanitizer !== undefined) {
                 const sanitizer = new Sanitizer();
-                json = sanitizer.sanitizeFor('template', json);
+                json = sanitizer.sanitizeFor('template', json).innerHTML;
             }
             try {
                 parsedObj = JSON.parse(json);

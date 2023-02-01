@@ -15,7 +15,6 @@
   "module": "DE.js",
   "exports": {
     ".": "./DE.js",
-    "./attachAndResolve.js": "./attachAndResolve.js",
     "./upgrade.js": "./upgrade.js",
     "./findAdjacentElement.js": "./findAdjacentElement.js",
     "./DE.js": "./DE.js",
