@@ -30,7 +30,6 @@ export class DE extends HTMLElement {
         const { lispToCamel } = await import('trans-render/lib/lispToCamel.js');
         const key = lispToCamel(ifWantsToBe);
         let existingProp = target.beDecorated[key];
-        //console.log({propDefaults});
         const { primaryProp, primaryPropReq } = propDefaults;
         if (existingProp !== undefined && primaryProp) {
             if (primaryPropReq) {

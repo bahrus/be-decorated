@@ -36,7 +36,6 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const {lispToCamel} = await import('trans-render/lib/lispToCamel.js');
         const key = lispToCamel(ifWantsToBe);
         let existingProp = (<any>target).beDecorated[key];
-        //console.log({propDefaults});
         const {primaryProp, primaryPropReq} = propDefaults;
         if(existingProp !== undefined && primaryProp){
             if(primaryPropReq){
