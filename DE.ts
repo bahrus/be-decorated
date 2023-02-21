@@ -25,7 +25,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         const attr = this.#getAttrs(upDef, iwtbDef);
         const {ifWantsToBe} = attr;
         Object.assign(propDefaults, attr);
-        const {noParse} = propDefaults;
+        
         let controllerInstance = new controller() as any;
         controllerInstance[sym] = new Map<string, any>();
         controllerInstance[changedKeySym] = new Set<string>();
@@ -137,6 +137,7 @@ export class DE<TControllerProps=any, TControllerActions=TControllerProps> exten
         (proxy as any).self = target;
         (proxy as any).controller =  controllerInstance; 
         (proxy as any).proxy = proxy;
+        const {noParse} = propDefaults;
         if(!noParse){ //yes, parse!
             const {init} = await import('./init.js');
             await init(this, propDefaults, target, controllerInstance, existingProp, ifWantsToBe); 

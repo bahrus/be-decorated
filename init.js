@@ -1,5 +1,5 @@
 export async function init(self, props, newTarget, controller, passedIn, ifWantsToBe) {
-    const { actions, proxyPropDefaults, primaryProp } = props;
+    const { actions, proxyPropDefaults, primaryProp, parseAndCamelize } = props;
     controller.propChangeQueue = new Set();
     const objToAssign = proxyPropDefaults !== undefined ? { ...proxyPropDefaults } : {};
     const { getAttrInfo } = await import('./upgrade.js');
@@ -15,7 +15,13 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
                 json = sanitizer.sanitizeFor('template', json).innerHTML;
             }
             try {
-                parsedObj = JSON.parse(json);
+                if (parseAndCamelize) {
+                    const { parseAndCamelize } = await import('./parseAndCamelize.js');
+                    parsedObj = parseAndCamelize(json);
+                }
+                else {
+                    parsedObj = JSON.parse(json);
+                }
             }
             catch (e) {
                 console.error(e);

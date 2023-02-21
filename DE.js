@@ -20,7 +20,6 @@ export class DE extends HTMLElement {
         const attr = this.#getAttrs(upDef, iwtbDef);
         const { ifWantsToBe } = attr;
         Object.assign(propDefaults, attr);
-        const { noParse } = propDefaults;
         let controllerInstance = new controller();
         controllerInstance[sym] = new Map();
         controllerInstance[changedKeySym] = new Set();
@@ -128,6 +127,7 @@ export class DE extends HTMLElement {
         proxy.self = target;
         proxy.controller = controllerInstance;
         proxy.proxy = proxy;
+        const { noParse } = propDefaults;
         if (!noParse) { //yes, parse!
             const { init } = await import('./init.js');
             await init(this, propDefaults, target, controllerInstance, existingProp, ifWantsToBe);
