@@ -52,11 +52,9 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     finale: keyof TControllerActions;
 
-
     actions: Partial<{[key in keyof TControllerActions]: keyof TControllerProps | ActionExt<TControllerProps, TControllerActions>}>;
 
     controller: {new(): TControllerProps & TControllerActions};
-
 
     newTargets: Element[];
 
@@ -79,6 +77,8 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     primaryProp: (keyof TControllerProps);
 
     primaryPropReq: boolean;
+
+    parseAndCamelize: boolean;
 
     //isC: boolean;
 
