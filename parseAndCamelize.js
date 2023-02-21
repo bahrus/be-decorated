@@ -1,7 +1,7 @@
 export function parseAndCamelize(json) {
     const lastChar = json.lastIndexOf('}');
     const strToCamelize = json.substring(lastChar + 1);
-    json = json?.substring(0, lastChar);
+    json = json?.substring(0, lastChar + 1);
     const parsedObj = JSON.parse(json);
     const statements = strToCamelize.split('.');
     const objToMerge = {};
