@@ -221,8 +221,3 @@ const sym = Symbol();
 const reqVirtualProps : (keyof MinimalProxy)[] = ['self', 'emitEvents', 'controller', 'resolved', 'rejected', 'proxy'];
 
 const changedKeySym = Symbol();
-
-export function arr<T = any>(inp: T | T[] | undefined) : T[] {
-    return inp === undefined ? []
-        : Array.isArray(inp) ? inp : [inp];
-}

@@ -204,7 +204,3 @@ export function define(controllerConfig) {
 const sym = Symbol();
 const reqVirtualProps = ['self', 'emitEvents', 'controller', 'resolved', 'rejected', 'proxy'];
 const changedKeySym = Symbol();
-export function arr(inp) {
-    return inp === undefined ? []
-        : Array.isArray(inp) ? inp : [inp];
-}
