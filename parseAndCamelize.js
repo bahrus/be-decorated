@@ -1,4 +1,5 @@
 export function parseAndCamelize(json) {
+    debugger;
     const lastChar = json.lastIndexOf('}');
     const strToCamelize = json.substring(lastChar + 1);
     json = json?.substring(0, lastChar + 1);

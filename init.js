@@ -8,12 +8,12 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
     let json;
     if (attr !== null && attr.length !== 0 && attr[0].length !== 0) {
         json = attr[0].trim();
+        if (typeof Sanitizer !== undefined) {
+            const sanitizer = new Sanitizer();
+            json = sanitizer.sanitizeFor('template', json).innerHTML;
+        }
         const firstChar = json[0];
         if (firstChar === '{' || firstChar === '[') {
-            if (typeof Sanitizer !== undefined) {
-                const sanitizer = new Sanitizer();
-                json = sanitizer.sanitizeFor('template', json).innerHTML;
-            }
             try {
                 if (parseAndCamelize) {
                     const { parseAndCamelize } = await import('./parseAndCamelize.js');
@@ -25,6 +25,12 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
             }
             catch (e) {
                 console.error(e);
+            }
+        }
+        else {
+            if (parseAndCamelize) {
+                const { camelize } = await import('./camelize.js');
+                parsedObj = camelize(json);
             }
         }
     }
