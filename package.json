@@ -15,6 +15,7 @@
   "module": "DE.js",
   "exports": {
     ".": "./DE.js",
+    "./cpu.js": "./cpu.js",
     "./upgrade.js": "./upgrade.js",
     "./findAdjacentElement.js": "./findAdjacentElement.js",
     "./DE.js": "./DE.js",

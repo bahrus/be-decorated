@@ -4,11 +4,13 @@
 		"module": "ESNext",
 		"sourceMap": false,
 		"experimentalDecorators": false,
+		"forceConsistentCasingInFileNames": true,
 		"newLine": "LF",
 		"watch": true,
 		"strict": true,
 	},
 	"files":[
+		"cpu.ts",
 		"DE.ts",
 		"DEbug.ts",
 		"isOrWillBe.ts",
@@ -18,8 +20,6 @@
 		"inject.ts"
 	],
 	"exclude":[
-		"build",
-		"bower_components",
 		"node_modules"
 	]
 
