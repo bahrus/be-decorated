@@ -89,7 +89,7 @@ define({
     config: {
         tagName: 'be-counted',
         propDefaults: {
-            virtualProps: ['count'],
+            virtualProps: ['count', 'on'],
             upgrade: 'button',
             ifWantsToBe: 'counted',
             emitEvents: ['count'],
@@ -132,10 +132,10 @@ There is a way to allow for simpler attributes, by specifying the default prop n
 ```
 
 ```html
-<button id='test' be-counted=30'>Count</button>
+<button id='test' be-counted=30>Count</button>
 ```
 
-Without use of [be-hive](https://github.com/bahrus/be-hive), the decorator won't apply within any ShadowDOM.
+Without use of [be-hive](https://github.com/bahrus/be-hive), the decorator won't apply within any ShadowDOM, with plopping an instance of the web component inside somewhere.
 
 
 > **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element the decorator adorns be enhanced with a new property with the same name.
@@ -308,7 +308,7 @@ Alternatively, more controversially, and in addition, [be-noticed](https://githu
 
 ## Lifecycle milestones
 
-There are three lifecycle milestones that be-decorated observes.  They are all optional and can be omitted.  The names of the lifecycle milestones do not need to match with method names in the controller class.  The mapping between the lifecycle milestones and methods of the controller is specified in the propDefaults section of the configuration settings, as discussed earlier.
+There are two lifecycle milestones that be-decorated observes.  They are all optional and can be omitted.  The names of the lifecycle milestones do not need to match with method names in the controller class.  The mapping between the lifecycle milestones and methods of the controller is specified in the propDefaults section of the configuration settings, as discussed earlier.
 
 
 
@@ -319,9 +319,6 @@ There are three lifecycle milestones that be-decorated observes.  They are all o
 <tr>
     <td>intro</td><td>Occurs when the proxy is created for a new target that has been discovered that matches the custom attribute criteria.</td>
 </tr>
-<!--<tr>
-    <td>visible[TODO]</td><td>This is used in conjunction with template instantiation, when applying isomorphic logic between template instantiation and within the live DOM tree.  More on this below.[TODO]</td>
-</tr>-->
 <tr>
     <td>finale</td><td>Occurs when the underlying element is removed from the DOM, and the proxy is destroyed.</td>
 </table>
