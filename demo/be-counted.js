@@ -11,7 +11,7 @@ define({
     config: {
         tagName: 'be-counted',
         propDefaults: {
-            virtualProps: ['count'],
+            virtualProps: ['count', 'on'],
             emitEvents: ['count'],
             proxyPropDefaults: {
                 on: 'click'
