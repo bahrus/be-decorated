@@ -14,7 +14,10 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
         json = attr[0]!.trim();
         if(typeof Sanitizer !== 'undefined'){
             const sanitizer = new Sanitizer();
-            json = sanitizer.sanitizeFor('template', json).innerHTML as string;
+            if(sanitizer.sanitizeFor !== undefined){
+                json = sanitizer.sanitizeFor('template', json).innerHTML as string;
+            }
+            
         }
         const firstChar = json[0];
         if (firstChar === '{' || firstChar === '[') {

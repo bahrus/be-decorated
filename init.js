@@ -10,7 +10,9 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
         json = attr[0].trim();
         if (typeof Sanitizer !== 'undefined') {
             const sanitizer = new Sanitizer();
-            json = sanitizer.sanitizeFor('template', json).innerHTML;
+            if (sanitizer.sanitizeFor !== undefined) {
+                json = sanitizer.sanitizeFor('template', json).innerHTML;
+            }
         }
         const firstChar = json[0];
         if (firstChar === '{' || firstChar === '[') {

@@ -39,7 +39,8 @@
     "serve": "node node_modules/may-it-serve",
     "test": "playwright test",
     "package-check": "package-check",
-    "safari": "npx playwright wk http://localhost:3030"
+    "safari": "npx playwright wk http://localhost:3030",
+    "chrome": "npx playwright open http://localhost:3030"
   },
   "repository": {
     "type": "git",
