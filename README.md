@@ -139,7 +139,7 @@ There is a way to allow for simpler attributes, by specifying the default prop n
 <button id='test' be-counted=30>Count</button>
 ```
 
-be-decorated does provide support for a radically different kind of syntax, which we dub ["Hemingway Notation"](https://www.youtube.com/watch?v=4hJiVqSP4qM), including support for comments.  
+be-decorated also provides support for a radically different kind of syntax, which we dub ["Hemingway Notation"](https://www.youtube.com/watch?v=4hJiVqSP4qM), including support for comments.  
 
 As the example below illustrates, the two can be combined:
 
