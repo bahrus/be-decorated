@@ -145,7 +145,6 @@ As the example below illustrates, the two can be combined:
 
 ### (Mostly) Hemingway Notation Example
 
-In the example below, we provide multiple examples of be-sharing expressions.
 
 ```html
 <div be-scoped='{
