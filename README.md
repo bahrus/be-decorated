@@ -174,7 +174,7 @@ In the example below, we provide multiple examples of be-sharing expressions.
 </div>
 ```
 
-### Equivavalent markup with all JSON
+### Equivalent markup with all JSON
 
 ```html
 <div be-scoped='{
