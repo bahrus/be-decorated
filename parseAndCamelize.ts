@@ -1,5 +1,4 @@
 export function parseAndCamelize(json: string){
-    debugger;
     const lastChar = json!.lastIndexOf('}');
     const strToCamelize = json!.substring(lastChar + 1);
     json = json?.substring(0, lastChar + 1);
@@ -8,6 +7,7 @@ export function parseAndCamelize(json: string){
     const objToMerge: {[key: string]: string[]} = {};
     for(const statement of statements){
         const trimmedStatement = statement.trim();
+        if(trimmedStatement.startsWith('//')) continue;
         const normalizedStatement = trimmedStatement.replace(/\s+/g, ' ');
         const splitStatement = normalizedStatement.split(' ');
         const head = splitStatement[0];
