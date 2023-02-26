@@ -71,7 +71,7 @@ Prior to that, there was the heretical [htc behaviors](https://en.wikipedia.org/
 
 ## Example
 
-There are numerous useful element decorators/behaviors that provide a good introduction to what creating a be-decorated behavior/decorator.
+There are [numerous](https://github.com/bahrus?tab=repositories&q=be-&type=&language=&sort=) useful element decorators/behaviors that provide a good introduction to what creating a be-decorated behavior/decorator entails.
 
 They all use a secondary dependency, be-hive.  So the example shown below indicates how to create one without [be-hive](https://github.com/bahrus/be-hive).
 
@@ -120,6 +120,10 @@ The actions section of the configuration routes property changes of the proxy to
 
 So anytime property 'on' changes (which will happen during initialization of the properties via proxyPropDefaults which can be overridden by settings in the attribute).
 
+Without use of [be-hive](https://github.com/bahrus/be-hive), the decorator won't apply within any ShadowDOM, without plopping an instance of the web component inside each ShadowDOM realm somewhere.
+
+## Support for Duo Lingo
+
 By default, the initial settings specified by the attribute are expected to be in JSON format.
 
 There is a way to allow for simpler attributes, by specifying the default prop name:
@@ -135,8 +139,69 @@ There is a way to allow for simpler attributes, by specifying the default prop n
 <button id='test' be-counted=30>Count</button>
 ```
 
-Without use of [be-hive](https://github.com/bahrus/be-hive), the decorator won't apply within any ShadowDOM, with plopping an instance of the web component inside somewhere.
+be-decorated does provide support for a radically different kind of syntax, which we dub ["Hemingway Notation"](https://www.youtube.com/watch?v=4hJiVqSP4qM), including support for comments.  
 
+As the example below illustrates, the two can be combined:
+
+### (Mostly) Hemingway Notation Example
+
+In the example below, we provide multiple examples of be-sharing expressions.
+
+```html
+<div be-scoped='{
+    "count": 30,
+    "status": "Logged in",
+    "propWithAndOrToInName": "hello"
+}'>
+    <button></button>
+    <div></div>
+    <span></span>
+    <script be-sharing='
+        {
+            "shareCountAndStatusTo":  [{"div": ["status", " (", "count", " times)"]}],
+            "share": [{
+                "props": ["propWithAndOrToInName"],
+                "transform": {
+                    "span": "propWithAndOrToInName"
+                }
+            }]
+        }
+        Set observing realm to parent. //this is the default.
+        Set home in on path to be scoped:scope.  //not set by default.  Special intervention for properties that start with be[space]
+        Set sharing realm to parent. //this is the default.
+        Share count to button element as text content.'>
+    </script>
+</div>
+```
+
+### Equivavalent markup with all JSON
+
+```html
+<div be-scoped='{
+    "count": 30,
+    "status": "Logged In"
+}'>
+    <button></button>
+    <div></div>
+    <script be-sharing='{
+        "observingRealm": "parent",
+        "homeInOnPath": "beDecorated.beScoped.scope",
+        "sharingRealm": "parent",
+        "shareCountAndStatusTo":  [{"div": ["status", " (", "count", " times)"]}],
+        "Share": ["countToButtonEAsTextContent"],
+        "share": [{
+            "props": ["propWithAndOrToInName"],
+            "transform": {
+                "span": "propWithAndOrToInName"
+            }
+        }]
+    }'>
+    </script>
+</div>
+```
+
+The JSON syntax can be more convenient if one is adopting a built step -- editing an mts/mjs file, which compiles to HTML, so the developer can use JS (no quotes, support for comments, etc) and benefit from TypeScript compile time checks.  Hemingway notation seems better when working with HTML files without a build step.  The performance penalty from this DX nicety is quite low, and the penalty 
+ is only incurred if there is actual Hemingway notation in the attribute, so it could also be eliminated during a (more sophisticated) build step.
 
 > **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element the decorator adorns be enhanced with a new property with the same name.
 
