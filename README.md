@@ -199,7 +199,7 @@ As the example below illustrates, the two can be combined:
 </div>
 ```
 
-The JSON syntax can be more convenient if one is adopting a built step -- editing an mts/mjs file, which compiles to HTML, so the developer can use JS (no quotes, support for comments, etc) and benefit from TypeScript compile time checks.  Hemingway notation seems better when working with HTML files without a build step.  The performance penalty from this DX nicety is quite low, and the penalty 
+The JSON syntax can be more convenient if one is adopting a build step -- editing an mts/mjs file, which compiles to HTML, so the developer can use JS (no quotes, support for comments, etc) and benefit from TypeScript compile time checks.  Hemingway notation seems better when working with HTML files without a build step.  The performance penalty from this DX nicety is quite low, and the penalty 
  is only incurred if there is actual Hemingway notation in the attribute, so it could also be eliminated during a (more sophisticated) build step.
 
 > **Note**: Use of the "virtualProps" setting is critical if we want to be guaranteed that our component doesn't break, should the native DOM element or custom element the decorator adorns be enhanced with a new property with the same name.
