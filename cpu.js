@@ -31,3 +31,13 @@ export function append(inp, camelStrings, regExp) {
         inp.push(grp);
     }
 }
+const reSet = /^(?<lhs>\w+)(?<!\\)To(?<rhs>\w+)/;
+export function parseSet(Set, camelConfig) {
+    if (Set !== undefined) {
+        const setRules = [];
+        append(setRules, Set, reSet);
+        for (const rule of setRules) {
+            camelConfig[rule.lhs] = rule.rhs;
+        }
+    }
+}

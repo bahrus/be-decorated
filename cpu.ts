@@ -35,3 +35,18 @@ export function append<T = any>(inp: T[], camelStrings: string[], regExp?: RegEx
         inp.push(grp as T);
     }
 }
+
+const reSet = /^(?<lhs>\w+)(?<!\\)To(?<rhs>\w+)/;
+type lhs = string;
+type rhs = string;
+
+export function parseSet(Set: `${lhs}To${rhs}`[] | undefined, camelConfig: any ){
+    if(Set !== undefined){
+        const setRules: {lhs: lhs, rhs: rhs}[] = [];
+        append(setRules, Set, reSet);
+        for(const rule of setRules){
+            camelConfig[rule.lhs] = rule.rhs;
+        }
+    }
+}
+
