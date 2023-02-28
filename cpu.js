@@ -31,7 +31,7 @@ export function append(inp, camelStrings, regExp) {
         let grp = toDot;
         const regExps = arr(regExp);
         for (const r of regExps) {
-            const test = r.exec(camelString);
+            const test = r.exec(toDot);
             const grps = test?.groups;
             if (grps) {
                 grp = toLcGrp(grps);
