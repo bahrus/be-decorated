@@ -13,7 +13,6 @@ export function toLcGrp(groups: any){
     for(const k in groups){
         const val = groups[k];
         lcGroup[k] = val.split('\\').map((s: string, idx: number) => idx === 0 ? lc(s) : uc(s)).join('');
-        //lcGroup[k] = lc(groups[k]);
     }
     return lcGroup;
 }

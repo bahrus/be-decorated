@@ -10,7 +10,6 @@ export function toLcGrp(groups) {
     for (const k in groups) {
         const val = groups[k];
         lcGroup[k] = val.split('\\').map((s, idx) => idx === 0 ? lc(s) : uc(s)).join('');
-        //lcGroup[k] = lc(groups[k]);
     }
     return lcGroup;
 }
