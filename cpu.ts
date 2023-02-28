@@ -4,12 +4,24 @@ export function lc(s: string){
     return s[0].toLowerCase() + s.substring(1);
 }
 
+export function uc(s: string){
+    return s[0].toUpperCase() + s.substring(1);
+}
+
 export function toLcGrp(groups: any){
     const lcGroup = {} as any;
     for(const k in groups){
-        lcGroup[k] = lc(groups[k]);
+        const val = groups[k];
+        lcGroup[k] = val.split('\\').map((s: string, idx: number) => idx === 0 ? lc(s) : uc(s)).join('');
+        //lcGroup[k] = lc(groups[k]);
     }
     return lcGroup;
+}
+
+export function tryParse(s: string, re: RegExp){
+    const test = re.exec(s);
+    if(test === null) return null;
+    return toLcGrp(test.groups);
 }
 
 export function arr<T = any>(inp: T | T[] | undefined) : T[] {

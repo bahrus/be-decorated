@@ -2,12 +2,23 @@
 export function lc(s) {
     return s[0].toLowerCase() + s.substring(1);
 }
+export function uc(s) {
+    return s[0].toUpperCase() + s.substring(1);
+}
 export function toLcGrp(groups) {
     const lcGroup = {};
     for (const k in groups) {
-        lcGroup[k] = lc(groups[k]);
+        const val = groups[k];
+        lcGroup[k] = val.split('\\').map((s, idx) => idx === 0 ? lc(s) : uc(s)).join('');
+        //lcGroup[k] = lc(groups[k]);
     }
     return lcGroup;
+}
+export function tryParse(s, re) {
+    const test = re.exec(s);
+    if (test === null)
+        return null;
+    return toLcGrp(test.groups);
 }
 export function arr(inp) {
     return inp === undefined ? []
