@@ -27,6 +27,7 @@ export function append(inp, camelStrings, regExp) {
     const regExps = arr(regExp);
     for (const camelString of camelStrings) {
         const toDot = camelString.replaceAll(':', '.');
+        console.log({ toDot });
         //TODO:  regexps
         let grp = toDot;
         const regExps = arr(regExp);
@@ -41,7 +42,7 @@ export function append(inp, camelStrings, regExp) {
         inp.push(grp);
     }
 }
-const reSet = /^(?<lhs>\w+)(?<!\\)To(?<rhs>\w+)/;
+const reSet = /^(?<lhs>\w+)(?<!\\)To(?<rhs>[\w\.]+)/;
 export function parseSet(Set, camelConfig) {
     if (Set !== undefined) {
         const setRules = [];

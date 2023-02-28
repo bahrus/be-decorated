@@ -32,6 +32,7 @@ export function append<T = any>(inp: T[], camelStrings: string[], regExp?: RegEx
     const regExps = arr(regExp);
     for(const camelString of camelStrings){
         const toDot = camelString.replaceAll(':', '.');
+        console.log({toDot});
         //TODO:  regexps
         let grp = toDot as string | {[key: string] : string};
         const regExps = arr(regExp);
@@ -47,7 +48,7 @@ export function append<T = any>(inp: T[], camelStrings: string[], regExp?: RegEx
     }
 }
 
-const reSet = /^(?<lhs>\w+)(?<!\\)To(?<rhs>\w+)/;
+const reSet = /^(?<lhs>\w+)(?<!\\)To(?<rhs>[\w\.]+)/;
 type lhs = string;
 type rhs = string;
 
