@@ -27,7 +27,6 @@ export function append(inp, camelStrings, regExp) {
     const regExps = arr(regExp);
     for (const camelString of camelStrings) {
         const toDot = camelString.replaceAll(':', '.');
-        console.log({ toDot });
         //TODO:  regexps
         let grp = toDot;
         const regExps = arr(regExp);
