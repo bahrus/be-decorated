@@ -52,6 +52,13 @@ export async function init<TControllerProps = any>(self: any, props: BeDecorated
                 Object.assign(objToAssign, parsedObj);
             }
         }
+        if(primaryProp && parseAndCamelize){
+            const {camelizeOptions} = props;
+            if(camelizeOptions !== undefined){
+                const {camelPlus} = await import('./camelPlus.js');
+                await camelPlus(objToAssign, camelizeOptions, primaryProp as string, props);
+            }
+        }
     } else {
         if (parsedObj !== undefined) {
             Object.assign(objToAssign, parsedObj);

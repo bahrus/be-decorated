@@ -80,10 +80,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
     parseAndCamelize: boolean;
 
-    camelize: {
-        simpleSets: (keyof TPrimaryProp)[];
-        doSets: boolean;
-    }
+    camelizeOptions: CamelizeOptions<TPrimaryProp>
  
 
     //isC: boolean;
@@ -99,6 +96,11 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
      * Don't use css animation hack to monitor for matching elements appearing in Shadow DOM realm.
      */
     //searchOnce: boolean;
+}
+
+export interface CamelizeOptions<TPrimaryProp = any>{
+    simpleSets: (keyof TPrimaryProp)[];
+    doSets: boolean;
 }
 
 export interface BeDecoratedActions{

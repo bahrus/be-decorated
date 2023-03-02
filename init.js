@@ -51,6 +51,13 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
                 Object.assign(objToAssign, parsedObj);
             }
         }
+        if (primaryProp && parseAndCamelize) {
+            const { camelizeOptions } = props;
+            if (camelizeOptions !== undefined) {
+                const { camelPlus } = await import('./camelPlus.js');
+                await camelPlus(objToAssign, camelizeOptions, primaryProp, props);
+            }
+        }
     }
     else {
         if (parsedObj !== undefined) {
