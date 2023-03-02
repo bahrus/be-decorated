@@ -43,7 +43,7 @@ export interface ActionExt<TControllerProps = any, TControllerActions = TControl
     returnObjMold?: Partial<TControllerProps> | [Partial<TControllerProps> | undefined, EventConfigs<TControllerProps, TControllerActions> | undefined]
 }
 
-export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps>{
+export interface BeDecoratedProps<TControllerProps = any, TControllerActions = TControllerProps, TPrimaryProp = any>{
     upgrade: string;
     ifWantsToBe: string;
     disabled: boolean;
@@ -79,6 +79,12 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
     primaryPropReq: boolean;
 
     parseAndCamelize: boolean;
+
+    camelize: {
+        simpleSets: (keyof TPrimaryProp)[];
+        doSets: boolean;
+    }
+ 
 
     //isC: boolean;
 
