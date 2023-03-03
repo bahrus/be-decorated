@@ -51,3 +51,17 @@ export function parseSet(Set, camelConfig) {
         }
     }
 }
+export async function beSplit(s) {
+    const split = s.split('.');
+    if (split.length > 1) {
+        const { camelToLisp } = await import('trans-render/lib/camelToLisp.js');
+        let firstTokenCamel = camelToLisp(split[0]);
+        if (firstTokenCamel.startsWith('be-')) {
+            firstTokenCamel = firstTokenCamel.replace('be-', '');
+            //const {lc} = await import('be-decorated/cpu.js');
+            const path = '.beDecorated.' + lc(s.replace('be', ''));
+            const eventName = 'be-decorated.' + firstTokenCamel + '.resolved';
+            return { path, eventName };
+        }
+    }
+}
