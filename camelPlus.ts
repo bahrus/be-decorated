@@ -14,7 +14,10 @@ export async function camelPlus(objToAssign: any, options: CamelizeOptions, prim
         const {lc} = await import('./cpu.js');
         for(const simpleSet of simpleSets){
             const propName = lc(simpleSet);
-            camelConfig[propName] = camelConfig[simpleSet][0];
+            if(Array.isArray(camelConfig[simpleSet])){
+                camelConfig[propName] = camelConfig[simpleSet][0].replaceAll(':', '.');
+            }
+            
         }
     }
 }
