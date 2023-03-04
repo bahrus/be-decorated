@@ -1,10 +1,10 @@
 export function camelize(strToCamelize: string){
     const statements = strToCamelize.split('.');
-    console.log({statements});
     const objToMerge: {[key: string]: string[]} = {};
     for(const statement of statements){
         const trimmedStatement = statement.trim();
         if(trimmedStatement.length === 0) continue;
+        if(trimmedStatement.startsWith('//')) continue;
         const normalizedStatement = trimmedStatement.replace(/\s+/g, ' ');
         const splitStatement = normalizedStatement.split(' ');
         const head = splitStatement[0];
