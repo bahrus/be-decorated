@@ -1,5 +1,5 @@
 export async function camelPlus(objToAssign, options, primaryProp, props) {
-    const { doSets, simpleSets } = options;
+    const { doSets, simpleSets, booleans } = options;
     const camelConfig = objToAssign[primaryProp];
     if (doSets) {
         const { Set } = camelConfig;
@@ -15,6 +15,13 @@ export async function camelPlus(objToAssign, options, primaryProp, props) {
             if (Array.isArray(camelConfig[simpleSet])) {
                 camelConfig[propName] = camelConfig[simpleSet][0].replaceAll(':', '.');
             }
+        }
+    }
+    if (booleans !== undefined) {
+        const { lc } = await import('./cpu.js');
+        for (const boolean of booleans) {
+            const propName = lc(boolean);
+            camelConfig[propName] = true;
         }
     }
 }

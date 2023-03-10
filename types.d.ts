@@ -100,6 +100,7 @@ export interface BeDecoratedProps<TControllerProps = any, TControllerActions = T
 
 export interface CamelizeOptions<TPrimaryProp = any>{
     simpleSets?: (keyof TPrimaryProp & string)[];
+    booleans?: (keyof TPrimaryProp & string)[];
     doSets?: boolean;
 }
 

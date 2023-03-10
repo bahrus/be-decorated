@@ -1,6 +1,6 @@
 import {BeDecoratedProps, CamelizeOptions} from './types';
 export async function camelPlus(objToAssign: any, options: CamelizeOptions, primaryProp: string, props: BeDecoratedProps){
-    const {doSets, simpleSets} = options;
+    const {doSets, simpleSets, booleans} = options;
     const camelConfig = objToAssign[primaryProp];
     if(doSets){
         
@@ -18,6 +18,13 @@ export async function camelPlus(objToAssign: any, options: CamelizeOptions, prim
                 camelConfig[propName] = camelConfig[simpleSet][0].replaceAll(':', '.');
             }
             
+        }
+    }
+    if(booleans !== undefined){
+        const {lc} = await import('./cpu.js');
+        for(const boolean of booleans){
+            const propName = lc(boolean);
+            camelConfig[propName] = true;
         }
     }
 }
