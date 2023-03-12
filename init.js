@@ -51,7 +51,7 @@ export async function init(self, props, newTarget, controller, passedIn, ifWants
                 Object.assign(objToAssign, parsedObj);
             }
         }
-        if (primaryProp && parseAndCamelize) {
+        if (attr !== null && primaryProp && parseAndCamelize) {
             const { camelizeOptions } = props;
             if (camelizeOptions !== undefined) {
                 const { camelPlus } = await import('./camelPlus.js');
