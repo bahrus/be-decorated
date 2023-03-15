@@ -1,4 +1,10 @@
-export function parseAndCamelize(json: string){
+import {JSONObject} from 'trans-render/lib/types';
+export function parseAndCamelize(json: string): JSONObject | JSONObject[]{
+    if(json.startsWith('```')){
+        const split = json.split('```').filter(s => s.trim() !== '');
+        //No nested ```'s
+        return split.map(s => parseAndCamelize(s) as JSONObject)
+    }
     const lastChar = json!.lastIndexOf('}');
     const strToCamelize = json!.substring(lastChar + 1);
     json = json?.substring(0, lastChar + 1);
@@ -20,5 +26,5 @@ export function parseAndCamelize(json: string){
         bucket.push(tail);
     }
     Object.assign(parsedObj, objToMerge);
-    return parsedObj;
+    return parsedObj as JSONObject;
 }

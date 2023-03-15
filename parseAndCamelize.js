@@ -1,4 +1,9 @@
 export function parseAndCamelize(json) {
+    if (json.startsWith('```')) {
+        const split = json.split('```').filter(s => s.trim() !== '');
+        //No nested ```'s
+        return split.map(s => parseAndCamelize(s));
+    }
     const lastChar = json.lastIndexOf('}');
     const strToCamelize = json.substring(lastChar + 1);
     json = json?.substring(0, lastChar + 1);

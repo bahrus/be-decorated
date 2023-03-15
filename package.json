@@ -32,7 +32,7 @@
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
     "@playwright/test": "1.31.2",
-    "be-scoped": "0.0.5",
+    "be-scoped": "0.0.6",
     "may-it-serve": "0.0.5",
     "xtal-shell": "0.0.27"
   },
