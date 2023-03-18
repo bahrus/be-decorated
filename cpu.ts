@@ -1,3 +1,4 @@
+import {Declarations} from './types';
 //camel parse utilities
 
 export function lc(s: string){
@@ -8,19 +9,25 @@ export function uc(s: string){
     return s[0].toUpperCase() + s.substring(1);
 }
 
-export function toLcGrp(groups: any){
+export function toLcGrp(groups: any, declarations: Declarations = {}){
     const lcGroup = {} as any;
     for(const k in groups){
         const val = groups[k];
-        lcGroup[k] = val.split('\\').map((s: string, idx: number) => idx === 0 ? lc(s) : uc(s)).join('');
+        const rhs = lc(val);
+        const rhs2 = declarations[rhs] || rhs;
+        lcGroup[k] = rhs2;
     }
     return lcGroup;
 }
 
-export function tryParse(s: string, re: RegExp){
+export function unescSplit(val: string){
+    return val.split('\\').map((s: string, idx: number) => idx === 0 ? lc(s) : uc(s)).join('');
+}
+
+export function tryParse(s: string, re: RegExp, declarations: Declarations = {}){
     const test = re.exec(s);
     if(test === null) return null;
-    return toLcGrp(test.groups);
+    return toLcGrp(test.groups, declarations);
 }
 
 export function arr<T = any>(inp: T | T[] | undefined) : T[] {

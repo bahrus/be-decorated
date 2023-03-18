@@ -187,3 +187,5 @@ export type DMN = DestinationMethodName;
 export type DMN2OMN2ET2AC = Map<DMN, OMN2ET2AC>;
 
 export type EvTg2DMN2OMN2ET2AC = WeakMap<EventTarget, DMN2OMN2ET2AC>;
+
+export type Declarations = {[key: string]: any}
