@@ -21,7 +21,7 @@ export async function camelPlus(objToAssign, options, primaryProp, props) {
         const { lc } = await import('./cpu.js');
         for (const boolean of booleans) {
             const propName = lc(boolean);
-            camelConfig[propName] = true;
+            camelConfig[propName] = camelConfig[boolean] !== undefined;
         }
     }
 }
