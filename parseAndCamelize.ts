@@ -9,6 +9,7 @@ export function parseAndCamelize(json: string): JSONObject | JSONObject[]{
     const strToCamelize = json!.substring(lastChar + 1);
     json = json?.substring(0, lastChar + 1);
     const parsedObj = JSON.parse(json!);
+    //TODO:  conditionally load code below only if string after JSON is non trivial
     const statements = strToCamelize.split('.');
     const objToMerge: {[key: string]: string[]} = {};
     for(const statement of statements){
