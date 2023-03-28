@@ -1,5 +1,7 @@
 //camel parse utilities
 export function lc(s) {
+    if (s === '')
+        return s;
     return s[0].toLowerCase() + s.substring(1);
 }
 export function uc(s) {

@@ -2,6 +2,7 @@ import {Declarations} from './types';
 //camel parse utilities
 
 export function lc(s: string){
+    if(s === '') return s;
     return s[0].toLowerCase() + s.substring(1);
 }
 
