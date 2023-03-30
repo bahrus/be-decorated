@@ -1,6 +1,6 @@
 //camel parse utilities
 export function lc(s) {
-    if (s === '')
+    if (!s)
         return s;
     return s[0].toLowerCase() + s.substring(1);
 }
@@ -20,11 +20,14 @@ export function toLcGrp(groups, declarations = {}) {
 export function unescSplit(val) {
     return val.split('\\').map((s, idx) => idx === 0 ? lc(s) : uc(s)).join('');
 }
-export function tryParse(s, re, declarations = {}) {
-    const test = re.exec(s);
-    if (test === null)
-        return null;
-    return toLcGrp(test.groups, declarations);
+export function tryParse(s, regExp, declarations = {}) {
+    const reArr = arr(regExp);
+    for (const re of reArr) {
+        const test = re.exec(s);
+        if (test === null)
+            continue;
+        return toLcGrp(test.groups, declarations);
+    }
 }
 export function arr(inp) {
     return inp === undefined ? []

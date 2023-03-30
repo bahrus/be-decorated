@@ -2,7 +2,7 @@ import {Declarations} from './types';
 //camel parse utilities
 
 export function lc(s: string){
-    if(s === '') return s;
+    if(!s) return s;
     return s[0].toLowerCase() + s.substring(1);
 }
 
@@ -25,10 +25,14 @@ export function unescSplit(val: string){
     return val.split('\\').map((s: string, idx: number) => idx === 0 ? lc(s) : uc(s)).join('');
 }
 
-export function tryParse(s: string, re: RegExp, declarations: Declarations = {}){
-    const test = re.exec(s);
-    if(test === null) return null;
-    return toLcGrp(test.groups, declarations);
+export function tryParse(s: string, regExp: RegExp | RegExp[], declarations: Declarations = {}){
+    const reArr = arr(regExp);
+    for(const re of reArr){
+        const test = re.exec(s);
+        if(test === null) continue;
+        return toLcGrp(test.groups, declarations);
+    }
+    
 }
 
 export function arr<T = any>(inp: T | T[] | undefined) : T[] {
