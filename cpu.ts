@@ -32,7 +32,7 @@ export function tryParse(s: string, regExp: RegExp | RegExp[], declarations: Dec
         if(test === null) continue;
         return toLcGrp(test.groups, declarations);
     }
-    
+    return null;
 }
 
 export function arr<T = any>(inp: T | T[] | undefined) : T[] {

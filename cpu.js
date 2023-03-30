@@ -28,6 +28,7 @@ export function tryParse(s, regExp, declarations = {}) {
             continue;
         return toLcGrp(test.groups, declarations);
     }
+    return null;
 }
 export function arr(inp) {
     return inp === undefined ? []
