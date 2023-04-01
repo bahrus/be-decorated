@@ -1,4 +1,4 @@
-import {Declarations} from './types';
+import {Declarations, RegExpOrRegExpExt} from './types';
 //camel parse utilities
 
 export function lc(s: string){
@@ -25,12 +25,24 @@ export function unescSplit(val: string){
     return val.split('\\').map((s: string, idx: number) => idx === 0 ? lc(s) : uc(s)).join('');
 }
 
-export function tryParse(s: string, regExp: RegExp | RegExp[], declarations: Declarations = {}){
-    const reArr = arr(regExp);
-    for(const re of reArr){
+export function tryParse<TStatementGroup = any>(s: string, regExpOrRegExpExt: RegExpOrRegExpExt<TStatementGroup> | RegExpOrRegExpExt<TStatementGroup>[], declarations: Declarations = {}){
+    const reArr = arr(regExpOrRegExpExt);
+    for(const reOrRegExt of reArr){
+        let re: RegExp | undefined;
+        let def: TStatementGroup | undefined;
+        if(reOrRegExt instanceof RegExp){
+            re = reOrRegExt;
+        }else{
+            re = reOrRegExt.regExp;
+            def = reOrRegExt.defaultVals;
+        }
         const test = re.exec(s);
         if(test === null) continue;
-        return toLcGrp(test.groups, declarations);
+        const returnObj =  toLcGrp(test.groups, declarations);
+        if(def !== undefined){
+            Object.assign(returnObj, def);
+        }
+        return returnObj;
     }
     return null;
 }

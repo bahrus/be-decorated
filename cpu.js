@@ -20,13 +20,26 @@ export function toLcGrp(groups, declarations = {}) {
 export function unescSplit(val) {
     return val.split('\\').map((s, idx) => idx === 0 ? lc(s) : uc(s)).join('');
 }
-export function tryParse(s, regExp, declarations = {}) {
-    const reArr = arr(regExp);
-    for (const re of reArr) {
+export function tryParse(s, regExpOrRegExpExt, declarations = {}) {
+    const reArr = arr(regExpOrRegExpExt);
+    for (const reOrRegExt of reArr) {
+        let re;
+        let def;
+        if (reOrRegExt instanceof RegExp) {
+            re = reOrRegExt;
+        }
+        else {
+            re = reOrRegExt.regExp;
+            def = reOrRegExt.defaultVals;
+        }
         const test = re.exec(s);
         if (test === null)
             continue;
-        return toLcGrp(test.groups, declarations);
+        const returnObj = toLcGrp(test.groups, declarations);
+        if (def !== undefined) {
+            Object.assign(returnObj, def);
+        }
+        return returnObj;
     }
     return null;
 }

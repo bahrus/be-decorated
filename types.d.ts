@@ -189,3 +189,10 @@ export type DMN2OMN2ET2AC = Map<DMN, OMN2ET2AC>;
 export type EvTg2DMN2OMN2ET2AC = WeakMap<EventTarget, DMN2OMN2ET2AC>;
 
 export type Declarations = {[key: string]: any}
+
+export interface RegExpExt<TStatementGroup = any>{
+    regExp: RegExp,
+    defaultVals: TStatementGroup,
+}
+
+export type RegExpOrRegExpExt<TStatementGroup = any> = RegExp | RegExpExt<TStatementGroup>;
