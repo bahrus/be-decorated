@@ -83,7 +83,7 @@ I also think there should be a distinguishing feature all such attributes should
 3.  Authors of custom elements will avoid that prefix when defining their attributes to avoid confusion.
 4.  As such, if the name of the decorator matches the name of one of the custom element's attributes, **now** we can fallback to using the prefixed name.
 
-For server-rendered content (as opposed to template instantiated content), yes, we need single attributes to be used to stuff all the needed settings needed by the class.
+For server-rendered content (as opposed to template instantiated content), yes, we need single attributes to be used into which we can stuff all the needed settings supported by the class.
 
 But I strongly believe we want to be able to enhance elements during template instantiation, using the same class definitions, and we should not require some fixed attribute name associated with a giant string of configurations being cloned every time to do this.  Instead, we should be passing in properties via the gateway property described above (even if the class hasn't been loaded, the class instance should be able to absorb already passed in property values).  
 
