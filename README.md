@@ -83,7 +83,7 @@ I also think there should be a distinguishing feature all such attributes should
 3.  Authors of custom elements will avoid that prefix when defining their attributes to avoid confusion.
 4.  As such, if the name of the decorator matches the name of one of the custom element's attributes, **now** we can fallback to using the prefixed name.
 
-If we settle on "enhancements" for the gateway property name, maybe the prefix should be enh- , which [I don't think we step on many toes](https://www.bing.com/search?q=npm+enh-&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=npm+enh-&sc=10-8&sk=&cvid=6896C8D1704C45F18AB5D7E91EDA46D6&ghsh=0&ghacc=0&ghpl=).
+If we settle on "enhancements" for the gateway property name, maybe the prefix should be enh- , which [I don't think](https://enhance.dev/) [would step on many toes](https://www.bing.com/search?q=npm+enh-&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=npm+enh-&sc=10-8&sk=&cvid=6896C8D1704C45F18AB5D7E91EDA46D6&ghsh=0&ghacc=0&ghpl=).
 
 For server-rendered content (as opposed to template instantiated content), yes, we need single attributes to be used into which we can stuff all the needed settings supported by the class.
 
