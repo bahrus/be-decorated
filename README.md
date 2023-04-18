@@ -83,11 +83,13 @@ I also think there should be a distinguishing feature all such attributes should
 3.  Authors of custom elements will avoid that prefix when defining their attributes to avoid confusion.
 4.  As such, if the name of the decorator matches the name of one of the custom element's attributes, **now** we can fallback to using the prefixed name.
 
+If we settle on "enhancements" for the gateway property name, maybe the prefix should be enh- , which [I don't think we step on many toes](https://www.bing.com/search?q=npm+enh-&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=npm+enh-&sc=10-8&sk=&cvid=6896C8D1704C45F18AB5D7E91EDA46D6&ghsh=0&ghacc=0&ghpl=).
+
 For server-rendered content (as opposed to template instantiated content), yes, we need single attributes to be used into which we can stuff all the needed settings supported by the class.
 
 But I strongly believe we want to be able to enhance elements during template instantiation, using the same class definitions, and we should not require some fixed attribute name associated with a giant string of configurations being cloned every time to do this.  Instead, we should be passing in properties via the gateway property described above (even if the class hasn't been loaded, the class instance should be able to absorb already passed in property values).  
 
-There may be more than one category for the types of  enhancements we make to existing elements.  The angle *be-decorated* takes is squarely fixated on adding "behaviors".  Every dream I've had since 1994, when it comes to enhancing HTML (or maybe a little later, when I was trying to polyfill MathML (😳) ), has been associated with adding things that are best described as behaviors.  But I'm not sure that perfectly describes *all* types of enhancements people might want to make.  Things that are look and feel related (that may define which CSS theme to pull in for example) don't really fit that.  And there may be other categories.  Which is why I come back to "decorators", to match what we call those things in JavaScript.  And I really like the phrase "adorned element."  And decorators seems like it could aptly describe CSS themes also, no?
+There may be more than one category for the types of  enhancements we make to existing elements.  The angle *be-decorated* takes is squarely fixated on adding "behaviors".  Every dream I've had since 1994, when it comes to enhancing HTML (or maybe a little later, when I was trying to polyfill MathML (😳) ), has been associated with adding things that are best described as behaviors.  But I'm not sure that perfectly describes *all* types of enhancements people might want to make.  Things that are look and feel related (that may define which CSS theme to pull in for example) don't really fit that.  And there may be other categories.  Which is why I come back to "enhancements".
 
 ## Example
 
