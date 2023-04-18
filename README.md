@@ -78,7 +78,7 @@ For very, very simple cases, where the loosely coupled, extending class has only
 
 I also think there should be a distinguishing feature all such attributes should have (similar in spirit to data- / dataset), so that we can distinguish the ownership.  I think be- is assuming too much about what all these enhancements will be doing (see below) in case you were wondering (🙂).  Maybe it should be required to use a colon in the name, just to be a little different?  If a prefix with a dash is still the preferred approach (similar to data-), my vote is x-.  Which I suppose would push for the gateway property to be called "extensions", which I would also be okay with.  Whatever we use for this prefix, it will likely be:
 
-1.  Just as ignored, normally, as data-
+1.  Just as ignored, normally, as data-*.
 2.  But support for recognizing the prefix by decorator authors will be provided to conform to best practices.
 3.  Authors of custom elements will avoid that prefix when defining their attributes to avoid confusion.
 4.  As such, if the name of the decorator matches the name of one of the custom element's attributes, **now** we can fallback to using the prefixed name.
