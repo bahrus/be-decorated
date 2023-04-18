@@ -12,7 +12,7 @@ The fact that there is an urgent need for this functionality with template insta
 4.  These classes can define a callback, "attachedCallback" which passes in a proxy that wraps the target element.  The proxy prevents pass-through of properties, or calling methods that are not defined for built-ins to be passed through to the target element (throws an error), and does the same for upgraded custom elements(?).  The call back should probably also pass the original target element, for faster read only access.
 5.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.
 6.  Frameworks could also pass properties down to the enhancement class instance via the same mechanism.
-7.  ElementEnhacement class has a callback "detachedCallback"
+7.  ElementEnhancement class has a callback "detachedCallback."
 8.  ElementEnhancement class provides a way of defining an attribute name to associate with the enh- prefix in each shadow DOM realm (following scoped custom element methodology), and callback for when the attribute value changes (but this should, and I suspect would, be used sparingly, in favor of the enhancements property gateway).   AttributeChangedCallback method with two parameters (oldValue, newValue).
 
 The reason the prefix enh-* should be encouraged, but not necessarily required is this:
@@ -31,6 +31,6 @@ The same solution for scoped registries is applied to these methods.
 
 I *think* we also want to insist that the name has a dash in it, depending on this decision:   The name should cause server-rendered elements with attribute enh-[name passed to define] to create an instance of the class, create the proxy, etc, and call attachedCallback().  Should it do the same if enh-* is dropped?  If so, we need to require a dash in the name.  
 
-
+##  
 
 (More details to follow).
