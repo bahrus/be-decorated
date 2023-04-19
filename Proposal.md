@@ -20,15 +20,12 @@ So, for an alternative to custom built-in extensions to be worthwhile, and based
 So the bottom-line is that the crux of this proposal is to allow developers to do this (with a little tender loving care):
 
 ```JavaScript
-oInput.extensions.myExtension.foo = bar;
-oCustomElement.extensions.yourExtension.bar = foo;
+oInput.enhancements.myEnhancement.foo = bar;
+oCustomElement.enhancements.yourEnhancement.bar = foo;
 ```
 
-This would either require a one-line, or zero-line polyfill, which I would like to see added to the platform.  Either add the "extensions" property to the Element prototype, setting it to {}, or simply announce to custom element authors not to use "extensions" for a property name, that it is a valid place for third-party extensions to store their stuff, just as they shouldn't use "dataset."  So maybe it's more than one line polyfill, because I know dataset does throw errors when using it the wrong way.
+This would either require a one-line, or zero-line polyfill, which I would like to see added to the platform.  Either add the "enhancements" property to the Element prototype, setting it to {}, or simply announce to custom element authors not to use "enhancemetns" for a property name, that it is a valid place for third-party extensions to store their stuff, just as they shouldn't use "dataset."  So maybe it's more than one line polyfill, because I know dataset does throw errors when using it the wrong way.
 
-The role *attributes* should play should be minor in comparison, just as they are for custom elements.  They should generally only be used for setting initial values from server-rendered content, and initial styling.  The rest should be done through properties for performance reasons.  And that really applies to template instantiation.  I do think there's a significant argument even for custom elements that if there are numerous attributes that are static in the template, it would be good to provide template instantiation the ability to pull those out, and using css rules, pass the values through as properties rather than attributes.  Less bulk in the template, less string parsing.  So in fact, I will make sure that a part of this proposal covers that aspect of template instantiation as well (or has someone already thought about that?).
-
-The same argument applies 10-fold to "directives", which tend to [get quite large](https://alpinejs.dev/).  If we have rapidly changing values that need to be passed to a small part of the attribute, replacing the attribute and re-parsing seems incredibly wasteful.   
 
 ## Purpose
 
