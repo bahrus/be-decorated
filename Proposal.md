@@ -134,9 +134,9 @@ async function enhance(with, settings, oButton){
     }
     Object.assign(enhancements[with], settings);
     const def = await customEnhancements.whenDefined('be-counted');
-    const beCounted = new def();
+    const enhancement = new def();
     const proxy = //do some code to create a proxy around oButton;
-    beCounted.attachCallback(proxy, oButton, with);
+    enhancement.attachCallback(proxy, oButton, with);
 }
 ```
 
