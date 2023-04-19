@@ -44,12 +44,6 @@ I *think* we also want to insist that the name has a dash in it, depending on th
 
 ##  Mapping template elements to enhancement classes.
 
-For the rest of the document, please go [here](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md).
-
-The document will continue to evolve.  PR's welcome (in addition to comments below).
-
-Thanks
-
 Let's first cast aside the important, but delicate and difficult question of how we can take server-rendered initial render of a DOM element and "reverse-engineer" it into a template. Let's just assume we have a template that we want to use for repeated template instantiation:
 
 For example:
