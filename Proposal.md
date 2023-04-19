@@ -33,7 +33,7 @@ So enhancements seems to cover it.  Plus I feel bad for gobbling up all those np
 1.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is provided below).
 2.  Can be used to enhance built-in and custom elements from a server rendered HTML via attributes that *ought* to start with enh- , just as custom data attributes ought to start with data-.  But realistically authors will support both enh-* and an attribute without the prefix, just as Angular does (for example).
 3.  Class based, extends ElementEnhancement class, which extends EventTarget.
-4.  These classes can define a callback, "attachedCallback" which passes in a proxy that wraps the target element.  The proxy prevents pass-through of properties, or calling methods that are not defined for built-ins to be passed through to the target element (throws an error), and does the same for upgraded custom elements(?).  The call back should probably also pass the original target element, for faster read only access.  We need to provide developers tools to do the right thing, while not hampering their ability to get maximum performance.
+4.  These classes can define a callback, "attachedCallback" which passes in a proxy that wraps the target element.  The proxy prevents pass-through of properties, or calling methods that are not defined for built-ins to be passed through to the target element (throws an error), and does the same for upgraded custom elements(?).  The call back also passes the original target element, for faster read only access.  We need to provide developers tools to do the right thing, while not hampering their ability to get maximum performance.
 5.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.
 6.  Frameworks could also pass properties down to the enhancement class instance via the same mechanism.
 7.  ElementEnhancement class has a callback "detachedCallback."
@@ -132,7 +132,7 @@ async function enhance(with, settings, oButton){
     if(enhancements[with] === undefined) {
         enhancements[with] = {};
     }
-    Object.assign(enhancements.beCounted, settings);
+    Object.assign(enhancements[with], settings);
     const def = await customEnhancements.whenDefined('be-counted');
     const beCounted = new def();
     const proxy = //do some code to create a proxy around oButton;
