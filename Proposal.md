@@ -1,4 +1,13 @@
+## Author(s)
+
+Bruce B. Anderson
+
+## Last update
+
+4/18/2023
+
 ## Purpose
+
 
 The need to be able to enhance existing elements in cross-cutting ways has been demonstrated by countless frameworks, [old](https://jqueryui.com/about/) and [new](https://make.wordpress.org/core/2023/03/30/proposal-the-interactivity-api-a-better-developer-experience-in-building-interactive-blocks/).  As the latter link indicates, there are great synergies that can be achieved between the client and the server with these declarative blocks of settings.
 
@@ -34,6 +43,12 @@ The same solution for scoped registries is applied to these methods.
 I *think* we also want to insist that the name has a dash in it, depending on this decision:   The name should cause server-rendered elements with attribute enh-[name passed to define] to create an instance of the class, create the proxy, etc, and call attachedCallback().  Should it do the same if enh-* is dropped?  If so, we need to require a dash in the name.  
 
 ##  Mapping template elements to enhancement classes.
+
+For the rest of the document, please go [here](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md).
+
+The document will continue to evolve.  PR's welcome (in addition to comments below).
+
+Thanks
 
 Let's first cast aside the important, but delicate and difficult question of how we can take server-rendered initial render of a DOM element and "reverse-engineer" it into a template. Let's just assume we have a template that we want to use for repeated template instantiation:
 
