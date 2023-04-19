@@ -45,7 +45,7 @@ The reason the prefix enh-* should be encouraged, but not necessarily required i
 
 1.  Requiring it can make the names unnecessarily clunky, unless there's a slam-dunk reason to do so (I'm on the fence).
 2.  If enh-* is encouraged the way data-* is encouraged, custom element authors will likely avoid that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
-3.  Should a custom enhancement author choose a name that happens to coincide with one of the attribute names of the custom element, (which seems likely to happen sometimes) now the markup can fallback to enh-[name-of-attribute].   Except how do we avoid calling the attachedCallback method for the custom element that uses a matching name, without the enh-*?  I think that means we need a way to specify in each Shadow DOM Realm, including the document root, whether to abide by "strict" mode, where only enh- prefixed attributes are recognized.
+3.  Should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems likely to happen sometimes) now the markup can fallback to enh-[name-of-attribute].   Except how do we avoid calling the attachedCallback method for the custom element that uses a matching name, without the enh-*?  I think that means we need a way to specify in each Shadow DOM Realm, including the document root, whether to abide by "strict" mode, where only enh- prefixed attributes are recognized.
 
 Most (all?) of the customElements methods would have a corresponding method in customEnhancements:
 
