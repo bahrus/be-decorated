@@ -109,12 +109,12 @@ What the template instantiation process would do with this mapping, as it takes 
 2.  For each such button element it finds ("oButton"), carefully pass in the associated settings, with the help of template parts (if applicable?):
 
 ```JavaScript
-async function(tiem, oButton){
+async function enhance(tiem, oButton){
     const {enhancements} = oButton;
-    if(enhancements.BeCounted === undefined) {
-        enhancements.BeCounted = {};
+    if(enhancements.beCounted === undefined) {
+        enhancements.beCounted = {};
     }
-    Object.assign(enhancements.BeCounted, {transform: {span: 'value'}});
+    Object.assign(enhancements.beCounted, {transform: {span: 'value'}});
     const def = await customEnhancements.whenDefined('be-counted');
     const beCounted = new def();
     const proxy = //do some code to create a proxy around oButton;
