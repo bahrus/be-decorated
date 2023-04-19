@@ -18,7 +18,13 @@ I started this journey placing great emphasis on the HTML attribute aspect of th
 
 ### Why enhancements, and not behaviors?
 
-Enhancements could also include be theme based, and contorting the language to make those sound like behaviors doesn't seem right:  "be Picasso blue period looking" for example.
+Granted, the majority of enhancements would likely fit our common idea of what constitutes a "behavior".
+
+But enhancements could also include specifying some common theme onto a white label web component, and contorting the language to make those sound like behaviors doesn't sound right:  "be Picasso blue period looking" for example.
+
+Some could be adding a copyright symbol to a text.  Does be-copyright-symboled feel right?
+
+So enhancements seems to cover it.  Plus I feel bad for gobbling up all those npm packages that start with be-.
 
 ## Highlights:
 
