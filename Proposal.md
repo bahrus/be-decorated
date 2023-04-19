@@ -150,5 +150,20 @@ where settings is the parsed (if applicable) RHS expression keyed from "button":
 }
 ```
 
+## How an enhancement class indicates it has hydrated   
+
+In many cases, multiple enhancements are so loosely coupled, they can be run in parallel.
+
+However, suppose we want to add three buttons to an input element:
+
+1.  One that opens a dialog window allowing us to specify what type of input we want it to be (number / date, etc).
+2.  One that allows us to clone the input element.
+3.  One that allows us to delete the input element.
+
+If they run in parallel, the order of the buttons will vary, which could confuse the user.
+
+In order to do that, we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
+
+Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
 
 (More details to follow).
