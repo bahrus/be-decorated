@@ -150,7 +150,7 @@ where settings is the parsed (if applicable) RHS expression keyed from "button":
 }
 ```
 
-So to make this explicit, it is critical to this proposal that the platform add a "enhancements" property (or some other name) to all Element definitions, similar to the dataset property used for data- attributes.
+So to make this explicit, **it is critical to this proposal that the platform add an "enhancements" property (or some other name) to all Element definitions, similar to the dataset property used for data- attributes**. The choice of this name should dictate the name of this proposal, and the name of the class we extend, the names of the defining methods, etc.
 
 ## How an enhancement class indicates it has hydrated   
 
@@ -168,6 +168,6 @@ In order avoid that, we need to wait in sequence.  This means that we need a com
 
 Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
 
-The template instantiation map of enhanments
+The TIME structure would need to 
 
 (More details to follow).
