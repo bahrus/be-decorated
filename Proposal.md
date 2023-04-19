@@ -114,14 +114,14 @@ What this proposal is calling for is moving out those settings to a JSON structu
 }
 ```
 
-We'll refer to the structure above as the "template instantiation enhancement mapping" [TIEM], name subject to change.
+We'll refer to the structure above as the "template instantiation mapping of enhancements" [TIME].
 
-This proposal is **not** advocating always limiting the TIEM structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
+This proposal is **not** advocating always limiting the TIME structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
 
-What the template instantiation process would do with this mapping, as it takes into account the TIEM structure is:
+What the template instantiation process would do with this mapping, as it takes into account the TIME structure is:
 
 1.  Use CSS queries to find all matching elements within the template clone ("button") in this case.
-2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the enhancements gateway property, with the help of template parts (if applicable?):
+2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts (if applicable?):
 
 ```JavaScript
 //internal logic in the browser, 
@@ -150,6 +150,8 @@ where settings is the parsed (if applicable) RHS expression keyed from "button":
 }
 ```
 
+So to make this explicit, it is critical to this proposal that the platform add a "enhancements" property (or some other name) to all Element definitions, similar to the dataset property used for data- attributes.
+
 ## How an enhancement class indicates it has hydrated   
 
 In many cases, multiple enhancements are so loosely coupled, they can be run in parallel.
@@ -162,8 +164,10 @@ However, suppose we want to add three buttons to an input element:
 
 If they run in parallel, the order of the buttons will vary, which could confuse the user.
 
-In order to do that, we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
+In order avoid that, we need to wait in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
 
 Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
+
+The template instantiation map of enhanments
 
 (More details to follow).
