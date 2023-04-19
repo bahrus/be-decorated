@@ -26,7 +26,7 @@ But enhancements could also include specifying some common theme onto a white la
 
 Some could be adding a copyright symbol to a text.  Does be-copyright-symboled feel right?
 
-So enhancements seems to cover it.  Plus I feel bad for gobbling up all those npm packages that start with be-.
+So "enhancements" seems to cover all bases.  Plus I feel bad for gobbling up all those npm packages that start with be-.
 
 ## Highlights:
 
@@ -34,7 +34,7 @@ So enhancements seems to cover it.  Plus I feel bad for gobbling up all those np
 2.  Can be used to enhance built-in and custom elements from a server rendered HTML via attributes that *ought* to start with enh- , just as custom data attributes ought to start with data-.  But realistically authors will support both enh-* and an attribute without the prefix, just as Angular does (for example).
 3.  Class based, extends ElementEnhancement class, which extends EventTarget.
 4.  These classes can define a callback, "attachedCallback". ~~which passes in a proxy that wraps the target element.  The proxy prevents pass-through of properties, or calling methods that are not defined for built-ins to be passed through to the target element (throws an error), and does the same for upgraded custom elements(?).~~ I'm thinking now if the platform provides an official public, easy to access place we can hang our class instance, we don't really need a proxy (discussion on this question below)  The call back would pass in the matching  target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm.
-5.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.
+5.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.  This is a one line polyfill to implement.  If that's too much to ask, at least being officially sanctioned to store classes there (and create the enhancements property on the fly as needed).
 6.  Frameworks could also pass properties down to the enhancement class instance via the same mechanism.
 7.  ElementEnhancement class has a callback "detachedCallback."
 8.  ElementEnhancement class provides a way of defining an attribute name to associate with the enh- prefix in each shadow DOM realm (following scoped custom element methodology), and callback for when the attribute value changes (but this should, and I suspect would, be used sparingly, in favor of the enhancements property gateway).   AttributeChangedCallback method with two parameters (oldValue, newValue).
