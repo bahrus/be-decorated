@@ -2,7 +2,7 @@
 
 The need to be able to enhance existing elements in cross-cutting ways has been demonstrated by countless frameworks, [old](https://jqueryui.com/about/) and [new](https://make.wordpress.org/core/2023/03/30/proposal-the-interactivity-api-a-better-developer-experience-in-building-interactive-blocks/).  As the latter link indicates, there are great synergies that can be achieved between the client and the server with these declarative blocks of settings.
 
-The fact that there is an urgent need for this functionality with template instantiation, leads me to believe this is an opportune time to take stock of all these solutions, and adopt an approach that makes sense in the context of streaming, declarative ShadowDOM, combined with template instantiation.  I think it is clear that we want the solution to provide both progressive enhancement for server-rendered HTML, and completely optimized ways of defining the linkages between DOM and the class definition that can enhance the DOM element. I think for template instantiation to really succeed, which I very much want it to do, it needs extensibility, which this functionality provides.
+The fact that there is an urgent need for this functionality with template instantiation, leads me to believe this is an opportune time to take stock of all these solutions, and adopt an approach that makes sense in the context of streaming, declarative ShadowDOM, combined with template instantiation.  I think it is clear that we want the solution to provide both progressive enhancement for server-rendered HTML, and completely optimized ways of defining the linkages between DOM elements and the class definition that can enhance the DOM element. I think for template instantiation to really succeed, which I very much want it to do, it needs extensibility, which this functionality provides.
 
 ## Highlights:
 
@@ -54,7 +54,7 @@ For example:
 
 Now the developer defines a class that provides the ability to keep track of how many times a button has been clicked, and that can broadcast that count to other elements near-by, which extends ElementEnhancement.
 
-An example, in concept, of such a class, used in a POC for this proposal, can be [seen here](https://github.com/bahrus/be-counted), just to make the concept less abstract (the POC does not use exactly follow what this proposal will outline as far as defining and registering the class), but basically, for server-rendered progressive enhancement, the server rendered HTML be expected to look as follows:
+An example, in concept, of such a class, used in a POC for this proposal, can be [seen here](https://github.com/bahrus/be-counted), just to make the concept less abstract (the POC will not exactly follow what this proposal will outline as far as defining and registering the class), but basically, for server-rendered progressive enhancement, the **server-rendered** HTML this class expects would look as follows:
 
 ```html
 <span></span>
@@ -64,6 +64,8 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
     }
 }'>Count</button>
 ```
+
+I find it much easier to document these enhancement classes sticking to the server-render HTML, leaving how it behaves during template instantiation as a more advanced topic once the concepts are understood.
 
 The scope of this proposal is not to endorse the particular settings this enhancement class expects, but the idea is that the transform specifies a css-like way of saying to pass the value of the count maintained in the enhancing class to the span element.  Other syntaxes could be used.
 
@@ -93,10 +95,10 @@ This proposal is **not** advocating always limiting the TIEM structure to JSON (
 What the template instantiation process would do with this mapping, as it takes into account the TIEM structure is:
 
 1.  Use CSS queries to find all matching elements within the template clone ("button") in this case.
-2.  For each such button element it finds, carefully pass in the object:
+2.  For each such button element it finds ("oButton"), carefully pass in the associated settings, with the help of template parts (if applicable?):
 
 ```JavaScript
-async function(tiem){
+async function(tiem, oButton){
     const {enhancements} = oButton;
     if(enhancements.BeCounted === undefined) {
         enhancements.BeCounted = {};
