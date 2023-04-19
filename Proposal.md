@@ -156,13 +156,13 @@ So to make this explicit, **it is critical to this proposal that the platform ad
 
 In many cases, multiple enhancements are so loosely coupled, they can be run in parallel.
 
-However, suppose we want to add three buttons to an input element:
+However, suppose we want to apply three enhancements to an input element, each of which adds a button:
 
 1.  One that opens a dialog window allowing us to specify what type of input we want it to be (number / date, etc).
 2.  One that allows us to clone the input element.
 3.  One that allows us to delete the input element.
 
-If they run in parallel, the order of the buttons will vary, which could confuse the user.
+If the three enhancements run in parallel, the order of the buttons will vary, which could confuse the user.
 
 In order avoid that, we need to wait in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
 
