@@ -168,6 +168,18 @@ In order to avoid that, we need to schedule them in sequence.  This means that w
 
 Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
 
-The TIME structure would need to 
+The TIME structure would need to sequences of enhancements:
+
+```JSON
+{
+    "enhance": {
+        "button": {
+            "with": ["specify-type", "be-clonable", {
+                "be-delible"
+            }]
+        }
+    }
+}
+```
 
 (More details to follow).
