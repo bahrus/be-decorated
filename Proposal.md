@@ -6,6 +6,30 @@ Bruce B. Anderson
 
 4/19/2023
 
+## Temporary (I hope) soapbox section
+
+I know there's some unnecessary repetition in this document, I just want to make sure I make these points and get across to *someone* because so far I don't think I am based on the chatter I see.
+
+The webkit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why?  
+Because that could limit the ability for the platform to add properties without a high probability of breaking some component extensions in userland, thus significantly constraining their ability to allow the platform to evolve.  The same would apply to extending third party custom elements.  What does built-in extensions have to do with third party custom elements?  Good question, nothing really.  The fact is extending built-in elements really addressed a small number of use cases, but the world has clearly endorsed more sweeping solutions across the vast majority of frameworks, which this solution is attempting to integrate.
+
+Why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they are right.
+
+So, for an alternative to custom built-in extensions to be worthwhile, and based on my explorations of this space for several years now, I strongly believe the alternative solution must provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's class, and to make those properties and methods public in a way that is (almost) as easy to access as the top level properties and methods themselves.
+
+So the bottom-line is that the crux of this proposal is to allow developers to do this (with a little tender loving care):
+
+```JavaScript
+oInput.extensions.myExtension.foo = bar;
+oCustomElement.extensions.yourExtension.bar = foo;
+```
+
+This would either require a one-line, or zero-line polyfill, which I would like to see added to the platform.  Either add the "extensions" property to the Element prototype, setting it to {}, or simply announce to custom element authors not to use "extensions" for a property name, that it is a valid place for third-party extensions to store their stuff, just as they shouldn't use "dataset."  So maybe it's more than one line polyfill, because I know dataset does throw errors when using it the wrong way.
+
+The role *attributes* should play should be minor in comparison, just as they are for custom elements.  They should generally only be used for setting initial values from server-rendered content, and initial styling.  The rest should be done through properties for performance reasons.  And that really applies to template instantiation.  I do think there's a significant argument even for custom elements that if there are numerous attributes that are static in the template, it would be good to provide template instantiation the ability to pull those out, and using css rules, pass the values through as properties rather than attributes.  Less bulk in the template, less string parsing.  So in fact, I will make sure that a part of this proposal covers that aspect of template instantiation as well (or has someone already thought about that?).
+
+The same argument applies 10-fold to "directives", which tend to [get quite large](https://alpinejs.dev/).  If we have rapidly changing values that need to be passed to a small part of the attribute, replacing the attribute and re-parsing seems incredibly wasteful.   
+
 ## Purpose
 
 The need to be able to enhance existing elements in cross-cutting ways has been demonstrated by countless frameworks, [old](https://jqueryui.com/about/) and [new](https://make.wordpress.org/core/2023/03/30/proposal-the-interactivity-api-a-better-developer-experience-in-building-interactive-blocks/).  As the latter link indicates, there are great synergies that can be achieved between the client and the server with these declarative blocks of settings.
