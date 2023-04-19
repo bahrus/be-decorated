@@ -10,7 +10,8 @@ Bruce B. Anderson
 
 I know there's some unnecessary repetition in this document, I just want to make sure I make these points and get across to *someone* because so far I don't think I am based on the chatter I see.
 
-The webkit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why?  
+The webkit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why? 
+
 Because that could limit the ability for the platform to add properties without a high probability of breaking some component extensions in userland, thus significantly constraining their ability to allow the platform to evolve.  The same would apply to extending third party custom elements.  What does built-in extensions have to do with third party custom elements?  Good question, nothing really.  The fact is extending built-in elements really addressed a small number of use cases, but the world has clearly endorsed more sweeping solutions across the vast majority of frameworks, which this solution is attempting to integrate.
 
 Why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they are right.
@@ -24,7 +25,7 @@ oInput.enhancements.myEnhancement.foo = bar;
 oCustomElement.enhancements.yourEnhancement.bar = foo;
 ```
 
-This would either require a one-line, or zero-line polyfill, which I would like to see added to the platform.  Either add the "enhancements" property to the Element prototype, setting it to {}, or simply announce to custom element authors not to use "enhancemetns" for a property name, that it is a valid place for third-party extensions to store their stuff, just as they shouldn't use "dataset."  So maybe it's more than one line polyfill, because I know dataset does throw errors when using it the wrong way.
+This would either require a one-line, or zero-line polyfill, which I would like to see added to the platform.  Either add the "enhancements" property to the Element prototype, setting it to {}, or simply announce to custom element authors not to use "enhancements" for a property name, that it is a valid place for third-party extensions to store their stuff, just as they shouldn't use "dataset."  So maybe it's more than one line polyfill, because I know dataset does throw errors when using it the wrong way.
 
 
 ## Purpose
@@ -47,7 +48,7 @@ But enhancements could also include specifying some common theme onto a white la
 
 Some could be adding a copyright symbol to a text.  Does be-copyright-symboled feel right?
 
-So "enhancements" seems to cover all bases.  Plus I feel bad for gobbling up all those npm packages that start with be-.
+So "enhancements" seems to cover all bases.
 
 ## Highlights:
 
@@ -60,13 +61,12 @@ So "enhancements" seems to cover all bases.  Plus I feel bad for gobbling up all
 7.  ElementEnhancement class has a callback "detachedCallback."
 8.  ElementEnhancement class provides a way of defining an attribute name to associate with the enh- prefix in each shadow DOM realm (following scoped custom element methodology), and callback for when the attribute value changes (but this should, and I suspect would, be used sparingly, in favor of the enhancements property gateway).   AttributeChangedCallback method with two parameters (oldValue, newValue).
 
-## Use of enh-* prefix for server-rendered progressive enhancement - required?
+## Use of enh-* prefix for server-rendered progressive enhancement should be required
 
-The reason the prefix enh-* should be encouraged, but not necessarily required is this:
+The reason the prefix enh-* should be required is this:
 
-1.  Requiring it can make the names unnecessarily clunky, unless there's a slam-dunk reason to do so (I'm on the fence).
-2.  If enh-* is encouraged the way data-* is encouraged, custom element authors will likely avoid that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
-3.  Should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems likely to happen sometimes) now the markup can fallback to enh-[name-of-attribute].   Except how do we avoid calling the attachedCallback method for the custom element that uses a matching name, without the enh-*?  I think that means we need a way to specify in each Shadow DOM Realm, including the document root, whether to abide by "strict" mode, where only enh- prefixed attributes are recognized.
+1.  If enh-* is encouraged the way data-* is encouraged, custom element authors will likely avoid that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
+2.  Should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems quite likely to happen frequently) now the enh-* prefix makes it clear which party is at fault.   
 
 Most (all?) of the customElements methods would have a corresponding method in customEnhancements:
 
@@ -103,14 +103,28 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
 
 ```html
 <span></span>
-<button enh-be-counted='{
-    "transform": {
-        "span": "value"
-    }
-}'>Count</button>
+<button >Count</button>
+<template>
+    <div>
+        <span></span>
+        <button enh-be-counted='{
+            "transform": {
+                "span": "value"
+            }
+        }'></button>
+    </div>
+    <section>
+        <span></span>
+        <button enh-be-counted='{
+            "transform": {
+                "span": "value"
+            }
+        }'></button>
+    </section>
+<template>
 ```
 
-I find it much easier to document these enhancement classes sticking to the server-rendered HTML, leaving how it behaves during template instantiation as a more advanced topic once the concepts are understood.
+Despite all my ranting against over-emphasis on the attributes used for server rendering, I will now admit that I do find it much easier to *document* these enhancement classes sticking to the server-rendered HTML, leaving how it behaves during template instantiation as a more advanced topic once the concepts are understood.
 
 The scope of this proposal is not to endorse the particular settings this enhancement class expects, but just to give some context, the idea here is that the transform setting specifies a css-like way of indicating we want to pass the value of the count maintained in the enhancing class to the span element.  Other syntaxes could be used.
 
