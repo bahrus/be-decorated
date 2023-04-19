@@ -164,7 +164,7 @@ However, suppose we want to apply three enhancements to an input element, each o
 
 If the three enhancements run in parallel, the order of the buttons will vary, which could confuse the user.
 
-In order avoid that, we need to wait in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
+In order to avoid that, we need to schedule them in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
 
 Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
 
