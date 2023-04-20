@@ -227,7 +227,7 @@ We can do:
 </template>
 ```
 
-together with:
+together with our template instantiation manifest:
 
 ```JSON
 [
