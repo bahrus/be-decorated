@@ -173,6 +173,25 @@ What this proposal is calling for is moving out those settings to a JSON structu
 
 Use of the term "deepMerge" refers to algorithms like [this](https://www.npmjs.com/package/deepmerge).
 
+We'll refer to the structure above as the "template instantiation merge" [TIM].
+
+So now our template is back to the original, with less bulk:
+
+```html
+<template>
+    <div>
+        <span></span>
+        <button></button>
+    </div>
+    <section>
+        <span></span>
+        <button></button>
+    </section>
+<template>
+```
+
+Less bulk means faster to clone!
+
 The same argument (excessive string parsing) can be applied custom element or even built in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
 
 Instead of:
@@ -212,24 +231,7 @@ together with:
 
 with TIM
 
-We'll refer to the structure above as the "template instantiation merge" [TIM].
 
-So now our template is back to the original, with less bulk:
-
-```html
-<template>
-    <div>
-        <span></span>
-        <button></button>
-    </div>
-    <section>
-        <span></span>
-        <button></button>
-    </section>
-<template>
-```
-
-Less bulk means faster to clone!
 
 This proposal is **not** advocating always limiting the TIME structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
 
