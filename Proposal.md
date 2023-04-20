@@ -86,8 +86,12 @@ Because of the requirement that attributes start with enh-*, dashes are not requ
 Just as with datasets, this proposal adopts the naming convention that if we define:
 
 ```JavaScript
-customEnhancements.define('with-steel', WithSteel, {matching:});
+customEnhancements.define('with-steel', WithSteel, {matching: '[enh-with-steel]'});
 ```
+
+The third parameter is illustrating the default value that would go along the name passed in.  In other words, we don't need to match with a single attribute!.
+
+So what role does the first parameter fulfill!  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registery), oElement.withSteel is "owned" by class WithSteel.
 
 then the subsection of the enhancements property that can hold the WithSteel instance would be:
 
@@ -222,7 +226,7 @@ together with:
                 "validate": true,
                 "placeholder": "Please enter the city in which you were born."
             },
-            "into": "button",
+            "into": "input",
         }
     }
 
