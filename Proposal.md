@@ -91,10 +91,6 @@ Let's take a close look at what the define method should look like:
 customEnhancements.define('with-steel', WithSteel, {upgrades: '*'});
 ```
 
-Just as with datasets, this proposal adopts the naming convention that if we define:
-
-
-
 Going backwards, the third parameter is indicating to match on all element tag names (the default). This also enables us to filter out element types we have no business interfering with:
 
 ```JavaScript
