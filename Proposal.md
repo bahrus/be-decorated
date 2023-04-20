@@ -321,4 +321,4 @@ The template instantiation manifest structure would need to sequence these enhan
 ]
 ```
 
-(More details to follow).
+(This is all I've got for now, but will take another look with a fresh mind.  I think the proposal is nearing an end as far as my capabilities are concerned).
