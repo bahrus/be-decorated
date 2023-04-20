@@ -55,6 +55,8 @@ Some could be adding a copyright symbol to a text.  Does be-copyright-symboled f
 
 So "enhancements" seems to cover all bases.
 
+Others prefer "behaviors", I'm open to both.
+
 ## Highlights:
 
 1.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is provided below).
@@ -92,7 +94,7 @@ customEnhancements.define('with-steel', WithSteel, {upgrades: '*'});
 The third parameter is indicating to match on all element tag names (the default) This also enables us to filter out element types we have no business interfering with:
 
 ```JavaScript
-customEnhancements.define('with-steel', WithSteel, {matching: 'input[enh-with-steel]'});
+customEnhancements.define('with-steel', WithSteel, {upgrades: 'input,textarea'});
 ```
 
 
@@ -201,7 +203,7 @@ So now our template is back to the original, with less bulk:
 
 Less bulk means faster to clone!
 
-The same argument (excessive string parsing) can be applied custom element or even built in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
+The same argument (excessive string parsing) can be applied to custom elements or even built in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
 
 Instead of:
 
@@ -244,7 +246,7 @@ with TIM
 
 This proposal is **not** advocating always limiting the TIM structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
 
-What the template instantiation process would do with this mapping, as it takes into account the TIME structure is:
+What the template instantiation process would do with this mapping, as it takes into account the TIM structure is:
 
 1.  Use CSS queries to find all matching elements within the template clone ("button") in this case.
 2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts (if applicable?):
@@ -261,7 +263,6 @@ async function enhance(with, settings, oButton){
     Object.assign(enhancements[with], settings);
     const def = await customEnhancements.whenDefined('be-counted');
     const enhancement = new def();
-    const proxy = //do some code to create a proxy around oButton;
     enhancement.attachCallback(proxy, oButton, with);
 }
 ```
