@@ -85,20 +85,26 @@ The same solution for scoped registries is applied to these methods.
 
 Because of the requirement that attributes start with enh-*, dashes are not required when using customEnhancements.define.
 
-Just as with datasets, this proposal adopts the naming convention that if we define:
+Let's take a close look at what the define method should look like:
 
 ```JavaScript
 customEnhancements.define('with-steel', WithSteel, {upgrades: '*'});
 ```
 
-The third parameter is indicating to match on all element tag names (the default) This also enables us to filter out element types we have no business interfering with:
+Just as with datasets, this proposal adopts the naming convention that if we define:
+
+
+
+Going backwards, the third parameter is indicating to match on all element tag names (the default). This also enables us to filter out element types we have no business interfering with:
 
 ```JavaScript
 customEnhancements.define('with-steel', WithSteel, {upgrades: 'input,textarea'});
 ```
 
+The second element is our class which must extend ElementEnhancement.
 
-So what role does the first parameter fulfill!  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.enhancements.withSteel is "owned" by the class instance of WithSteel.
+
+So what role does the first parameter fulfill?  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.enhancements.withSteel is "owned" by the class instance of WithSteel.
 
 then the subsection of the enhancements property that can hold the WithSteel instance would be:
 
