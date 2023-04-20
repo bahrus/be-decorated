@@ -114,7 +114,7 @@ const {withSteel} = oElement.enhancements;
 
 ##  Mapping elements contained in the template to enhancement classes.
 
-Let's first cast aside the important, but delicate and difficult question of how we can take server-rendered initial render of a DOM element and "reverse-engineer" it into a template. Let's just assume we have a template that we want to use for repeated template instantiation:
+Let's first cast aside the important, but delicate and difficult question of how we can take server-rendered initial render of a DOM element and "reverse-engineer" it into a template (if necessary). Let's just assume we have a template that we want to use for repeated template instantiation:
 
 For example:
 
