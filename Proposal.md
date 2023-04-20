@@ -182,7 +182,7 @@ What this proposal is calling for is moving out those settings to a JSON structu
 
 Use of the term "deepMerge" refers to algorithms like [this](https://www.npmjs.com/package/deepmerge).
 
-We'll refer to the structure above as the "template instantiation merge" [TIM].
+We'll refer to the structure above as the "template instantiation manifest" [TIM].
 
 So now our template is back to the original, with less bulk:
 
