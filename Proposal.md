@@ -96,7 +96,7 @@ customEnhancements.define('with-steel', WithSteel, {matching: 'input[enh-with-st
 ```
 
 
-So what role does the first parameter fulfill!  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.withSteel is "owned" by class WithSteel.
+So what role does the first parameter fulfill!  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.enhancements.withSteel is "owned" by the class instance of WithSteel.
 
 then the subsection of the enhancements property that can hold the WithSteel instance would be:
 
@@ -242,7 +242,7 @@ with TIM
 
 
 
-This proposal is **not** advocating always limiting the TIME structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
+This proposal is **not** advocating always limiting the TIM structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
 
 What the template instantiation process would do with this mapping, as it takes into account the TIME structure is:
 
