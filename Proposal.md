@@ -65,15 +65,14 @@ So "enhancements" seems to cover all bases.
 5.  These classes will want to define a callback, "attachedCallback". The call back will pass in the matching  target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.
 6.  Frameworks could also pass properties down to the enhancement class instance via the same mechanism.
 7.  ElementEnhancement class has a callback "detachedCallback."
-8.  ElementEnhancement class provides a way of defining an attribute name to associate with the enh- prefix in each shadow DOM realm (following scoped custom element methodology), and callback for when the attribute value changes (but this should, and I suspect would, be used sparingly, in favor of the enhancements property gateway).   AttributeChangedCallback method with two parameters (oldValue, newValue).
+8.  The customEnhancements.define method provides a way of defining an attribute name to associate with the enh- prefix in each shadow DOM realm (following scoped custom element methodology), and callback for when the attribute value changes (but this should, and I suspect would, be used sparingly, in favor of the enhancements property gateway).   AttributeChangedCallback method with two parameters (oldValue, newValue). 
 
 ## Use of enh-* prefix for server-rendered progressive enhancement should be required
 
 The reason the prefix enh-* should be required is this:
 
-1.  If enh-* is encouraged the way data-* is encouraged, custom element authors will likely avoid that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
-2.  Should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems quite likely to happen frequently) now the enh-* prefix makes it clear which party is at fault.
-3.  And if    
+1.  If enh-* is only encouraged the way data-* is encouraged, at least we could still count on custom element authors likely avoiding that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
+2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems quite likely to happen frequently) it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
 
 Most (all?) of the customElements methods would have a corresponding method in customEnhancements:
 
