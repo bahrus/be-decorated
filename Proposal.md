@@ -86,10 +86,10 @@ Because of the requirement that attributes start with enh-*, dashes are not requ
 Just as with datasets, this proposal adopts the naming convention that if we define:
 
 ```JavaScript
-customEnhancements.define('with-steel', WithSteel, {matching: '[enh-with-steel]'});
+customEnhancements.define('with-steel', WithSteel, {upgrades: '*'});
 ```
 
-The third parameter is illustrating the default value that would go along the name passed in.  ~~In other words, we don't need to match with a single attribute!~~.  However, all such attributes must start with enh.  This also enables to filter out element types we have no business interfering with:
+The third parameter is indicating to match on all element tag names (the default) This also enables us to filter out element types we have no business interfering with:
 
 ```JavaScript
 customEnhancements.define('with-steel', WithSteel, {matching: 'input[enh-with-steel]'});
