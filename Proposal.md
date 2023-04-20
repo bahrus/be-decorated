@@ -151,6 +151,23 @@ What this proposal is calling for is moving out those settings to a JSON structu
 
 We'll refer to the structure above as the "template instantiation mapping of enhancements" [TIME].
 
+So now our template is back to the original, with less bulk:
+
+```html
+<template>
+    <div>
+        <span></span>
+        <button></button>
+    </div>
+    <section>
+        <span></span>
+        <button></button>
+    </section>
+<template>
+```
+
+Less bulk means faster to clone!
+
 This proposal is **not** advocating always limiting the TIME structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
 
 What the template instantiation process would do with this mapping, as it takes into account the TIME structure is:
