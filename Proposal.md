@@ -14,7 +14,7 @@ The webkit team has raised a number of valid concerns about extending built-in e
 
 Because that could limit the ability for the platform to add properties without a high probability of breaking some component extensions in userland, thus significantly constraining their ability to allow the platform to evolve.  The same would apply to extending third party custom elements.  What does built-in extensions have to do with third party custom elements?  Good question, nothing really.  The fact is extending built-in elements really addressed a small number of use cases, but the world has clearly endorsed more sweeping solutions across the vast majority of frameworks, which this solution is attempting to integrate.
 
-Why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they are right.
+But going back to built-in elements, why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they are right.
 
 So, for an alternative to custom built-in extensions to be worthwhile, and based on my explorations of this space for several years now, I strongly believe the alternative solution must provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's class, and to make those properties and methods public in a way that is (almost) as easy to access as the top level properties and methods themselves.
 
@@ -27,6 +27,10 @@ oCustomElement.enhancements.yourEnhancement.bar = foo;
 
 This would either require a one-line, or zero-line polyfill, which I would like to see added to the platform.  Either add the "enhancements" property to the Element prototype, setting it to {}, or simply announce to custom element authors not to use "enhancements" for a property name, that it is a valid place for third-party extensions to store their stuff, just as they shouldn't use "dataset."  So maybe it's more than one line polyfill, because I know dataset does throw errors when using it the wrong way.
 
+The role *attributes* should play should be minor in comparison, just as they are for custom elements.  They should generally only be used for setting initial values from server-rendered content, and initial styling.  The rest should be done through properties for performance reasons.  And that really applies to template instantiation.  I do think there's a significant argument even for custom elements that if there are numerous attributes that are static in the template, it would be good to provide template instantiation the ability to pull those out, and using css rules, pass the values through as properties rather than attributes.  Less bulk in the template, less string parsing.  
+
+The same argument applies 10-fold to "directives", which tend to [get quite large](https://alpinejs.dev/).  If we have rapidly changing values that need to be passed to a small part of the attribute, replacing the attribute and re-parsing seems incredibly wasteful.   
+
 
 ## Purpose
 
@@ -36,15 +40,15 @@ There is an urgent need to support this functionality with template instantiatio
 
 ## A note about naming
 
-I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a great mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  When we use them during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the proper gateway is not through attributes, which again would be inefficient, but rather through the same common property gateway through which all these enhancements would be linked.  **That common gateway should be the focal point**.
+I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a great mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  When we use them during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the proper gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked.  **That common gateway should be the focal point**.
 
 Calling this "CustomAttributes" would be the equivalent of calling custom elements "Custom Tag Names".  QED. 
 
-### Why enhancements, and not behaviors?
+### Why "enhancements", and not "behaviors"?
 
 Granted, the majority of enhancements would likely fit our common idea of what constitutes a "behavior".
 
-But enhancements could also include specifying some common theme onto a white label web component, and contorting the language to make those sound like behaviors doesn't sound right:  "be Picasso blue period looking" for example.
+But enhancements could also include specifying some common theme onto a white label web component, and contorting the language to make those sound like behaviors doesn't sound right:  "Be Picasso blue-period looking" for example.
 
 Some could be adding a copyright symbol to a text.  Does be-copyright-symboled feel right?
 
@@ -53,10 +57,10 @@ So "enhancements" seems to cover all bases.
 ## Highlights:
 
 1.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is provided below).
-2.  Can be used to enhance built-in and custom elements from a server rendered HTML via attributes that *ought* to start with enh- , just as custom data attributes ought to start with data-.  But realistically authors will support both enh-* and an attribute without the prefix, just as Angular does (for example).
-3.  Class based, extends ElementEnhancement class, which extends EventTarget.
-4.  These classes can define a callback, "attachedCallback". ~~which passes in a proxy that wraps the target element.  The proxy prevents pass-through of properties, or calling methods that are not defined for built-ins to be passed through to the target element (throws an error), and does the same for upgraded custom elements(?).~~ I'm thinking now if the platform provides an official public, easy to access place we can hang our class instance, we don't really need a proxy (discussion on this question below)  The call back would pass in the matching  target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm.
-5.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.  This is a one line polyfill to implement.  If that's too much to ask, at least being officially sanctioned to store classes there (and create the enhancements property on the fly as needed).
+2.  Can be used to enhance built-in and custom elements from a server rendered HTML via attributes that must start with enh- , just as custom data attributes ought to start with data-.  But if the developer wants to get any assistance from the platform, it will need to be prefixed with enh-.
+3.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.  This is a one line polyfill to implement.  If that's too much to ask, at least being officially sanctioned to store classes there (and create the enhancements property on the fly as needed).
+4.  Class based, extends ElementEnhancement class, which extends EventTarget.
+5.  These classes can define a callback, "attachedCallback". The call back will pass in the matching  target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in abstentia, via the "enhancements" property gateway.
 6.  Frameworks could also pass properties down to the enhancement class instance via the same mechanism.
 7.  ElementEnhancement class has a callback "detachedCallback."
 8.  ElementEnhancement class provides a way of defining an attribute name to associate with the enh- prefix in each shadow DOM realm (following scoped custom element methodology), and callback for when the attribute value changes (but this should, and I suspect would, be used sparingly, in favor of the enhancements property gateway).   AttributeChangedCallback method with two parameters (oldValue, newValue).
@@ -66,7 +70,8 @@ So "enhancements" seems to cover all bases.
 The reason the prefix enh-* should be required is this:
 
 1.  If enh-* is encouraged the way data-* is encouraged, custom element authors will likely avoid that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
-2.  Should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems quite likely to happen frequently) now the enh-* prefix makes it clear which party is at fault.   
+2.  Should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems quite likely to happen frequently) now the enh-* prefix makes it clear which party is at fault.
+3.  And if    
 
 Most (all?) of the customElements methods would have a corresponding method in customEnhancements:
 
