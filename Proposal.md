@@ -141,7 +141,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
 <template>
 ```
 
-Despite all my ranting against over-emphasis on the attributes used for server rendering, I will now admit that I do find it much easier to *document* these enhancement classes sticking to the server-rendered HTML, leaving how it behaves during template instantiation as a more advanced topic once the concepts are understood.
+Despite all my ranting against over-emphasis on the attributes used for server rendering, I will now admit that I do find it much easier to *document* these enhancement classes using server-rendered HTML in my examples, leaving how it behaves during template instantiation as a more advanced topic once the concepts are understood. 
 
 The scope of this proposal is not to endorse the particular settings this enhancement class expects, but just to give some context, the idea here is that the transform setting specifies a css-like way of indicating we want to pass the value of the count maintained in the enhancing class to the span element.  Other syntaxes could be used.
 
@@ -152,19 +152,28 @@ The problem with using this inline binding in our template, which we might want 
 What this proposal is calling for is moving out those settings to a JSON structure that can be associated with the transform: 
 
 ```JSON
-{
-    "enhance": {
-        "button": {
-            "with": "beCounted",
-            "having":{
-                "transform": {
-                    "span": "value"
+[
+    {
+        "deepMerge": {
+            "props": {
+                "enhancements": {
+                    "beCounted": {
+                        "transform": {
+                            "span": "value"
+                        }
+                    }
                 }
-            }
+            },
+            "into": "button",
         }
     }
-}
+
+]
 ```
+
+Use of the term "deepMerge" refers to algorithms like [this](https://www.npmjs.com/package/deepmerge).
+
+The same argument (excessive string parsing) can be applied custom element or even built in attributes.  But in that case, we don't need "deep merging" nearly as often:
 
 We'll refer to the structure above as the "template instantiation mapping of enhancements" [TIME].
 
