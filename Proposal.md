@@ -246,10 +246,6 @@ together with our template instantiation manifest:
 ]
 ```
 
-with TIM
-
-
-
 This proposal is **not** advocating always limiting the TIM structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
 
 What the template instantiation process would do with this mapping, as it takes into account the TIM structure is:
@@ -262,11 +258,8 @@ What the template instantiation process would do with this mapping, as it takes 
 //this is just for illustrative purposes, 
 //implementations will vary
 async function enhance(with, settings, oButton){
-    const {enhancements} = oButton;
-    if(enhancements[with] === undefined) {
-        enhancements[with] = {};
-    }
-    Object.assign(enhancements[with], settings);
+    deepMerge(oButton, settings[with]['deepMerge']);
+    Object.assign(oButton, settings[with]['assign']);
     const def = await customEnhancements.whenDefined('be-counted');
     const enhancement = new def();
     enhancement.attachCallback(proxy, oButton, with);
