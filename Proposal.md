@@ -14,11 +14,11 @@ I know there's some unnecessary repetition in this document, I just want to make
 
 The webkit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why? 
 
-Because that could limit the ability for the platform to add properties without a high probability of breaking some component extensions in userland, thus significantly constraining their ability to allow the platform to evolve.  The same would apply to extending third party custom elements.  What does built-in extensions have to do with third party custom elements?  Good question, nothing really.  The fact is extending built-in elements really addressed a small number of use cases, but the world has clearly endorsed more sweeping solutions across the vast majority of frameworks, which this solution is attempting to integrate.
+Because that could limit the ability for the platform to add properties without a high probability of breaking some component extensions in userland, thus significantly constraining their ability to allow the platform to evolve.  The same would apply to extending third party custom elements.  
 
-But going back to built-in elements, why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they are right.
+Now why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they were right.
 
-So, for an alternative to custom built-in extensions to be worthwhile, and based on my explorations of this space for several years now, I strongly believe the alternative solution must provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's class, and to make those properties and methods public in a way that is (almost) as easy to access as the top level properties and methods themselves.
+So, for an alternative to custom built-in extensions to be worthwhile, and based on my explorations of this space for several years now, I strongly believe the alternative solution must provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's classes, or the platform's, and to make those properties and methods public in a way that is (almost) as easy to access as the top level properties and methods themselves.
 
 So the bottom-line is that the crux of this proposal is to allow developers to do this (with a little tender loving care):
 
@@ -32,7 +32,6 @@ This would either require a one-line, or zero-line polyfill, which I would like 
 The role *attributes* should play should be minor in comparison, just as they are for custom elements.  They should generally only be used for setting initial values from server-rendered content, and initial styling.  The rest should be done through properties for performance reasons.  And that really applies to template instantiation.  I do think there's a significant argument even for custom elements that if there are numerous attributes that are static in the template, it would be good to provide template instantiation the ability to pull those out, and using css rules, pass the values through as properties rather than attributes.  Less bulk in the template, less string parsing.  
 
 The same argument applies 10-fold to "directives", which tend to [get quite large](https://alpinejs.dev/).  If we have rapidly changing values that need to be passed to a small part of the attribute, replacing the attribute and re-parsing seems incredibly wasteful.   
-
 
 ## Purpose
 
@@ -82,7 +81,19 @@ Most (all?) of the customElements methods would have a corresponding method in c
 
 The same solution for scoped registries is applied to these methods.
 
-I *think* we also want to insist that the name has a dash in it, depending on this decision:   The name should cause server-rendered elements with attribute enh-[name passed to define] to create an instance of the class, create the proxy, etc, and call attachedCallback().  Should it do the same if enh-* is dropped?  If so, we need to require a dash in the name.  
+Because of the requirement that attributes start with enh-*, dashes are not required when using customEnhancements.define.
+
+Just as with datasets, this proposal adopts the naming convention that if we define:
+
+```JavaScript
+customEnhancements.define('with-steel', WithSteel);
+```
+
+then the subsection of the enhancements property that can hold the WithSteel instance would be:
+
+```JavaScript
+const {withSteel} = oElement.enhancements;
+```
 
 ##  Mapping elements contained in the template to enhancement classes.
 
