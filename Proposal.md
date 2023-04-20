@@ -173,9 +173,46 @@ What this proposal is calling for is moving out those settings to a JSON structu
 
 Use of the term "deepMerge" refers to algorithms like [this](https://www.npmjs.com/package/deepmerge).
 
-The same argument (excessive string parsing) can be applied custom element or even built in attributes.  But in that case, we don't need "deep merging" nearly as often:
+The same argument (excessive string parsing) can be applied custom element or even built in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
 
-We'll refer to the structure above as the "template instantiation mapping of enhancements" [TIME].
+Instead of:
+
+```html
+<template>
+    <input readonly disabled validate placeholder="Please enter the city in which you were born.">
+</template>
+```
+
+We can do:
+
+```html
+<template>
+    <input>
+</template>
+```
+
+together with:
+
+```JSON
+[
+    {
+        "assign": {
+            "props": {
+                "readonly": true,
+                "disabled": true,
+                "validate": true,
+                "placeholder": "Please enter the city in which you were born."
+            },
+            "into": "button",
+        }
+    }
+
+]
+```
+
+with TIM
+
+We'll refer to the structure above as the "template instantiation merge" [TIM].
 
 So now our template is back to the original, with less bulk:
 
