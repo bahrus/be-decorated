@@ -86,7 +86,7 @@ Because of the requirement that attributes start with enh-*, dashes are not requ
 Just as with datasets, this proposal adopts the naming convention that if we define:
 
 ```JavaScript
-customEnhancements.define('with-steel', WithSteel);
+customEnhancements.define('with-steel', WithSteel, {matching:});
 ```
 
 then the subsection of the enhancements property that can hold the WithSteel instance would be:
