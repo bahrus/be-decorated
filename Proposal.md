@@ -96,7 +96,7 @@ customEnhancements.define('with-steel', WithSteel, {matching: 'input[enh-with-st
 ```
 
 
-So what role does the first parameter fulfill!  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registery), oElement.withSteel is "owned" by class WithSteel.
+So what role does the first parameter fulfill!  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.withSteel is "owned" by class WithSteel.
 
 then the subsection of the enhancements property that can hold the WithSteel instance would be:
 
