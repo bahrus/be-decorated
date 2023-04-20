@@ -102,12 +102,6 @@ The second element is our class which must extend ElementEnhancement.
 
 So what role does the first parameter fulfill?  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.enhancements.withSteel is "owned" by the class instance of WithSteel.
 
-then the subsection of the enhancements property that can hold the WithSteel instance would be:
-
-```JavaScript
-const {withSteel} = oElement.enhancements;
-```
-
 ##  Mapping elements contained in the template to enhancement classes.
 
 Let's first cast aside the important, but delicate and difficult question of how we can take server-rendered initial render of a DOM element and "reverse-engineer" it into a template (if necessary). Let's just assume we have a template that we want to use for repeated template instantiation:
