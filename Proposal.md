@@ -38,7 +38,7 @@ in a way that is recognized by the platform.
 
 The most minimal solution, then, is for the web platform to simply announce that no built-in element will ever use a property with name "enhancements", push the message to web component developers not to use that name, that it is a reserved property, similar to dataset,  only to be used by third-party enhancement libraries.  Of course, the final name would need to be agreed to.  This is just my suggestion.  Some analysis would be needed to make sure that isn't already in heavy use by any web component library in common usage.
 
-I think that would be a great start.  But the rest of this proposal outlines some ways the platform could third parties implement their enhancements in a more orderly fashion, so they can work together, and with the platform in harmony.
+I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
 The first thing beyond that announcement would be what many (including myself) are clamoring for:
 
@@ -54,9 +54,9 @@ So if server-rendered HTML looks as follows:
 
 Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison.
 
-I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strong for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, not to mention the frequent usage of JSON.stringify, for example (and the limitations of what can be passed via that mechanism).   
+I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of object needs to be passed, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
-Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, look for opportunities for these enhancements to play a role in the template instantiation process, as many of the most popular such libraries do provide similar binding support as template instantiation.  Basically, look for opportunities to make custom element enhancements serve the dual purpose making template instantiation extendable, especially if that adds even a small benefit to performance.
+Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process, as many of the most popular such libraries do provide similar binding support as template instantiation.  Basically, look for opportunities to make custom element enhancements serve the dual purpose making template instantiation extendable, especially if that adds even a small benefit to performance.
 
 ## A note about naming
 
@@ -82,8 +82,8 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 
 1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.  
 2.  Sub-properties of the enhancements can be reserved for only one specific class prototype, based on the customEnhancements.define method.  It prevents others from using the same path with an instance of a different class.  
-3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is provided below).
-4.  Instantiates an instance of the class and attaches it to the reversed subproperty of enhancements, when the DOM encounters enh- attributes with matching dash-delimited name.
+3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is suggested below).
+4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the DOM encounters enh- attributes with matching dash-delimited name.
 5.  Classes extend ElementEnhancement class, which extends EventTarget.
 5.  These classes will want to define a callback, "attachedCallback". The call back will pass in the matching  target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the matching attribute.
 8.  AttributeChangedCallback method with two parameters (oldValue, newValue) is supported in addition. 
@@ -133,16 +133,23 @@ it will throw an error.
 
 ##  When should the class instance be created?
 
-If the enh-* attribute is found on an element in the live tree, this would cause the platform to instantiate an instance of the corresponding class, and invoke the attachedCallback method. 
+If the enh-* attribute is found on an element in the live tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded. 
 
-I also argue below that it would be great if, during template instantiation supported natively by the platform, we can creating a mapping, without relying on attributes that would tend to clutter (and enlarge) the template.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.
+I also argue below that it would be great if, during template instantiation supported natively by the platform, we can create a mapping, without relying on attributes that would tend to clutter (and enlarge) the template.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
 
-But the other benefit is being able to pass already parsed / nonJSON serializable settings directly to the enhancement via the enhancement property gateway, rather than through attributes.  The performance gains wouldn't alway be huge, but every little bit helps, right?  I also argue that the same thing could benefit custom elements, knowing that that is what most libraries (such as lit) today also support. 
- 
+But the other benefit is being able to pass already parsed / nonJSON serializable settings directly to the enhancement via the enhancement property gateway, rather than through attributes.  The performance gains wouldn't always be huge, but every little bit helps, right?  I also argue that the same thing could benefit custom elements, knowing that that is what most libraries (such as lit) today also support. 
 
-So what follows is going out into uncharted territories, discussing how this proposal might integrate into a work-in-progress spec that hasn't been fully fleshed.
+Another integration nicety I would like to see template instantiation is to support passing sub objects from the host to the enhancements gateway.  So that if moustache syntax is supported for example:
 
-It is all perfectly doable to do all these things today in userland, once this protocol is established. For example, with lit-html, generate template, then attach all the enhancements (and run customElements.upgrade).
+```html
+<input value="{myHost.enhancements.yourEnhancement?.yourProp}">
+```
+
+Maybe that's already planned, which is great.
+
+
+So what follows is going out into uncharted territories, discussing how this proposal might integrate into a work-in-progress spec that hasn't been fully fleshed out.
+
 
 ##  Mapping elements contained in the template to enhancement classes during template instantiation.
 
@@ -191,13 +198,11 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
 ```
  
 
-The scope of this proposal is not to endorse the particular settings this enhancement class expects. But just to give a quick summary of what this is doing, the idea here is that the transform setting specifies a css-like way of indicating we want to pass the value of the count maintained in the enhancing class to the span element.  Other syntaxes could be used.
-
-Note that the enhancement class may specify a default count, so that the span would need to be mutated with the initial value,  either while it is being instantiated, if the custom enhancement has already been imported, or in the live DOM tree.  The decision of whether the enhancement should render-block is, when relevant, up to the developer.  If the developer chooses to import the enhancing class synchronously, before invoking the template instantiation, then it will render block, but will incur less churn in the live DOM tree.  If the developer imports the class asynchronously, then, depending on what is in cache and other things that could impact timing, the modifications could occur before or after getting appended to the live DOM tree.  Ideally before, but often it's better to let the user see something than nothing.
+Note that the enhancement class corresponding to this attribute may specify a default count, so that the span would need to be mutated with the initial value,  either while it is being instantiated, if the custom enhancement has already been imported, or in the live DOM tree.  The decision of whether the enhancement should render-block is, when relevant, is up to the developer.  If the developer chooses to import the enhancing class synchronously, before invoking the template instantiation, then it will render block, but will be already set when it is added to the DOM tree.  If the developer imports the class asynchronously, then, depending on what is in cache and other things that could impact timing, the modifications could occur before or after getting appended to the live DOM tree.  Ideally before, but often it's better to let the user see something than nothing.
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
-What this proposal is calling for is moving out those settings to a JSON structure that can be associated with the transform: 
+What this proposal is calling for is moving out those settings to a JSON structure that can be associated with the template instantion: 
 
 ```JSON
 [
@@ -238,7 +243,7 @@ So now our template is back to the original, with less bulk:
 <template>
 ```
 
-Less bulk means faster to clone!
+Less bulk means faster to clone, less strain on the eye!
 
 The same argument (excessive string parsing) can be applied to custom elements or even built-in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
 
@@ -282,7 +287,7 @@ This proposal is **not** advocating always limiting the TIM structure to JSON (s
 What the template instantiation process would do with this mapping, as it takes into account the TIM structure is:
 
 1.  Use CSS queries to find all matching elements within the template clone ("button") in this case.
-2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts (if applicable?):
+2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts (if applicable?);
 
 ```JavaScript
 //internal logic in the browser, 
@@ -307,8 +312,6 @@ where settings is the parsed (if applicable) RHS expression keyed from "button":
 }
 ```
 
-So to make this explicit once again, **it is critical to this proposal that the platform add an "enhancements" property (or some other name) to all Element definitions, similar to the dataset property used for data- attributes**. The choice of this name should dictate the name of this proposal, and the name of the class we extend, the name global object ("customEnhancements"), etc.
-
 ## How an enhancement class indicates it has hydrated   
 
 In many cases, multiple enhancements are so loosely coupled, they can be run in parallel.
@@ -324,6 +327,8 @@ If the three enhancements run in parallel, the order of the buttons will vary, w
 In order to avoid that, we need to schedule them in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
 
 Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
+
+So this is another "nice-to-see" (in my eyes) integration synergy that the platform could use to promote harmonious integration between third-party enhancement libraries:  Standardizing on these event names, similar to promises, so that scheduling the upgrades can be done in a consisten mannter.
 
 The template instantiation manifest structure would need to sequence these enhancements:
 
@@ -352,4 +357,3 @@ The template instantiation manifest structure would need to sequence these enhan
 ]
 ```
 
-(This is all I've got for now, but will take another look with a fresh mind.  I think the proposal is nearing an end as far as my nice-to-haves are concerned).
