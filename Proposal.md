@@ -231,7 +231,7 @@ So now our template is back to the original, with less bulk:
 
 Less bulk means faster to clone!
 
-The same argument (excessive string parsing) can be applied to custom elements or even built in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
+The same argument (excessive string parsing) can be applied to custom elements or even built-in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
 
 Instead of:
 
@@ -343,4 +343,4 @@ The template instantiation manifest structure would need to sequence these enhan
 ]
 ```
 
-(This is all I've got for now, but will take another look with a fresh mind.  I think the proposal is nearing an end as far as my capabilities are concerned).
+(This is all I've got for now, but will take another look with a fresh mind.  I think the proposal is nearing an end as far as my nice-to-haves are concerned).
