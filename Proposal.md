@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-4/20/2023
+4/21/2023
 
 ## Backdrop
 
@@ -56,7 +56,7 @@ Unlike custom elements, which have the luxury of creating a one-to-one mapping b
 
 I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of object needs to be passed, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
-Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process, as many of the most popular such libraries do provide similar binding support as template instantiation.  Basically, look for opportunities to make custom element enhancements serve the dual purpose making template instantiation extendable, especially if that adds even a small benefit to performance.
+Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process, as many of the most popular such libraries do provide similar binding support as template instantiation.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
 ## A note about naming
 
