@@ -122,17 +122,20 @@ So what role does the first parameter fulfill?  Just as with data-my-stuff turni
 
 When I started this journey, I took the approach that it should be created basically at the same time as when a custom element instance is created -- when the tag lands in the live tree.  And that's critical for server-rendered content, and should be supported.  This proposal endorses that capability.
 
-However, because in parallel I was experimenting with an alternative approach to template instantiation, it occurred to that intuitively, especially for enhancements that alter the DOM, and especially because some of the enhancements overlapped with some of the functionality that is part of the template instantiation mission (for loops / if conditions), that it would make much more sense to load them during template instantiation.  This would make template instantiation extendible also.  I argue that point below.  However, I do need to produce some test results "proving" that is more than intuition.
+However, because in parallel I was experimenting with an alternative approach to template instantiation, it occurred to that intuitively, especially for enhancements that alter the DOM, and especially because some of the enhancements overlapped with some of the functionality that is part of the template instantiation mission (for loops / if conditions), that it would make much more sense to load them during template instantiation.  This would make template instantiation extendible also, essentially.  I argue that point below.  However, I do need to produce some test results "proving" that is more than intuition.
 
 Hence my recommendation that the name of the callback for custom enhancements be "attachedCallback", not "connectedCallback".
 
 I also argue below that it would be great if, during template instantiation supported natively by the platform, we pass values in via the enhancement property gateway, rather than through attributes.  I also argue that the same thing could benefit custom elements, knowing that that is what most libraries support. 
 
-It does raise the question -- should the original CustomElement v1 spec be amended with an attachedCallback (or some other name), to also support some initial rendering work that can be done ahead of time before being added to the live DOM tree?  Maybe?
+It does raise the question -- should the original CustomElement v1 spec be amended with an attachedCallback (or some other name), to also support some initial rendering work that can be done ahead of time before being added to the live DOM tree when/if the platform officially?  Maybe?
+ 
 
-So what follows is going out a bit into uncharted territories.
+So what follows is going out into uncharted territories, discussing enhancements to integrating into a work-in-progress spec that hasn't been fully fleshed.
 
-##  Mapping elements contained in the template to enhancement classes.
+It is all perfectly doable to do all these things in userland.  But
+
+##  Mapping elements contained in the template to enhancement classes during template instantiation.
 
 Suppose we have a template that we want to use for repeated template instantiation:
 
