@@ -8,9 +8,7 @@ Bruce B. Anderson
 
 4/20/2023
 
-## Temporary (I hope) soapbox section
-
-I know there's some unnecessary repetition in this document, I just want to make sure I make these points and get across to *someone* because so far I don't think I am based on the chatter I see.
+## Backdrop
 
 The webkit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why? 
 
@@ -18,7 +16,16 @@ Because that could limit the ability for the platform to add properties without 
 
 Now why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they were right.
 
-So, for an alternative to custom built-in extensions to be worthwhile, and based on my explorations of this space for several years now, I strongly believe the alternative solution must provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's classes, or the platform's, and to make those properties and methods public in a way that is (almost) as easy to access as the top level properties and methods themselves.
+So for these reasons, the customized-built standard has essentially been blocked.
+
+And yet the need to be able to enhance existing elements in cross-cutting ways has been demonstrated by countless frameworks, [old](https://jqueryui.com/about/) and [new](https://make.wordpress.org/core/2023/03/30/proposal-the-interactivity-api-a-better-developer-experience-in-building-interactive-blocks/).  As the latter link indicates, there are great synergies that can be achieved between the client and the server with these declarative blocks of settings.
+
+A close examination of these solutions usually indicates that the problem WebKit is concerned about is only percolating under the surface, pushed underground by a lack of an alternative solution.  One finds plenty of custom objects attached to the element being enhanced.  Just to take one example:  "_x_dataStack".  Clearly, they don't want to "break the web" with this naming convention, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
+
+So, for an alternative to custom built-in extensions to be worthwhile, and based on my explorations of this space for several years now, I strongly believe the alternative solution must first and foremost:
+
+1.  Provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's classes, or the platform's, and 
+2.  Just as critically, make those properties and methods public in a way that is (almost) as easy to access as the top level properties and methods themselves.
 
 So the bottom-line is that the crux of this proposal is to allow developers to do this (with a little tender loving care):
 
@@ -27,23 +34,31 @@ oInput.enhancements.myEnhancement.foo = bar;
 oCustomElement.enhancements.yourEnhancement.bar = foo;
 ```
 
-This would either require a one-line, or zero-line polyfill, which I would like to see added to the platform.  Either add the "enhancements" property to the Element prototype, setting it to {}, or simply announce to custom element authors not to use "enhancements" for a property name, that it is a valid place for third-party extensions to store their stuff, just as they shouldn't use "dataset."  So maybe it's more than one line polyfill, because I know dataset does throw errors when using it the wrong way.
+in a way that is recognized by the platform.
 
-The role *attributes* should play should be minor in comparison, just as they are for custom elements.  They should generally only be used for setting initial values from server-rendered content, and initial styling.  The rest should be done through properties for performance reasons.  And that really applies to template instantiation.  I do think there's a significant argument even for custom elements that if there are numerous attributes that are static in the template, it would be good to provide template instantiation the ability to pull those out, and using css rules, pass the values through as properties rather than attributes.  Less bulk in the template, less string parsing.  
+The role *attributes* should play should be relatively minor in comparison, just as they are for custom elements.  I think because it is so easy to document/illustrate functionality enhancements via the server-rendered attributes, we tend to dwell on that aspect, at the risk of losing sight of our goal -- to be able to enhance the element.  
 
-The same argument applies 10-fold to "directives", which tend to [get quite large](https://alpinejs.dev/).  If we have rapidly changing values that need to be passed to a small part of the attribute, replacing the attribute and re-parsing seems incredibly wasteful.   
+This proposal does allow developers to associate one attribute string name to be associated with am "owned" section of the enhancement property of the underlying element, so that when we see the following server-rendered content:
 
-## Purpose
+```html
+<input enh-my-enhancement>
+```
 
-The need to be able to enhance existing elements in cross-cutting ways has been demonstrated by countless frameworks, [old](https://jqueryui.com/about/) and [new](https://make.wordpress.org/core/2023/03/30/proposal-the-interactivity-api-a-better-developer-experience-in-building-interactive-blocks/).  As the latter link indicates, there are great synergies that can be achieved between the client and the server with these declarative blocks of settings.
+we can expect (after dependencies have loaded) to see a class instance associated with that attribute, accessible via oInput.enhancements.myEnhancement.
 
-There is an urgent need to support this functionality with template instantiation, while providing similar synergies with streaming, declarative ShadowDOM, that also needs enhancing. In other words, we want the solution to provide both progressive enhancement for server-rendered HTML, but yet reuse the same logic while being completely optimized for template instantiation. I think for template instantiation to really succeed, which I very much want it to do, it needs extensibility, which this functionality provides.
+Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison.
+
+I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more heavily for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time.   
+
+Another aspect of this proposal that is quite critical is how it can interplay with template instantiation.
+
+I think for template instantiation to really succeed, which I very much want it to do, it needs extensibility, which this functionality provides.
 
 ## A note about naming
 
-I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a great mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  When we use them during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the proper gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked.  **That common gateway should be the focal point**.
+I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a great mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
 
-Calling this "CustomAttributes" would be the equivalent of calling custom elements "Custom Tag Names".  QED. 
+When we enhance existing elements during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the best gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked. 
 
 ### Why "enhancements", and not "behaviors"?
 
@@ -56,6 +71,8 @@ Some could be adding a copyright symbol to a text.  Does be-copyright-symboled f
 So "enhancements" seems to cover all bases.
 
 Others prefer "behaviors", I'm open to both.
+
+Choosing the right name seems import, as it ought align with the name sub-property of the root element, as well as the reversed prefix for attributes (think data- / dataset).
 
 ## Highlights:
 
@@ -97,14 +114,27 @@ Going backwards, the third parameter is indicating to match on all element tag n
 customEnhancements.define('with-steel', WithSteel, {upgrades: 'input,textarea'});
 ```
 
-The second element is our class which must extend ElementEnhancement.
-
+The second parameter is our class which must extend ElementEnhancement.
 
 So what role does the first parameter fulfill?  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.enhancements.withSteel is "owned" by the class instance of WithSteel.
 
+##  When should the class instance be created?
+
+When I started this journey, I took the approach that it should be created basically at the same time as when a custom element instance is created -- when the tag lands in the live tree.  And that's critical for server-rendered content, and should be supported.  This proposal endorses that capability.
+
+However, because in parallel I was experimenting with an alternative approach to template instantiation, it occurred to that intuitively, especially for enhancements that alter the DOM, and especially because some of the enhancements overlapped with some of the functionality that is part of the template instantiation mission (for loops / if conditions), that it would make much more sense to load them during template instantiation.  This would make template instantiation extendible also.  I argue that point below.  However, I do need to produce some test results "proving" that is more than intuition.
+
+Hence my recommendation that the name of the callback for custom enhancements be "attachedCallback", not "connectedCallback".
+
+I also argue below that it would be great if, during template instantiation supported natively by the platform, we pass values in via the enhancement property gateway, rather than through attributes.  I also argue that the same thing could benefit custom elements, knowing that that is what most libraries support. 
+
+It does raise the question -- should the original CustomElement v1 spec be amended with an attachedCallback (or some other name), to also support some initial rendering work that can be done ahead of time before being added to the live DOM tree?  Maybe?
+
+So what follows is going out a bit into uncharted territories.
+
 ##  Mapping elements contained in the template to enhancement classes.
 
-Let's first cast aside the important, but delicate and difficult question of how we can take server-rendered initial render of a DOM element and "reverse-engineer" it into a template (if necessary). Let's just assume we have a template that we want to use for repeated template instantiation:
+Suppose we have a template that we want to use for repeated template instantiation:
 
 For example:
 
@@ -147,8 +177,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
     </section>
 <template>
 ```
-
-Despite all my ranting against over-emphasis on the attributes used for server-side rendering, I will now admit that I do find it much easier to *document* these enhancement classes using server-rendered HTML in my examples, leaving how it behaves during template instantiation as a more advanced topic once the concepts are understood. 
+ 
 
 The scope of this proposal is not to endorse the particular settings this enhancement class expects. But just to give a quick summary of what this is doing, the idea here is that the transform setting specifies a css-like way of indicating we want to pass the value of the count maintained in the enhancing class to the span element.  Other syntaxes could be used.
 
