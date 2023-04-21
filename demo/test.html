@@ -7,21 +7,31 @@
     <title>Document</title>
 </head>
 <body>
+
     <div id=div1></div>
     <div id=div2></div>
     <button onclick="test1()">test 1</button>
     <button onclick="test2()">test 2</button>
     <button onclick="test3()">test 3</button>
+
+    <template id=testTemplate>
+        <custom-element></custom-element>
+    </template>
     <script>
-        const ubound = 100000;
+        const ubound = 10000;
         function test1(){
             const start = performance.now();
             let test = '';
+            const div = document.createElement('div');
             for(let i = 0; i < ubound; i++){
-                const div = document.createElement('div');
-                div.innerHTML =  '<template></template>';
-                div1.appendChild(div);
+                //const ce = document.createElement('custom-element');
+                div.appendChild(testTemplate.content.cloneNode(true));
             }
+            customElements.upgrade(div);
+            setTimeout(() => {
+                div1.appendChild(div);
+            }, 1);
+            
             const end = performance.now();
             const timeTaken = end - start; 
             console.log({timeTaken});
@@ -30,27 +40,38 @@
         function test2(){
             const start = performance.now();
             let test = '';
+            const div = document.createElement('div');
             for(let i = 0; i < ubound; i++){
-                const div = document.createElement('div');
-                div.innerHTML =  '<?child-node-part?><?/child-node-part?>';
-                div2.appendChild(div);
+                //const ce = document.createElement('custom-element');
+                div.appendChild(testTemplate.content.cloneNode(true));
             }
+            setTimeout(() => {
+                div1.appendChild(div);
+            }, 1);
             const end = performance.now();
             const timeTaken = end - start; 
             console.log({timeTaken});
         }
+
+        function test3(){
+
+        }
     </script>
-    <template id=testTemplate>
-        <custom-element></custom-element>
-    </template>
+
 
     <script>
         class CustomElement extends HTMLElement {
             constructor(){
-                console.log('in constructor');
+                super();
+                setTimeout(() => {
+                    this.innerHTML = String.raw `
+                    <div>I am here</div>
+                    `;
+                }, Math.random() * 100);
             }
             connectedCallback(){
-                console.log('in connected callback');
+
+
             }
         }
 
