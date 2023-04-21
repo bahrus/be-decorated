@@ -36,7 +36,7 @@ oCustomElement.enhancements.yourEnhancement.bar = foo;
 
 in a way that is recognized by the platform.
 
-The role *attributes* should play should be relatively minor in comparison, just as they are for custom elements.  I think because it is so easy to document/illustrate functionality enhancements via the server-rendered attributes, we tend to dwell on that aspect, at the risk of losing sight of our goal -- to be able to enhance the element.  
+The role *attributes* should play should be relatively minor in comparison, just as they are for custom elements.  I think because it is so easy to document/illustrate functionality enhancements via the server-rendered attributes, we tend to dwell on that aspect, at the risk of losing sight of our goal -- to be able to enhance the element.
 
 This proposal does allow developers to associate one attribute string name to be associated with am "owned" section of the enhancement property of the underlying element, so that when we see the following server-rendered content:
 
@@ -50,7 +50,7 @@ Unlike custom elements, which have the luxury of creating a one-to-one mapping b
 
 I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more heavily for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time.   
 
-Another aspect of this proposal that is quite critical is how it can interplay with template instantiation.
+Another aspect of this proposal that I think should be considered as the template instantiation proposal gels is how it can interplay with these enhancements in an optimal way.
 
 I think for template instantiation to really succeed, which I very much want it to do, it needs extensibility, which this functionality provides.
 
@@ -117,6 +117,14 @@ customEnhancements.define('with-steel', WithSteel, {upgrades: 'input,textarea'})
 The second parameter is our class which must extend ElementEnhancement.
 
 So what role does the first parameter fulfill?  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.enhancements.withSteel is "owned" by the class instance of WithSteel.
+
+If some other developer attempts to "hijack" this property extension:
+
+```JavaScript
+oInput.enhancements.withSteel = new WithAluminum()
+```
+
+it will throw an error.
 
 ##  When should the class instance be created?
 
