@@ -328,7 +328,7 @@ In order to avoid that, we need to schedule them in sequence.  This means that w
 
 Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
 
-So this is another "nice-to-see" (in my eyes) integration synergy that the platform could use to promote harmonious integration between third-party enhancement libraries:  Standardizing on these event names, similar to promises, so that scheduling the upgrades can be done in a consisten mannter.
+So this is another "nice-to-see" (in my eyes) integration synergy that the platform could use to promote harmonious integration between third-party enhancement libraries:  Standardizing on these event names, similar to promises, so that scheduling the upgrades can be done in a consistent manner.
 
 The template instantiation manifest structure would need to sequence these enhancements:
 
