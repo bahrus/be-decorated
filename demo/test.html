@@ -18,7 +18,7 @@
         <custom-element></custom-element>
     </template>
     <script>
-        const ubound = 10000;
+        const ubound = 5000;
         function test1(){
             const start = performance.now();
             let test = '';
@@ -30,7 +30,7 @@
             customElements.upgrade(div);
             setTimeout(() => {
                 div1.appendChild(div);
-            }, 1);
+            }, 100);
             
             const end = performance.now();
             const timeTaken = end - start; 
@@ -47,7 +47,7 @@
             }
             setTimeout(() => {
                 div1.appendChild(div);
-            }, 1);
+            }, 100);
             const end = performance.now();
             const timeTaken = end - start; 
             console.log({timeTaken});
@@ -63,15 +63,17 @@
         class CustomElement extends HTMLElement {
             constructor(){
                 super();
+                this.doRender();
+                return;
                 setTimeout(() => {
                     this.innerHTML = String.raw `
                     <div>I am here</div>
                     `;
                 }, Math.random() * 100);
             }
-            connectedCallback(){
-
-
+            async doRender(){
+                const {render} = await import('./render.js');
+                render(this);
             }
         }
 
