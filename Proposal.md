@@ -202,7 +202,7 @@ Note that the enhancement class corresponding to this attribute may specify a de
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
-What this proposal is calling for is moving out those settings to a JSON structure that can be associated with the template instantion: 
+What this proposal is calling for is moving out those settings to a JSON structure that can be associated with the template instantiation: 
 
 ```JSON
 [
