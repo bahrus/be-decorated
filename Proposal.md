@@ -346,7 +346,7 @@ The template instantiation manifest structure would need to sequence these enhan
                         "beClonable": {
                             "hydrate": true
                         },
-                        "beCounted": {
+                        "beDeletable": {
                             "hydrate": true
                         }
                     }
