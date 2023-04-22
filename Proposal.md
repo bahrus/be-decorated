@@ -139,7 +139,7 @@ I also argue below that it would be great if, during template instantiation supp
 
 But the other benefit is being able to pass already parsed / nonJSON serializable settings directly to the enhancement via the enhancement property gateway, rather than through attributes.  The performance gains wouldn't always be huge, but every little bit helps, right?  I also argue that the same thing could benefit custom elements, knowing that that is what most libraries (such as lit) today also support. 
 
-Another integration nicety I would like to see template instantiation is to support passing sub objects from the host to the enhancements gateway.  So that if moustache syntax is supported for example:
+Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So that if moustache syntax is supported for example:
 
 ```html
 <input value="{myHost.enhancements.yourEnhancement?.yourProp}">
