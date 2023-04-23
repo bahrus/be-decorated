@@ -42,7 +42,7 @@ I think that would be a great start.  But the rest of this proposal outlines som
 
 The first thing beyond that announcement would be what many (including myself) are clamoring for:
 
-The platform informs web component developers to not use any attributes with a matching prefix, that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.
+The platform informs web component developers to not use any attributes with a matching prefix to the gateway name, "enhancements", that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.
 
 So if server-rendered HTML looks as follows:
 
@@ -51,6 +51,8 @@ So if server-rendered HTML looks as follows:
 ```
 
 ... we can expect (after dependencies have loaded) to see a class instance associated with that attribute, accessible via oInput.enhancements.myEnhancement.
+
+The requirement for the prefix can be dropped if only built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
 
 Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison.
 
