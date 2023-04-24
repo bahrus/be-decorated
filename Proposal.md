@@ -22,6 +22,8 @@ And yet the need to be able to enhance existing elements in cross-cutting ways h
 
 A close examination of these solutions usually indicates that the problem WebKit is concerned about is only percolating under the surface, pushed (or remaining) underground by a lack of an alternative solution.  One finds plenty of custom objects attached to the element being enhanced.  Just to take one example:  "_x_dataStack".  Clearly, they don't want to "break the web" with this naming convention, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
 
+## Custom Property Name-spacing
+
 So, for an alternative to custom built-in extensions to be worthwhile, I strongly believe the alternative solution must first and foremost:
 
 1.  Provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's classes, or the platform's, and 
@@ -40,21 +42,24 @@ The most minimal solution, then, is for the web platform to simply announce that
 
 I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
+## Custom Attribute Associated with Custom Property
+
 The first thing beyond that announcement would be what many (including myself) are clamoring for:
 
-The platform informs web component developers to not use any attributes with a matching prefix to the gateway name, "enhancements", that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.
+The platform informs web component developers to not use any attributes with a matching prefix to the gateway name, "enhancements", that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  The restriction to prefix custom attributes with enh- would only be required when adorning third-party custom elements:
 
 So if server-rendered HTML looks as follows:
 
 ```html
-<input enh-my-enhancement>
+<input my-enhancement='{"foo": "bar"}'>
+<my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (after dependencies have loaded) to see a class instance associated with that attribute, accessible via oInput.enhancements.myEnhancement.
+... we can expect (after dependencies have loaded) to see a class instance associated with that attribute, accessible via oInput.enhancements.myEnhancement and oCustomElement.enhancements.yourEnhancement.
 
-The requirement for the prefix can be dropped if only built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
+The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
 
-Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison.
+Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example suggests.  These custom attributes would not be required to use JSON, that is up to each custom attribute vendor to decide.
 
 I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of object needs to be passed, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
