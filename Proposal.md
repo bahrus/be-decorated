@@ -42,7 +42,7 @@ The most minimal solution, then, is for the web platform to simply announce that
 
 I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
-## Custom Attribute Associated with Custom Property
+## Custom Attribute + Custom Property => Custom Enhancement
 
 The first thing beyond that announcement would be what many (including myself) are clamoring for:
 
