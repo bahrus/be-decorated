@@ -95,7 +95,7 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 5.  These classes will want to define a callback, "attachedCallback". The call back will pass in the matching  target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the matching attribute.
 8.  AttributeChangedCallback method with two parameters (oldValue, newValue) is supported in addition. 
 
-## Use of enh-* prefix for server-rendered progressive enhancement should be required
+## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required
 
 The reason the prefix enh-* should be required is this:
 
