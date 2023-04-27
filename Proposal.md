@@ -73,7 +73,7 @@ When we enhance existing elements during template instantiation, the attributes 
 
 ### Why "enhancements", and not "behaviors"?
 
-Granted, the majority of enhancements would likely fit our common idea of what constitutes a "behavior".
+Granted, the majority of enhancements would likely fit our common idea of what constitutes a ["behavior"](https://www.brainbell.com/tutors/XML/XML_Book_B/DHTML_Behaviors.htm#:~:text=DHTML%20Behaviors%20are%20lightweight%20components%20that%20extend%20the,referenced%20in%20Internet%20Explorer%205%20by%20using%20styles.).
 
 But enhancements could also include specifying some common theme onto a white label web component, and contorting the language to make those sound like behaviors doesn't sound right:  "Be Picasso blue-period looking" for example.
 
@@ -363,4 +363,8 @@ The template instantiation manifest structure would need to sequence these enhan
     }
 ]
 ```
+
+## Open Questions
+
+Should any formal support be providing for dispatching namespaced events from the element being enhanced?
 
