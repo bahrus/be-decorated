@@ -214,17 +214,17 @@ What this proposal is calling for is moving out those settings to a JSON structu
 ```JSON
 [
     {
-        "deepMerge": {
-            "props": {
-                "enhancements": {
-                    "beCounted": {
+        "make": {
+            "button": [
+                {
+                    "beEnhancedBy": "beCounted",
+                    "having": {
                         "transform": {
                             "span": "value"
                         }
                     }
                 }
-            },
-            "into": "button",
+            ]
         }
     }
 
@@ -275,14 +275,16 @@ together with our template instantiation manifest:
 ```JSON
 [
     {
-        "assign": {
-            "props": {
-                "readonly": true,
-                "disabled": true,
-                "validate": true,
-                "placeholder": "Please enter the city in which you were born."
-            },
-            "into": "input",
+        "make": {
+            "input": [
+                {
+                    "beAssigned": {
+                        "disabled": true,
+                        "validate": true,
+                        "placeholder": "Please enter the city in which you were born."
+                    }
+                }
+            ]
         }
     }
 
@@ -342,6 +344,7 @@ The template instantiation manifest structure would need to sequence these enhan
 ```JSON
 [
     {
+        "make
         "deepMerge": {
             "into": "input",
             "sequenceOfMerges": [
