@@ -217,7 +217,7 @@ What this proposal is calling for is moving out those settings to a JSON structu
         "make": {
             "button": [
                 {
-                    "beEnhancedBy": "beCounted",
+                    "beEnhancedBy": "be-counted",
                     "having": {
                         "transform": {
                             "span": "value"
@@ -231,7 +231,6 @@ What this proposal is calling for is moving out those settings to a JSON structu
 ]
 ```
 
-Use of the term "deepMerge" refers to algorithms like [this](https://www.npmjs.com/package/deepmerge).
 
 We'll refer to the structure above as the "template instantiation manifest" [TIM].
 
@@ -344,22 +343,28 @@ The template instantiation manifest structure would need to sequence these enhan
 ```JSON
 [
     {
-        "make
-        "deepMerge": {
-            "into": "input",
-            "sequenceOfMerges": [
+        "make": {
+            "input": [
                 {
-                    "enhancements": {
-                        "specifyType": {
-                            "hydrate": true
-                        },
-                        "beClonable": {
-                            "hydrate": true
-                        },
-                        "beDeletable": {
-                            "hydrate": true
-                        }
-                    }
+                    "beEnhancedBy": "specify-type",
+                    "having": {
+                        "hydrate": true
+                    },
+                    "waitToResolve": true
+                },
+                {
+                    "beEnhancedBy": "be-clonable",
+                    "having": {
+                        "hydrate": true
+                    },
+                    "waitToResolve": true
+                },
+                {
+                    "beEnhancedBy": "be-deletable",
+                    "having": {
+                        "hydrate": true
+                    },
+                    "waitToResolve": true
                 }
             ]
         }
