@@ -10,7 +10,7 @@ Bruce B. Anderson
 
 ## Backdrop
 
-The webkit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why? 
+The WebKit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why? 
 
 Because that could limit the ability for the platform to add properties without a high probability of breaking some component extensions in userland, thus significantly constraining their ability to allow the platform to evolve.  The same would apply to extending third party custom elements.  
 
@@ -46,7 +46,7 @@ I think that would be a great start.  But the rest of this proposal outlines som
 
 The first thing beyond that announcement would be what many (including myself) are clamoring for:
 
-The platform informs web component developers to not use any attributes with a matching prefix to the gateway name, "enhancements", that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  The restriction to prefix custom attributes with enh- would only be required when adorning third-party custom elements:
+The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  The restriction to prefix custom attributes with enh- would only be required when adorning third-party custom elements.
 
 So if server-rendered HTML looks as follows:
 
@@ -110,15 +110,15 @@ Most (all?) of the customElements methods would have a corresponding method in c
 
 The same solution for scoped registries is applied to these methods.
 
-Because of the requirement that attributes start with enh-*, dashes are not required when using customEnhancements.define.
-
 Let's take a close look at what the define method should look like:
 
 ```JavaScript
 customEnhancements.define('with-steel', WithSteel, {enhances: '*'});
 ```
 
-Going backwards, the third parameter is indicating to match on all element tag names (the default).  The CSS query for this define is '[enh-with-steel]'. 
+Going backwards, the third parameter is indicating to match on all element tag names (the default).  The CSS query for this define is '[with-steel],[enh-with-steel]'. 
+
+If matching elements are found, for built-in elements the attribute could be either with-steel or enh-with-steel.  For custom elements, either would work.
 
 We can also filter out element types we have no intention of enhancing:
 
