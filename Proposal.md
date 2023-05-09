@@ -320,6 +320,11 @@ where settings is the parsed (if applicable) RHS expression keyed from "button":
 }
 ```
 
+From my experience the **ideal** approach, from a developer experience point of view, is if the built-in template instantiation could intelligently decide, when it encounters these custom enhancement attributes, to  quietly pull out the inline attributes and form this TIM object in memory.
+
+I suspect, though, that overtime we will need to provide both this smart kind of optimization-on-the fly, in addition to providing the developer explicit access to this Template Instantiation Manifest, and merge the two together.
+
+
 ## How an enhancement class indicates it has hydrated   
 
 In many cases, multiple enhancements are so loosely coupled, they can be run in parallel.
