@@ -38,7 +38,7 @@ oCustomElement.enhancements.yourEnhancement.bar = foo;
 
 in a way that is recognized by the platform.
 
-The most minimal solution, then, is for the web platform to simply announce that no built-in element will ever use a property with name "enhancements", push the message to web component developers not to use that name, that it is a reserved property, similar to dataset,  only to be used by third-party enhancement libraries.  Of course, the final name would need to be agreed to.  This is just my suggestion.  Some analysis would be needed to make sure that isn't already in heavy use by any web component library in common usage.
+The most minimal solution, then, is for the web platform to simply announce that no built-in element will ever use a property with name "enhancements", push the message to web component developers not to use that name, that it is a reserved property, similar to dataset,  only to be used by third-party enhancement libraries.  Of course, the final name would need to be agreed to.  This is just my suggestion.  Some analysis would be needed to make sure that "enhancements" isn't already in heavy use by any web component library in common usage.
 
 I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
@@ -59,7 +59,7 @@ So if server-rendered HTML looks as follows:
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
 
-Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example suggests.  These custom attributes would not be required to use JSON, that is up to each custom attribute vendor to decide.
+Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON, that is up to each custom attribute vendor to decide.
 
 I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of object needs to be passed, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
@@ -140,7 +140,7 @@ it will throw an error.
 
 ##  When should the class instance be created?
 
-If the enh-* attribute is found on an element in the live tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded. 
+If the enh-* attribute is found on an element in the live tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded.
 
 I also argue below that it would be great if, during template instantiation supported natively by the platform, we can create a mapping, without relying on attributes that would tend to clutter (and enlarge) the template.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
 
@@ -205,7 +205,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
 ```
  
 
-Note that the enhancement class corresponding to this attribute may specify a default count, so that the span would need to be mutated with the initial value,  either while it is being instantiated, if the custom enhancement has already been imported, or in the live DOM tree.  The decision of whether the enhancement should render-block is, when relevant, is up to the developer.  If the developer chooses to import the enhancing class synchronously, before invoking the template instantiation, then it will render block, but will be already set when it is added to the DOM tree.  If the developer imports the class asynchronously, then, depending on what is in cache and other things that could impact timing, the modifications could occur before or after getting appended to the live DOM tree.  Ideally before, but often it's better to let the user see something than nothing.
+Note that the enhancement class corresponding to this attribute may specify a default count, so that the span would need to be mutated with the initial value,  either while it is being instantiated, if the custom enhancement has already been imported, or in the live DOM tree.  The decision of whether the enhancement should render-block is, when relevant, up to the developer.  If the developer chooses to import the enhancing class synchronously, before invoking the template instantiation, then it will render block, but will be already set when it is added to the DOM tree.  If the developer imports the class asynchronously, then, depending on what is in cache and other things that could impact timing, the modifications could occur before or after getting appended to the live DOM tree.  Ideally before, but often it's better to let the user see something than nothing.
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
@@ -322,7 +322,7 @@ where settings is the parsed (if applicable) RHS expression keyed from "button":
 
 From my experience the **ideal** approach, from a developer experience point of view, is if the built-in template instantiation could intelligently decide, when it encounters these custom enhancement attributes, to  quietly pull out the inline attributes and form this TIM object in memory.
 
-I suspect, though, that overtime we will need to provide both this smart kind of optimization-on-the fly, in addition to providing the developer explicit access to this Template Instantiation Manifest, and merge the two together.
+I suspect, though, that over time we would need to provide both this smart kind of optimization-on-the fly, in addition to providing the developer explicit access to this Template Instantiation Manifest, and merge the two together.
 
 
 ## How an enhancement class indicates it has hydrated   
@@ -379,5 +379,5 @@ The template instantiation manifest structure would need to sequence these enhan
 
 ## Open Questions
 
-Should any formal support be providing for dispatching namespaced events from the element being enhanced?
+Should any formal support be provided for dispatching namespaced events from the element being enhanced?
 
