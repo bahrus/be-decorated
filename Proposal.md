@@ -118,7 +118,7 @@ customEnhancements.define('with-steel', WithSteel, {enhances: '*'});
 
 Going backwards, the third parameter is indicating to match on all element tag names (the default).  The CSS query for this define is '[with-steel],[enh-with-steel]'. 
 
-If matching elements are found, for built-in elements the attribute could be either with-steel or enh-with-steel.  For custom elements, onhy enh-with-steel would work.
+If matching elements are found, for built-in elements the attribute could be either with-steel or enh-with-steel.  For custom elements, only enh-with-steel would work.
 
 We can also filter out element types we have no intention of enhancing:
 
