@@ -182,7 +182,15 @@ class ElementEnhancement extends EventTarget{
 
 ## A helper property to avoid method calling.
 
-In addition to the two methods above, the 
+In addition to the two methods above, the enhancements property would contain a property which returns a proxy, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
+
+This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary:
+
+```JavaScript
+oElement.enhancements.
+```
+
+
 
 ##  When should the class instance be created?
 
