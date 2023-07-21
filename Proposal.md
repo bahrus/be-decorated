@@ -59,11 +59,11 @@ So if server-rendered HTML looks as follows:
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
 
-Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the properties into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON, that is up to each custom attribute vendor to decide.
+Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the initial property values into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON, that is up to each custom enhancement vendor to decide.
 
-I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of object needs to be passed, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
+I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of objects needs to be passed in, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
-Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process, as many of the most popular such libraries do provide similar binding support as template instantiation.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
+Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
 ## A note about naming
 
@@ -79,6 +79,8 @@ But enhancements could also include specifying some common theme onto a white la
 
 Some could be adding a copyright symbol to a text.  Does be-copyright-symboled feel right?
 
+Many are adding binding support to elements, which may or not resonate with developers as being a "behavior".
+
 So "enhancements" seems to cover all bases.
 
 Others prefer "behaviors", I'm open to both.
@@ -88,12 +90,12 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 ## Highlights of this proposal:
 
 1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.  
-2.  Sub-properties of the enhancements can be reserved for only one specific class prototype, based on the customEnhancements.define method.  It prevents others from using the same path with an instance of a different class.  
+2.  Sub-properties of the enhancements property can be reserved for only one specific class prototype, based on the customEnhancements.define method.  It prevents others from using the same path with an instance of a different class.  
 3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is suggested below).
-4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the DOM encounters enh- attributes with matching dash-delimited name.
+4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters enh- attributes with matching dash-delimited name.
 5.  Classes extend ElementEnhancement class, which extends EventTarget.
-5.  These classes will want to define a callback, "attachedCallback". The call back will pass in the matching  target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the matching attribute.
-8.  AttributeChangedCallback method with two parameters (oldValue, newValue) is supported in addition. 
+6.  These classes will want to define a callback, "attachedCallback". The callback will pass in the matching target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the matching attribute.
+7.  AttributeChangedCallback method with two parameters (oldValue, newValue) is supported in addition. 
 
 ## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required
 
@@ -102,7 +104,9 @@ The reason the prefix enh-* should be required is this:
 1.  If enh-* is only encouraged the way data-* is encouraged, at least we could still count on custom element authors likely avoiding that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
 2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems quite likely to happen frequently) it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
 
-Most (all?) of the customElements methods would have a corresponding method in customEnhancements:
+## Global api's.
+
+All of the customElements methods would have a corresponding method in customEnhancements:
 
 1.  customEnhancements.define
 2.  customEnhancements.whenDefined
@@ -137,6 +141,49 @@ oInput.enhancements.withSteel = new WithAluminum()
 ```
 
 it will throw an error.
+
+## Methods of the enhancements property
+
+Unlike dataset, the enhancements property, added to the Element prototype would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
+
+```JavaScript
+const enhancementInstance = await oElement.enhancements.whenDefined('with-steel');
+const enhancementInstance = await oElement.enhancements.whenResolved('with-steel');
+```
+
+The whenDefined method returns the enhancement instance after calling attachedCallback.
+
+The whenResolved instance is returned after the developer sets:
+
+```JavaScript
+this.resolved = true;
+```
+
+The base class of these enhancements, ElementEnhancement, contains two reserved properties, resolved and rejected:
+
+```JavaScript
+class ElementEnhancement extends EventTarget{
+    #resolved = false;
+    get resolved(){
+        return this.#resolved;
+    }
+    set resolved(newValue){
+        this.#resolved = newValue;
+        if(newValue){
+            this.dispatchEvent(new Event('resolved'))
+        }else{
+            this.dispatchEvent(new Event('rejected'))
+        }
+    }
+
+}
+```
+
+If 
+
+## A helper property to avoid method calling.
+
+In addition to the two methods above, the 
 
 ##  When should the class instance be created?
 
