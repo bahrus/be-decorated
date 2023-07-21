@@ -192,7 +192,7 @@ oElement.enhancements.setPropsFor.WithSteel.carbonPercent = 0.2;
 
 
 
-##  When should the class instance be created?
+##  When should the class instance be created by the platform?
 
 If the enh-* attribute is found on an element in the live tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded.
 
