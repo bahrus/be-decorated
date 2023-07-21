@@ -151,7 +151,7 @@ const enhancementInstance = await oElement.enhancements.whenDefined('with-steel'
 const enhancementInstance = await oElement.enhancements.whenResolved('with-steel');
 ```
 
-The whenDefined method returns the enhancement instance after calling attachedCallback.
+Both of these methods will cause an instance of the class WithSteel to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
 
 The whenResolved instance is returned after the developer sets:
 
@@ -159,7 +159,7 @@ The whenResolved instance is returned after the developer sets:
 this.resolved = true;
 ```
 
-The base class of these enhancements, ElementEnhancement, contains two reserved properties, resolved and rejected:
+The base class of these enhancements, ElementEnhancement, then, contains a reserved property, resolved:
 
 ```JavaScript
 class ElementEnhancement extends EventTarget{
@@ -178,8 +178,7 @@ class ElementEnhancement extends EventTarget{
 
 }
 ```
-
-If 
+ 
 
 ## A helper property to avoid method calling.
 
