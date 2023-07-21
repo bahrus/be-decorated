@@ -187,7 +187,7 @@ In addition to the two methods above, the enhancements property would contain a 
 This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary:
 
 ```JavaScript
-oElement.enhancements.
+oElement.enhancements.setPropsFor.WithSteel.carbonPercent = 0.2;
 ```
 
 
