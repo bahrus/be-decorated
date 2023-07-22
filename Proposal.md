@@ -272,7 +272,10 @@ The problem with using this inline binding in our template, which we might want 
 
 So I have two possible suggestions for addressing this issue:
 
-## Solution 1
+## Solution 1 (probably not the right solution)
+
+<details>
+    <summary>Since this probably isn't the right solution, hiding it, just in case it helps anyone.</summary>
 
 We move out those settings to a JSON-like structure that can be associated with the template instantiation: 
 
@@ -380,13 +383,64 @@ It's possible that extracting out the attribute only results in savings if it is
 
 And here's the rub -- we can't, I don't think, insist that every custom enhancement vendor use JSON attributes.  The best thing I can suggest (and it is a bit iffy) is to assume that if the attribute is of the form [...] or {} then *try* doing a JSON.parse.  If one of those tests fails, just leave the attribute in place, and let the vendor cache as necessary.
 
-...which takes us to 
+...which takes us to
 
-## Solution 2:
+</details>
 
-What I described in Solution 1 seemed too difficult to me, when I got down to implementing it in my POC.  What I implemented instead, still assumes that there's a benefit in eliminating all the attributes from the final DOM (the more attributes, the bulkier the clone, the more work css querying has to do, etc).
+## Solution 2 (closer to the right solution?):
 
-I suspect, though, that over time we would need to provide both this smart kind of optimization-on-the fly, in addition to providing the developer explicit access to this Template Instantiation Manifest, and merge the two together.
+What I described in Solution 1 seemed too difficult to me, when I got down to implementing it in my POC.  What I implemented instead, still assumes that there's a benefit in eliminating all the attributes from the final DOM (the more attributes, the bulkier the clone, the larger the memory footprint of the DOM, the more work css querying has to do, etc).
+
+So what I did, essentially, was this:
+
+As a custom enhancement vendor, I took the time to implement, with custom element enhancements I anticipated would be used thousands of times on a page, an internal, bespoke way of caching attributes globally, so that if a template repeats thousands of times, if I'm passed in the same attribute, I look for the the parsed object from my cache, and if not found, do the parse, and cache it (basically, memoization).  So this could be a pattern we recommend as a best practice way of optimizing performance when it seems warranted.
+
+As far as the help the platform's template instantiation would provide:
+
+Say our template looks as follows:
+
+```html
+<template>
+    <div enhancement-1=clob1 enhancement-2=clob2 enhancement-3=clob3 etc></div>
+</template>
+```
+
+This is only done for custom attributes that have already been registered.
+
+We turn that template into something like this, using a temporary, internal attribute, say "enhancements":
+
+```html
+<template>
+     <div enhancements=ff3a5f86-7136-4d63-a959-60433a71e16d></div>
+</template>
+```
+
+(I think it's better to use global counter, not a guid, because it's smaller,  but using a guid for clarity)
+
+... and I maintain a lookup from that guid to the cached attributes for that element.
+
+Then when I would instantiate the template, I search globally for all "enhancements" attributes, do a look up for what the original attributes were, and instantiate the enhancement class instances, invoke the attribute changed callback on each of them, exactly as if there was that attribute (well, I didn't do this, more on that below), and removed the enhancements attribute so what we end up with is a clean div in the live DOM tree:
+
+```html
+<html>
+    ...
+    <body>
+        ...
+        <div></div>
+    </body>
+</html>
+```
+
+with all the enhancements enhancing away on the div.
+
+Now some custom enhancement vendors might complain, saying "hey, I need that attribute to stay on the element, why are you doing that?" so maybe it should be something that is configurable per enhancement?
+
+Now should we really call "attributeChangedCallback" when there isn't really such an attribute on the element?  Would that confuse the developer?
+
+I wonder if we should have a different callback for this scenario, to avoid possible confusion (at the expense of making the api more complex).
+
+Instead of "attributeChangedCallback", I think it would be better to pass that in to the attachedCallback
+
 
 
 ## How an enhancement class indicates it has hydrated   
