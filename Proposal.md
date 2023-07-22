@@ -204,9 +204,8 @@ The object would sit there ready to be absorbed into the enhancement during the 
 
 If the enh-* attribute is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded.
 
-I also argue below that it would be great if, during template instantiation supported natively by the platform, we can create a mapping, without relying on attributes that would tend to clutter (and enlarge) the template.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
+I also argue below that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving an efficient outcome in comes to recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
 
-But the other benefit is being able to pass already parsed / nonJSON serializable settings directly to the enhancement via the enhancement property gateway, rather than through attributes.  The performance gains wouldn't always be huge, but every little bit helps, right?  I also argue that the same thing could benefit custom elements, knowing that that is what most libraries (such as lit) today also support. 
 
 Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So that if moustache syntax is supported for example:
 
@@ -271,7 +270,7 @@ Note that the enhancement class corresponding to this attribute may specify a de
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
-So I have two possible suggestions for addressing this issue:
+So I have two possible suggestions for addressing this issue, both designed to optimize this situation (however, I'm speculating a bit what would be effective here, as I say, I'm not an expert in this field):
 
 ## Solution 1 (probably not the right solution)
 
