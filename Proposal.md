@@ -151,7 +151,7 @@ const enhancementInstance = await oElement.enhancements.whenDefined('with-steel'
 const enhancementInstance = await oElement.enhancements.whenResolved('with-steel');
 ```
 
-Both of these methods will cause an instance of the class WithSteel to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
+Both of these methods will see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class WithSteel to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
 
 The whenResolved promise is returned after the developer sets:
 
