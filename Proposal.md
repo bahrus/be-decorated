@@ -178,8 +178,9 @@ class ElementEnhancement extends EventTarget{
 
 }
 ```
- 
 
+The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
+ 
 ## A helper property to avoid method calling.
 
 In addition to the two methods above, the enhancements property would contain a property which returns a proxy, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
@@ -417,9 +418,21 @@ We turn that template into something like this, using a temporary, internal attr
 
 (I think it's better to use global counter, not a guid, because it's smaller,  but using a guid for clarity)
 
-... and I maintain a lookup from that guid to the cached attributes for that element.
+... and we maintain a lookup from that guid to the cached attributes for that element.
 
-Then when I would instantiate the template, I search globally for all "enhancements" attributes, do a look up for what the original attributes were, and instantiate the enhancement class instances, invoke the attribute changed callback on each of them, exactly as if there was that attribute (well, I didn't do this, more on that below), and removed the enhancements attribute so what we end up with is a clean div in the live DOM tree:
+Then when we instantiate the template, we search globally for all "enhancements" attributes, do a look up for what the original attributes were, and instantiate the enhancement class instances.
+
+Solution 2, option a:
+
+Invoke the attribute changed callback on each of them, exactly as if there  that original attribute that the developer specified was there. 
+
+Solution 2, option b:
+
+Now should we really call "attributeChangedCallback" when there isn't really such an attribute on the element?  Would that confuse the developer?
+
+Instead of "attributeChangedCallback", I think it would be better to pass that in to the attachedCallback as an additional parameter for this scenario.
+
+Either way, we remove the "enhancements" attribute so what we end up with is a clean div in the live DOM tree:
 
 ```html
 <html>
@@ -433,17 +446,12 @@ Then when I would instantiate the template, I search globally for all "enhanceme
 
 with all the enhancements enhancing away on the div.
 
-Now some custom enhancement vendors might complain, saying "hey, I need that attribute to stay on the element, why are you doing that?" so maybe it should be something that is configurable per enhancement?
-
-Now should we really call "attributeChangedCallback" when there isn't really such an attribute on the element?  Would that confuse the developer?
-
-I wonder if we should have a different callback for this scenario, to avoid possible confusion (at the expense of making the api more complex).
-
-Instead of "attributeChangedCallback", I think it would be better to pass that in to the attachedCallback
+Now with all of these solutions, some custom enhancement vendors might complain, saying "hey, I need that attribute to stay on the element, why are you doing that?" so maybe it should be something that is configurable per enhancement?
 
 
+## How an enhancement class indicates it has hydrated 
 
-## How an enhancement class indicates it has hydrated   
+Earlier in this document, I mentioned a feature built in to the base class, that indicates a state of "resolved".  Here's the explanation for one use case:
 
 In many cases, multiple enhancements are so loosely coupled, they can be run in parallel.
 
@@ -455,45 +463,11 @@ However, suppose we want to apply three enhancements to an input element, each o
 
 If the three enhancements run in parallel, the order of the buttons will vary, which could confuse the user.
 
-In order to avoid that, we need to schedule them in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  
+In order to avoid that, we need to schedule them in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  That is why we should have this ability to specify whether the hydration has completed. 
 
-Since EnhancementClasses extend the EventTarget, they can do so by dispatching events with name "resolved" and "rejected", respectively.
+I have a heavy suspicion that as the platform builds out template instantiation and (hopefully) includes something close to this solution as far as plug-in, there will arise other reasons to support this feature.
 
-So this is another "nice-to-see" (in my eyes) integration synergy that the platform could use to promote harmonious integration between third-party enhancement libraries:  Standardizing on these event names, similar to promises, so that scheduling the upgrades can be done in a consistent manner.
-
-The template instantiation manifest structure would need to sequence these enhancements:
-
-```JSON
-[
-    {
-        "make": {
-            "input": [
-                {
-                    "beEnhancedBy": "specify-type",
-                    "having": {
-                        "hydrate": true
-                    },
-                    "waitToResolve": true
-                },
-                {
-                    "beEnhancedBy": "be-clonable",
-                    "having": {
-                        "hydrate": true
-                    },
-                    "waitToResolve": true
-                },
-                {
-                    "beEnhancedBy": "be-deletable",
-                    "having": {
-                        "hydrate": true
-                    },
-                    "waitToResolve": true
-                }
-            ]
-        }
-    }
-]
-```
+But for now, the way this feature can be used is with a bespoke custom enhancement, such as [be-promising](https://github.com/bahrus/be-promising#be-promising).
 
 ## Open Questions
 
