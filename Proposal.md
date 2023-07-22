@@ -181,7 +181,7 @@ class ElementEnhancement extends EventTarget{
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
  
-## A helper property to avoid method calling.
+## A helper property to make setting properties easier.
 
 In addition to the two methods above, the enhancements property would contain a property which returns a proxy, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
 
