@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-7/21/2023
+7/22/2023
 
 ## Backdrop
 
@@ -46,7 +46,7 @@ I think that would be a great start.  But the rest of this proposal outlines som
 
 The first thing beyond that announcement would be what many (including myself) are clamoring for:
 
-The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  The restriction to prefix custom attributes with enh- would only be required when adorning third-party custom elements.
+The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  
 
 So if server-rendered HTML looks as follows:
 
@@ -144,7 +144,7 @@ it will throw an error.
 
 ## Methods of the enhancements property
 
-Unlike dataset, the enhancements property, added to the Element prototype would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
+Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
 const enhancementInstance = await oElement.enhancements.whenDefined('with-steel');
