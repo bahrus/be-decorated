@@ -16,7 +16,7 @@ Because that could limit the ability for the platform to add properties without 
 
 Now why would a developer want to add public properties and methods onto a built-in element?  For the simple reason that the developer expects external components to find it beneficial to pass values to these properties, or call the methods.  I doubt the WebKit team would have raised this issue, unless they were quite sure there would be a demand for doing just that, and I believe they were right.
 
-So for this reason (and others), the customized-built standard has essentially been blocked.
+So for this reason (and others), the customized built-in standard has essentially been blocked.
 
 And yet the need to be able to enhance [existing](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [elements](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [in](https://docs.angularjs.org/guide/directive) [cross-cutting](https://svelte.dev/docs#template-syntax-element-directives) [ways](https://mavo.io/docs/plugins) [has](https://knockoutjs.com/documentation/custom-bindings.html) [been](https://medium.com/@_edhuang/add-a-custom-attribute-to-an-ember-component-81f485f8d997) [demonstrated](https://alpinejs.dev/) [by](https://github.com/bahrus?tab=repositories&q=be-&type=&language=&sort=) [countless](https://htmx.org/docs/) [frameworks](https://vuejs.org/v2/guide/custom-directive.html), [old](https://jqueryui.com/about/) [and](https://riot.js.org/documentation/#html-elements-as-components) [new](https://make.wordpress.org/core/2023/03/30/proposal-the-interactivity-api-a-better-developer-experience-in-building-interactive-blocks/).  As the latter link indicates, there are great synergies that can be achieved between the client and the server with these declarative blocks of settings.  And making such solutions work across frameworks would be as profound as custom elements themselves.  The only alternative, working with nested custom elements, is [deeply](https://sitebulb.com/hints/performance/avoid-excessive-dom-depth/) [problematic](https://opensource.com/article/19/12/zen-python-flat-sparse#:~:text=If%20the%20Zen%20was%20designed%20to%20be%20a,obvious%20than%20in%20Python%27s%20strong%20insistence%20on%20indentation.).
 
@@ -89,7 +89,7 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 
 ## Highlights of this proposal:
 
-1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet) -- lazy property setting, in other words.  
+1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet -- lazy property setting, in other words).  
 2.  Sub-properties of the enhancements property can be reserved for only one specific class prototype, based on the customEnhancements.define method.  It prevents others from using the same path with an instance of a different class.  
 3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is suggested below).
 4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters enh- attributes with matching dash-delimited name.
@@ -153,7 +153,7 @@ const enhancementInstance = await oElement.enhancements.whenResolved('with-steel
 
 Both of these methods will cause an instance of the class WithSteel to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
 
-The whenResolved instance is returned after the developer sets:
+The whenResolved promise is returned after the developer sets:
 
 ```JavaScript
 this.resolved = true;
@@ -187,14 +187,21 @@ In addition to the two methods above, the enhancements property would contain a 
 This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary:
 
 ```JavaScript
-oElement.enhancements.setPropsFor.WithSteel.carbonPercent = 0.2;
+oElement.enhancements.setPropsFor.withSteel.carbonPercent = 0.2;
 ```
 
+These value settings would either get applied directly to oElement.enhancements.withSteel if has already been attached.  If it hasn't been attached, the browser would set (or merge) the value into the property:
 
+```JavaScript
+if(oElement.enhancements.withSteel === undefined) oElement.enhancements.withSteel = {};
+oElement.enhancements.withSteel.carbonPercent = 0.2;
+```
+
+The object would sit there ready to be absorbed into the enhancement during the attachedCallback handshake.
 
 ##  When should the class instance be created by the platform?
 
-If the enh-* attribute is found on an element in the live tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded.
+If the enh-* attribute is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded.
 
 I also argue below that it would be great if, during template instantiation supported natively by the platform, we can create a mapping, without relying on attributes that would tend to clutter (and enlarge) the template.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
 
@@ -241,7 +248,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
 <template>
     <div>
         <span></span>
-        <button enh-be-counted='{
+        <button be-counted='{
             "transform": {
                 "span": "value"
             }
@@ -249,7 +256,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
     </div>
     <section>
         <span></span>
-        <button enh-be-counted='{
+        <button be-counted='{
             "transform": {
                 "span": "value"
             }
@@ -263,7 +270,11 @@ Note that the enhancement class corresponding to this attribute may specify a de
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
-What this proposal is calling for is moving out those settings to a JSON structure that can be associated with the template instantiation: 
+So I have two possible suggestions for addressing this issue:
+
+## Solution 1
+
+We move out those settings to a JSON-like structure that can be associated with the template instantiation: 
 
 ```JSON
 [
@@ -305,7 +316,11 @@ So now our template is back to the original, with less bulk:
 
 Less bulk means faster to clone, less strain on the eye!
 
-The same argument (excessive string parsing) can be applied to custom elements or even built-in attributes.  But in that case, we don't need "deep merging" nearly as often.  For example:
+But again, I'm not an expert on performance.  I'm not certain this would produce performance benefits.  While the template might be smaller, the performance benefits from the smaller template might be more than offset by the cost of locating the "part" to apply the settings to.
+
+So the rest of this discussion goes out on a limb and assumes there is a performance benefit, just in case.
+
+The same argument (excessive string parsing) can be (more weakly) applied to custom elements or even built-in attributes. For example:
 
 Instead of:
 
@@ -344,37 +359,32 @@ together with our template instantiation manifest:
 ]
 ```
 
+The chances that this improves performance is probably even lower than for JSON based attributes, but just wanted to suggest investigating the possibility.
+
 This proposal is **not** advocating always limiting the TIM structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
 
 What the template instantiation process would do with this mapping, as it takes into account the TIM structure is:
 
 1.  Use CSS queries to find all matching elements within the template clone ("button") in this case.
-2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts (if applicable?);
+2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts, if applicable.
 
-```JavaScript
-//internal logic in the browser, 
-//this is just for illustrative purposes, 
-//implementations will vary
-async function enhance(with, settings, oButton){
-    deepMerge(oButton, settings[with]['deepMerge']);
-    Object.assign(oButton, settings[with]['assign']);
-    const def = await customEnhancements.whenDefined('be-counted');
-    const enhancement = new def();
-    enhancement.attachCallback(proxy, oButton, with);
-}
-```
+## How exactly would this attribute extraction be orchestrated for custom enhancements?
 
-where settings is the parsed (if applicable) RHS expression keyed from "button": 
+Going back to the custom enhancement attributes...
 
-```JSON
-{
-    "transform": {
-        "span": "value"
-    }
-}
-```
+From my experience, the **ideal** approach, from a developer experience point of view, is if the built-in template instantiation could intelligently decide, when it encounters these custom enhancement attributes, to  quietly pull out the inline attributes and form this TIM object in memory, leaving the developer oblivious to this whole issue.
 
-From my experience the **ideal** approach, from a developer experience point of view, is if the built-in template instantiation could intelligently decide, when it encounters these custom enhancement attributes, to  quietly pull out the inline attributes and form this TIM object in memory.
+In the example I gave, I had two buttons with identical attributes, which seems like a rare thing to happen in a template, so automating the detection of identical attributes, and formulating the most optimal css query to apply the settings to, seems like a lot of work with little benefit.
+
+It's possible that extracting out the attribute only results in savings if it is of a certain size.
+
+And here's the rub -- we can't, I don't think, insist that every custom enhancement vendor use JSON attributes.  The best thing I can suggest (and it is a bit iffy) is to assume that if the attribute is of the form [...] or {} then *try* doing a JSON.parse.  If one of those tests fails, just leave the attribute in place, and let the vendor cache as necessary.
+
+...which takes us to 
+
+## Solution 2:
+
+What I described in Solution 1 seemed too difficult to me, when I got down to implementing it in my POC.  What I implemented instead, still assumes that there's a benefit in eliminating all the attributes from the final DOM (the more attributes, the bulkier the clone, the more work css querying has to do, etc).
 
 I suspect, though, that over time we would need to provide both this smart kind of optimization-on-the fly, in addition to providing the developer explicit access to this Template Instantiation Manifest, and merge the two together.
 
