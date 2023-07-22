@@ -162,7 +162,7 @@ this.resolved = true;
 The base class of these enhancements, ElementEnhancement, then, contains a reserved property, resolved:
 
 ```JavaScript
-class ElementEnhancement extends EventTarget{
+class ElementEnhancement extends EventTarget {
     #resolved = false;
     get resolved(){
         return this.#resolved;
@@ -202,9 +202,9 @@ The object would sit there ready to be absorbed into the enhancement during the 
 
 ##  When should the class instance be created by the platform?
 
-If the enh-* attribute is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub-tree, and invoke the attachedCallback method, similar to how custom elements are upgraded.
+If the enh-* attribute is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub property, and invoke the attachedCallback method, similar to how custom elements are upgraded.
 
-I also argue below that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving an efficient outcome in comes to recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
+I also argue below that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
 
 
 Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So that if moustache syntax is supported for example:
@@ -415,7 +415,7 @@ We turn that template into something like this, using a temporary, internal attr
 </template>
 ```
 
-(I think it's better to use global counter, not a guid, because it's smaller,  but using a guid for clarity)
+(I think it's better to use a global counter, not a guid, because it's smaller,  but using a guid for clarity)
 
 ... and we maintain a lookup from that guid to the cached attributes for that element.
 
@@ -423,11 +423,11 @@ Then when we instantiate the template, we search globally for all "enhancements"
 
 Solution 2, option a:
 
-Invoke the attribute changed callback on each of them, exactly as if there  that original attribute that the developer specified was there. 
+Invoke the attribute changed callback on each of them, exactly as if that original attribute that the developer specified was there on the element, even though it isn't, really. 
 
 Solution 2, option b:
 
-Now should we really call "attributeChangedCallback" when there isn't really such an attribute on the element?  Would that confuse the developer?
+Now should we really call "attributeChangedCallback" when there isn't really such an attribute on the element?  Would that not confuse the developer?
 
 Instead of "attributeChangedCallback", I think it would be better to pass that in to the attachedCallback as an additional parameter for this scenario.
 
@@ -445,7 +445,45 @@ Either way, we remove the "enhancements" attribute so what we end up with is a c
 
 with all the enhancements enhancing away on the div.
 
-Now with all of these solutions, some custom enhancement vendors might complain, saying "hey, I need that attribute to stay on the element, why are you doing that?" so maybe it should be something that is configurable per enhancement?
+Now with all of these solutions, some custom enhancement vendors might complain, saying "hey, I need that attribute to stay on the element, why are you doing that?" so maybe it should be something that is configurable per enhancement?  Perhaps they want to use this attribute in their styling, for example.
+
+That is one of the reasons that I proposed above that we only apply this optimization for enhancements that have already been registered.  Since it's already been registered, the vendor could specify the rule in a config static property of the class:
+
+```JavaScript
+class WithSteel extends ElementEnhancement {
+    static get config {
+        leaveAttr: true
+    }
+}
+```
+
+The other reason for only doing it only for registered enhancements, is it means no guesswork is involved in determining which attributes are meant to be enhancements.
+
+I suspect this "config" static property will grow to have other settings, especially as it integrates with template instantiation binding.
+
+## AttachedCallback signature
+
+I propose the attached callback signature look as follows:
+
+```TypeScript
+interface ElementEnhancement{
+    ...
+    attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo);
+    ...
+}
+
+interface EnhancementInfo {
+    enh: string; //with-steel
+    enhancement: string; //withSteel
+    data: any; //{ carbonPercent = 0.2}
+    templateAttr: string;
+}
+
+```
+
+The data property of EnhancementInfo would be the object that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
+
+The templateAttr would be the original attribute string that was removed from the template, following Solution 2 above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
 
 
 ## How an enhancement class indicates it has hydrated 
@@ -464,7 +502,7 @@ If the three enhancements run in parallel, the order of the buttons will vary, w
 
 In order to avoid that, we need to schedule them in sequence.  This means that we need a common way each enhancement class instance can signify it either succeeded, or failed, either way you can proceed.  That is why we should have this ability to specify whether the hydration has completed. 
 
-I have a heavy suspicion that as the platform builds out template instantiation and (hopefully) includes something close to this solution as far as plug-in, there will arise other reasons to support this feature.
+I have a heavy suspicion that as the platform builds out template instantiation and (hopefully) includes something close to this solution as far as plug-in's, there will arise other reasons to support this feature.
 
 But for now, the way this feature can be used is with a bespoke custom enhancement, such as [be-promising](https://github.com/bahrus/be-promising#be-promising).
 
