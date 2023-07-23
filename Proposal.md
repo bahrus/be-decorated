@@ -163,16 +163,16 @@ The base class of these enhancements, ElementEnhancement, then, contains a reser
 
 ```JavaScript
 class ElementEnhancement extends EventTarget {
-    #resolved = false;
+    #resolved = undefined;
     get resolved(){
         return this.#resolved;
     }
     set resolved(newValue){
         this.#resolved = newValue;
         if(newValue){
-            this.dispatchEvent(new Event('resolved'))
+            this.dispatchEvent(new Event('resolved'));
         }else{
-            this.dispatchEvent(new Event('rejected'))
+            this.dispatchEvent(new Event('rejected'));
         }
     }
 
@@ -191,7 +191,7 @@ This would allow consumers of the enhancement to pass property values (and only 
 oElement.enhancements.setPropsFor.withSteel.carbonPercent = 0.2;
 ```
 
-These value settings would either get applied directly to oElement.enhancements.withSteel if has already been attached.  If it hasn't been attached, the browser would set (or merge) the value into the property:
+These value settings would either get applied directly to oElement.enhancements.withSteel if has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property:
 
 ```JavaScript
 if(oElement.enhancements.withSteel === undefined) oElement.enhancements.withSteel = {};
