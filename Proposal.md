@@ -20,7 +20,11 @@ So for this reason (and others), the customized built-in standard has essentiall
 
 And yet the need to be able to enhance [existing](https://aurelia.io/docs/templating/custom-attributes#simple-custom-attribute) [elements](https://dojotoolkit.org/reference-guide/1.10/quickstart/writingWidgets.html) [in](https://docs.angularjs.org/guide/directive) [cross-cutting](https://svelte.dev/docs#template-syntax-element-directives) [ways](https://mavo.io/docs/plugins) [has](https://knockoutjs.com/documentation/custom-bindings.html) [been](https://medium.com/@_edhuang/add-a-custom-attribute-to-an-ember-component-81f485f8d997) [demonstrated](https://alpinejs.dev/) [by](https://github.com/bahrus?tab=repositories&q=be-&type=&language=&sort=) [countless](https://htmx.org/docs/) [frameworks](https://vuejs.org/v2/guide/custom-directive.html), [old](https://jqueryui.com/about/) [and](https://riot.js.org/documentation/#html-elements-as-components) [new](https://make.wordpress.org/core/2023/03/30/proposal-the-interactivity-api-a-better-developer-experience-in-building-interactive-blocks/).  As the latter link indicates, there are great synergies that can be achieved between the client and the server with these declarative blocks of settings.  And making such solutions work across frameworks would be as profound as custom elements themselves.  The only alternative, working with nested custom elements, is [deeply](https://sitebulb.com/hints/performance/avoid-excessive-dom-depth/) [problematic](https://opensource.com/article/19/12/zen-python-flat-sparse#:~:text=If%20the%20Zen%20was%20designed%20to%20be%20a,obvious%20than%20in%20Python%27s%20strong%20insistence%20on%20indentation.).
 
-A close examination of these solutions usually indicates that the problem WebKit is concerned about is only percolating under the surface, pushed (or remaining) underground by a lack of an alternative solution.  One finds plenty of custom objects attached to the element being enhanced.  Just to take one example:  "_x_dataStack".  Clearly, they don't want to "break the web" with this naming convention, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
+A close examination of these solutions usually indicates that the problem WebKit is concerned about is only percolating under the surface, pushed (or remaining) underground by a lack of an alternative solution.  One finds plenty of custom objects attached to the element being enhanced.  Just to take one example:  "_x_dataStack".  
+
+Another example:  Currently if you go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also containing properties and methods. 
+
+Clearly, they don't want to "break the web" with these naming conventions, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
 
 ## Custom Property Name-spacing
 
@@ -147,7 +151,7 @@ it will throw an error.
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
-const enhancementInstance = await oElement.enhancements.whenDefined('with-steel');
+const enhancementInstance = await oElement.enhancements.whenAttached('with-steel');
 const enhancementInstance = await oElement.enhancements.whenResolved('with-steel');
 ```
 
@@ -508,5 +512,30 @@ But for now, the way this feature can be used is with a bespoke custom enhanceme
 
 ## Open Questions
 
-Should any formal support be provided for dispatching namespaced events from the element being enhanced?
+### Question 1: Should setPropsFor have the side effect of causing the enhancement to attach?
+
+The advantages of **not** causing the enhancement to start attaching in the background:
+
+1.  In some cases, a vendor may not want to define and register a class -- they just need a place to plop data, that goes beyond what can be done with dataset. This would allow that to happen.
+
+The advantage of causing the enhancement to start attaching is:
+
+1.  It's a convenient way to attach the enhancement, and pass values to it at the same time.
+2.  Opening up the possibility of plopping data without formally registering the namespaced property name could result in more conflicts in userland.
+
+
+
+### Question 2: Should any formal support be provided for dispatching namespaced events from the element being enhanced?
+
+Since the ElementEnhancement class extends EventTarget, we can directly subscribe to events from the enhancement.  Is this enough, though?
+
+What if we need the enhancement to dispatch an event that can bubble up the DOM tree, or be able to be "captured" if not bubbling?
+
+When I think about what the platform could do to help avoid name space collisions between different vendors, I think the best way to approach that would be to
+simply promote some guidance for how the naming should be done.  
+
+Perhaps while integrating with template instantiation, there will arise some scenarios where such events are needed.  Should that happen, that would be a great opportunity to 
+abide by the naming convention, to help set the precedent for actual usage.
+
+
 
