@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-7/22/2023
+7/23/2023
 
 ## Backdrop
 
@@ -22,7 +22,7 @@ And yet the need to be able to enhance [existing](https://aurelia.io/docs/templa
 
 A close examination of these solutions usually indicates that the problem WebKit is concerned about is only percolating under the surface, pushed (or remaining) underground by a lack of an alternative solution.  One finds plenty of custom objects attached to the element being enhanced.  Just to take one example:  "_x_dataStack".  
 
-Another example:  Currently if you go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also containing properties and methods. 
+Another example:  Currently if you go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also a function prototype containing properties and methods. 
 
 Clearly, they don't want to "break the web" with these naming conventions, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
 
@@ -531,11 +531,9 @@ Since the ElementEnhancement class extends EventTarget, we can directly subscrib
 
 What if we need the enhancement to dispatch an event that can bubble up the DOM tree, or be able to be "captured" if not bubbling?
 
-When I think about what the platform could do to help avoid name space collisions between different vendors, I think the best way to approach that would be to
-simply promote some guidance for how the naming should be done.  
+When I think about what the platform could do to help avoid name space collisions between different vendors, I think the best way to approach that would be to simply promote some guidance for how the naming should be done.  
 
-Perhaps while integrating with template instantiation, there will arise some scenarios where such events are needed.  Should that happen, that would be a great opportunity to 
-abide by the naming convention, to help set the precedent for actual usage.
+Perhaps while integrating with template instantiation, there will arise some scenarios where such events are needed.  Should that happen, that would be a great opportunity to abide by the naming convention, to help set the precedent for actual usage.
 
 
 
