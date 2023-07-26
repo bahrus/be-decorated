@@ -544,14 +544,14 @@ What if we need the enhancement to dispatch an event that can bubble up the DOM 
 
 I think dispatching events from the enhanced element seems in keeping with the notion that we are enhancing the element, and that platform namespacing of such events would be beneficial.
 
-I propose that the ElementEnhancement base class have a method:  dispatchEventFromEnhancedElement that has the same signature as dispatchEvent.  But it would prefix the name of all events dispatched through this method.  The code for this method would look roughly as follows:
+I propose that the ElementEnhancement base class have a method:  dispatchEventFromEnhancedElement that  would prefix the name of all events dispatched through this method, according to the endorsed naming convention.  The code for this method would look roughly as follows:
 
 ```TypeScript
 class EnhancedElement{
     ...
     dispatchEventFromEnhancedElement(type: string, init?: CustomEventInit){
         const prefixedType = 'enh-' + this.enhancementInfo.enh + '-' + type;
-        const evt = init ? new CustomEvent(prefixedType, init) : new Event(prefixedType);
+        const evt = init !== undefined ? new CustomEvent(prefixedType, init) : new Event(prefixedType);
         this.#enhancedElement.dispatchEvent(evt);
     }
 }
