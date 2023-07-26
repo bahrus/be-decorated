@@ -196,3 +196,4 @@ export interface RegExpExt<TStatementGroup = any>{
 }
 
 export type RegExpOrRegExpExt<TStatementGroup = any> = RegExp | RegExpExt<TStatementGroup>;
+

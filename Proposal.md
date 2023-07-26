@@ -523,7 +523,18 @@ The advantage of causing the enhancement to start attaching is:
 1.  It's a convenient way to attach the enhancement, and pass values to it at the same time.
 2.  Opening up the possibility of plopping data without formally registering the namespaced property name could result in more conflicts in userland.
 
+As someone who wants this proposal to solve as many problems as possible within reason, perhaps the Element.prototype.enhancements class would have two properties used for lazy property setting:
 
+```TypeScript
+export interface EnhancementGatewayPrototype {
+    whenAttached(enh: string): Promise<ElementEnhancement>;
+    whenResolved(enh: string): Promise<ElementEnhancement>;
+
+    setPropsFor: ProxyConstructor;
+    attachAndSetPropsFor: ProxyConstructor;
+}
+
+```
 
 ### Question 2: Should any formal support be provided for dispatching namespaced events from the element being enhanced?
 
