@@ -494,7 +494,9 @@ The data property of EnhancementInfo would be the object that had been passed in
 
 The templateAttr would be the original attribute string that was removed from the template, following Solution 2 above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
 
-When would the detachedCallback method be called?  One time it definitely **not** be called is if the enh-* attribute, if present, is removed from the enhanced element. 
+## DetachedCallback lifecycle event
+
+When would the detachedCallback method be called?  One time it definitely would **not** be called is if the enh-* attribute, if present, is removed from the enhanced element. 
 
 I *think* we would want all such detachedCallback's called *prior* to the custom element's disconnectedCallback() being called, when the enhanced element is removed from the live DOM tree, in the case of custom elements, and the equivalent internal call for built-in elements, if applicable.  But this is a question I would have to defer to the browser vendors, well beyond what I can confidently weigh in on.
 
