@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-7/23/2023
+7/26/2023
 
 ## Backdrop
 
@@ -173,15 +173,17 @@ class ElementEnhancement extends EventTarget {
     }
     set resolved(newValue){
         this.#resolved = newValue;
-        if(newValue){
+        if(newValue === true){
             this.dispatchEvent(new Event('resolved'));
-        }else{
+        }else if(newValue === false){
             this.dispatchEvent(new Event('rejected'));
         }
     }
 
 }
 ```
+
+The whenResolved method would throw an error (catcheable via try/catch with await or .catch() if using the more traditional promise approach) when the developer sets this.resolved = false;
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
  
@@ -467,12 +469,13 @@ I suspect this "config" static property will grow to have other settings, especi
 
 ## AttachedCallback signature
 
-I propose the attached callback signature look as follows:
+I propose the attached (and detached) callback signature look as follows:
 
 ```TypeScript
 interface ElementEnhancement{
     ...
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo);
+    detachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo);
     ...
 }
 
@@ -485,10 +488,15 @@ interface EnhancementInfo {
 
 ```
 
+The strings enh and enhancement would, I think, be helpful for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement within the context of the scoped registry.
+
 The data property of EnhancementInfo would be the object that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
 
 The templateAttr would be the original attribute string that was removed from the template, following Solution 2 above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
 
+When would the detachedCallback method be called?  One time it definitely **not** be called is if the enh-* attribute, if present, is removed from the enhanced element. 
+
+I *think* we would want all such detachedCallback's called *prior* to the custom element's disconnectedCallback() being called, when the enhanced element is removed from the live DOM tree, in the case of custom elements, and the equivalent internal call for built-in elements, if applicable.  But this is a question I would have to defer to the browser vendors, well beyond what I can confidently weigh in on.
 
 ## How an enhancement class indicates it has hydrated 
 
@@ -530,7 +538,10 @@ export interface EnhancementGatewayPrototype {
     whenAttached(enh: string): Promise<ElementEnhancement>;
     whenResolved(enh: string): Promise<ElementEnhancement>;
 
+    //doesn't attach the enhancement in the background
     setPropsFor: ProxyConstructor;
+
+    //attaches the enhancement in the background if not already attached
     attachAndSetPropsFor: ProxyConstructor;
 }
 
