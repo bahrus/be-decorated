@@ -531,9 +531,20 @@ Since the ElementEnhancement class extends EventTarget, we can directly subscrib
 
 What if we need the enhancement to dispatch an event that can bubble up the DOM tree, or be able to be "captured" if not bubbling?
 
-When I think about what the platform could do to help avoid name space collisions between different vendors, I think the best way to approach that would be to simply promote some guidance for how the naming should be done.  
+I think dispatching events from the enhanced element seems in keeping with the notion that we are enhancing the element, and that platform namespacing of such events would be beneficial.
 
-Perhaps while integrating with template instantiation, there will arise some scenarios where such events are needed.  Should that happen, that would be a great opportunity to abide by the naming convention, to help set the precedent for actual usage.
+I propose that the ElementEnhancement base class have a method:  dispatchEventFromEnhancedElement that has the same signature as dispatchEvent.  But it would prefix the name of all events dispatched through this method.  The code for this method would look roughly as follows:
+
+```TypeScript
+class EnhancedElement{
+    ...
+    dispatchEventFromEnhancedElement(type: string, init?: CustomEventInit){
+        const prefixedType = 'enh-' + this.enhancementInfo.enh + '-' + type;
+        const evt = init ? new CustomEvent(prefixedType, init) : new Event(prefixedType);
+        this.#enhancedElement.dispatchEvent(evt);
+    }
+}
+```
 
 
 
