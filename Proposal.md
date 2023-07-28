@@ -563,7 +563,7 @@ I propose that the ElementEnhancement base class have a method:  dispatchEventFr
 class EnhancedElement{
     ...
     dispatchEventFromEnhancedElement(type: string, init?: CustomEventInit){
-        const prefixedType = 'enh-' + this.enhancementInfo.enh + '-' + type;
+        const prefixedType = 'enh-' + this.enhancementInfo.enh + '.' + type;
         const evt = init !== undefined ? new CustomEvent(prefixedType, init) : new Event(prefixedType);
         this.#enhancedElement.dispatchEvent(evt);
     }
