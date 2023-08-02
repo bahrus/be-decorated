@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-7/26/2023
+8/2/2023
 
 ## Backdrop
 
@@ -22,7 +22,7 @@ And yet the need to be able to enhance [existing](https://aurelia.io/docs/templa
 
 A close examination of these solutions usually indicates that the problem WebKit is concerned about is only percolating under the surface, pushed (or remaining) underground by a lack of an alternative solution.  One finds plenty of custom objects attached to the element being enhanced.  Just to take one example:  "_x_dataStack".  
 
-Another example:  Currently if you go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also a function prototype containing properties and methods. 
+Another example:  Currently if I go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also a function prototype containing properties and methods. 
 
 Clearly, they don't want to "break the web" with these naming conventions, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
 
@@ -67,7 +67,7 @@ Unlike custom elements, which have the luxury of creating a one-to-one mapping b
 
 I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of objects needs to be passed in, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
-Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
+Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
 ## A note about naming
 
@@ -94,7 +94,7 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 ## Highlights of this proposal:
 
 1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet -- lazy property setting, in other words).  
-2.  Sub-properties of the enhancements property can be reserved for only one specific class prototype, based on the customEnhancements.define method.  It prevents others from using the same path with an instance of a different class.  
+2.  Sub-properties of the enhancements property can be reserved for only one specific class prototype, based on the customEnhancements.define method, with the scoped registry solution adopted.  It prevents others from using the same path with an instance of a different class.  
 3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is suggested below).
 4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters enh- attributes with matching dash-delimited name.
 5.  Classes extend ElementEnhancement class, which extends EventTarget.
@@ -482,7 +482,7 @@ interface ElementEnhancement{
 interface EnhancementInfo {
     enh: string; //with-steel
     enhancement: string; //withSteel
-    data: any; //{ carbonPercent = 0.2}
+    initialPropValues: any; //{ carbonPercent = 0.2}
     templateAttr: string;
 }
 
@@ -490,7 +490,7 @@ interface EnhancementInfo {
 
 The strings enh and enhancement would, I think, be helpful for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement within the context of the scoped registry.
 
-The data property of EnhancementInfo would be the object that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
+The initialPropValues field of EnhancementInfo would be the object properties that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
 
 The templateAttr would be the original attribute string that was removed from the template, following Solution 2 above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
 
