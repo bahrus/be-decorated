@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-8/2/2023
+8/6/2023
 
 ## Backdrop
 
@@ -63,7 +63,7 @@ So if server-rendered HTML looks as follows:
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
 
-Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will need to "pile in" all the initial property values into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON, that is up to each custom enhancement vendor to decide.
+Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will often need to "pile in" all the initial property values into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON, that is up to each custom enhancement vendor to decide.
 
 I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of objects needs to be passed in, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
@@ -200,11 +200,18 @@ oElement.enhancements.setPropsFor.withSteel.carbonPercent = 0.2;
 These value settings would either get applied directly to oElement.enhancements.withSteel if has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property:
 
 ```JavaScript
-if(oElement.enhancements.withSteel === undefined) oElement.enhancements.withSteel = {};
+if(oElement.enhancements.withSteel === undefined) {
+    oElement.enhancements.withSteel = {};
+    // invoke some method asynchronously in the background to attach the enhnement.
+} 
 oElement.enhancements.withSteel.carbonPercent = 0.2;
+
 ```
 
-The object would sit there ready to be absorbed into the enhancement during the attachedCallback handshake.
+The object would sit there ready to be absorbed into the enhancement during the attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.define is invoked for this enhancement.
+
+Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.
+
 
 ##  When should the class instance be created by the platform?
 
@@ -212,17 +219,16 @@ If the enh-* attribute is found on an element in the live DOM tree, this would c
 
 I also argue below that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
 
-
-Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So that if moustache syntax is supported for example:
+Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So for example:
 
 ```html
-<input value="{myHost.enhancements.yourEnhancement?.yourProp}">
+<input :enhancements.withSteel.carbonPercent={{carbonPercent}} >
 ```
 
-Maybe that's already planned, which is great.
+would work (using FAST web component syntax here.  Lit uses a . instead).
 
 
-So what follows is going out into uncharted territories, discussing how this proposal might integrate into a work-in-progress spec that hasn't been fully fleshed out.
+What follows is going out into uncharted territories, discussing how this proposal might integrate into a work-in-progress spec (template instantiation) that hasn't been fully fleshed out.
 
 
 ##  Mapping elements contained in the template to enhancement classes during template instantiation.
@@ -249,8 +255,6 @@ Now the developer defines a class that provides the ability to keep track of how
 An example, in concept, of such a class, used in a POC for this proposal, can be [seen here](https://github.com/bahrus/be-counted), just to make the concept less abstract (the POC will not exactly follow what this proposal will outline as far as defining and registering the class), but basically, for server-rendered progressive enhancement, the **server-rendered** HTML this class expects would look as follows:
 
 ```html
-<span></span>
-<button >Count</button>
 <template>
     <div>
         <span></span>
@@ -272,7 +276,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
 ```
  
 
-Note that the enhancement class corresponding to this attribute may specify a default count, so that the span would need to be mutated with the initial value,  either while it is being instantiated, if the custom enhancement has already been imported, or in the live DOM tree.  The decision of whether the enhancement should render-block is, when relevant, up to the developer.  If the developer chooses to import the enhancing class synchronously, before invoking the template instantiation, then it will render block, but will be already set when it is added to the DOM tree.  If the developer imports the class asynchronously, then, depending on what is in cache and other things that could impact timing, the modifications could occur before or after getting appended to the live DOM tree.  Ideally before, but often it's better to let the user see something than nothing.
+Note that the enhancement class corresponding to this attribute may specify a default count, so that the span would need to be mutated with the initial value,  either while it is being instantiated, if the custom enhancement has already been imported, or in the live DOM tree.  The decision of whether the enhancement should render-block is, when relevant, up to the developer.  If the developer chooses to import the enhancing class synchronously, before invoking the template instantiation, then it will render block, but the span's text will be already set when it is added to the DOM tree.  If the developer imports the class asynchronously, then, depending on what is in cache and other things that could impact timing, the modification could occur before or after getting appended to the live DOM tree.  Ideally before, but often it's better to let the user see something than nothing.
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
@@ -399,7 +403,7 @@ What I described in Solution 1 seemed too difficult to me, when I got down to im
 
 So what I did, essentially, was this:
 
-As a custom enhancement vendor, I took the time to implement, with custom element enhancements I anticipated would be used thousands of times on a page, an internal, bespoke way of caching attributes globally, so that if a template repeats thousands of times, if I'm passed in the same attribute, I look for the the parsed object from my cache, and if not found, do the parse, and cache it (basically, memoization).  So this could be a pattern we recommend as a best practice way of optimizing performance when it seems warranted.
+As a custom enhancement vendor, I took the time to implement, with custom enhancements I anticipated would be used thousands of times on a page, an internal, bespoke way of caching attributes globally, so that if a template repeats thousands of times, if I'm passed in the same attribute, I look for the the parsed object from my cache, and if not found, do the parse, and cache it (basically, memoization).  So this could be a pattern we recommend as a best practice way of optimizing performance when it seems warranted.
 
 As far as the help the platform's template instantiation would provide:
 
@@ -457,9 +461,20 @@ That is one of the reasons that I proposed above that we only apply this optimiz
 
 ```JavaScript
 class WithSteel extends ElementEnhancement {
-    static get config {
-        leaveAttr: true
+    static get config() {
+        return {
+            leaveAttr: true
+        }
+        
     }
+}
+```
+
+... or more simply:
+
+```JavaScript
+class WithSteel extends ElementEnhancement {
+    static config = {leaveAttr: true}
 }
 ```
 
@@ -522,34 +537,8 @@ But for now, the way this feature can be used is with a bespoke custom enhanceme
 
 ## Open Questions
 
-### Question 1: Should setPropsFor have the side effect of causing the enhancement to attach?
 
-The advantages of **not** causing the enhancement to start attaching in the background:
-
-1.  In some cases, a vendor may not want to define and register a class -- they just need a place to plop data, that goes beyond what can be done with dataset. This would allow that to happen.
-
-The advantage of causing the enhancement to start attaching is:
-
-1.  It's a convenient way to attach the enhancement, and pass values to it at the same time.
-2.  Opening up the possibility of plopping data without formally registering the namespaced property name could result in more conflicts in userland.
-
-As someone who wants this proposal to solve as many problems as possible within reason, perhaps the Element.prototype.enhancements class would have two properties used for lazy property setting:
-
-```TypeScript
-export interface EnhancementGatewayPrototype {
-    whenAttached(enh: string): Promise<ElementEnhancement>;
-    whenResolved(enh: string): Promise<ElementEnhancement>;
-
-    //doesn't attach the enhancement in the background
-    setPropsFor: ProxyConstructor;
-
-    //attaches the enhancement in the background if not already attached
-    attachAndSetPropsFor: ProxyConstructor;
-}
-
-```
-
-### Question 2: Should any formal support be provided for dispatching namespaced events from the element being enhanced?
+### Question 1: Should any formal support be provided for dispatching namespaced events from the element being enhanced?
 
 Since the ElementEnhancement class extends EventTarget, we can directly subscribe to events from the enhancement.  Is this enough, though?
 
@@ -560,7 +549,7 @@ I think dispatching events from the enhanced element seems in keeping with the n
 I propose that the ElementEnhancement base class have a method:  dispatchEventFromEnhancedElement that  would prefix the name of all events dispatched through this method, according to the endorsed naming convention.  The code for this method would look roughly as follows:
 
 ```TypeScript
-class EnhancedElement{
+class ElementEnhancement{
     ...
     dispatchEventFromEnhancedElement(type: string, init?: CustomEventInit){
         const prefixedType = 'enh-' + this.enhancementInfo.enh + '.' + type;
@@ -569,6 +558,8 @@ class EnhancedElement{
     }
 }
 ```
+
+So for the with-steel enhancement, if we call this method with type = "carbonPercentChanged", the event type would be namespaced to enh-with-steel.carbonPercentChanged.
 
 
 
