@@ -106,7 +106,7 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 The reason the prefix enh-* should be required is this:
 
 1.  If enh-* is only encouraged the way data-* is encouraged, at least we could still count on custom element authors likely avoiding that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
-2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, (which seems quite likely to happen frequently) it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
+2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, which seems quite likely to happen frequently, it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
 
 ## Global api's.
 
@@ -144,7 +144,7 @@ If some other developer attempts to "hijack" this property extension:
 oInput.enhancements.withSteel = new WithAluminum()
 ```
 
-it will throw an error.
+it would throw an error.
 
 ## Methods of the enhancements property
 
