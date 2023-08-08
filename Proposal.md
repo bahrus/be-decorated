@@ -59,11 +59,11 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (after dependencies have loaded) to see a class instance associated with that attribute, accessible via oInput.enhancements.myEnhancement and oCustomElement.enhancements.yourEnhancement.
+... we can expect (after dependencies have loaded) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oCustomElement.enhancements.yourEnhancement.
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
 
-Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will often need to "pile in" all the initial property values into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON, that is up to each custom enhancement vendor to decide.
+Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will often need to "pile in" all the initial property values into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON (or specify any value whatsoever), that is up to each custom enhancement vendor to decide.
 
 I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of objects needs to be passed in, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
 
