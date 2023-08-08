@@ -197,20 +197,20 @@ This would allow consumers of the enhancement to pass property values (and only 
 oElement.enhancements.setPropsFor.withSteel.carbonPercent = 0.2;
 ```
 
-These value settings would either get applied directly to oElement.enhancements.withSteel if has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property:
+These value settings would either get applied directly to oElement.enhancements.withSteel if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
 
 ```JavaScript
 if(oElement.enhancements.withSteel === undefined) {
     oElement.enhancements.withSteel = {};
-    // invoke some method asynchronously in the background to attach the enhnement.
+    // invoke some method asynchronously in the background to attach the enhancement.
 } 
 oElement.enhancements.withSteel.carbonPercent = 0.2;
 
 ```
 
-The object would sit there ready to be absorbed into the enhancement during the attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.define is invoked for this enhancement.
+The object would sit there, ready to be absorbed into the enhancement during the attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
 
-Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.
+Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
 
 ##  When should the class instance be created by the platform?
@@ -360,6 +360,7 @@ together with our template instantiation manifest:
             "input": [
                 {
                     "beAssigned": {
+                        "readOnly": true,
                         "disabled": true,
                         "validate": true,
                         "placeholder": "Please enter the city in which you were born."
@@ -378,7 +379,7 @@ This proposal is **not** advocating always limiting the TIM structure to JSON (s
 
 What the template instantiation process would do with this mapping, as it takes into account the TIM structure is:
 
-1.  Use CSS queries to find all matching elements within the template clone ("button") in this case.
+1.  Use CSS queries (or parts) to find all matching elements within the template clone ("button") in this case.
 2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts, if applicable.
 
 ## How exactly would this attribute extraction be orchestrated for custom enhancements?
@@ -507,7 +508,7 @@ The strings enh and enhancement would, I think, be helpful for "self-awareness",
 
 The initialPropValues field of EnhancementInfo would be the object properties that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
 
-The templateAttr would be the original attribute string that was removed from the template, following Solution 2 above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
+The templateAttr would be the original attribute string that was removed from the template, following Solution 2b above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
 
 ## DetachedCallback lifecycle event
 
@@ -544,7 +545,7 @@ Since the ElementEnhancement class extends EventTarget, we can directly subscrib
 
 What if we need the enhancement to dispatch an event that can bubble up the DOM tree, or be able to be "captured" if not bubbling?
 
-I think dispatching events from the enhanced element seems in keeping with the notion that we are enhancing the element, and that platform namespacing of such events would be beneficial.
+I think dispatching events from the enhanced element seems in keeping with the notion that we are enhancing the element, and that platform name-spacing of such events would be beneficial.
 
 I propose that the ElementEnhancement base class have a method:  dispatchEventFromEnhancedElement that  would prefix the name of all events dispatched through this method, according to the endorsed naming convention.  The code for this method would look roughly as follows:
 
