@@ -30,14 +30,14 @@ Clearly, they don't want to "break the web" with these naming conventions, but c
 
 So, for an alternative to custom built-in extensions to be worthwhile, I strongly believe the alternative solution must first and foremost:
 
-1.  Provide an avenue for developers to be able to safely add properties to their class without trampling on other developer's classes, or the platform's, and 
+1.  Provide an avenue for developers to be able to safely add properties to their class without trampling on any other developer's classes, or the platform's, and 
 2.  Just as critically, make those properties and methods public in a way that is (almost) as easy to access as the top level properties and methods themselves.
 
 So the bottom-line is that the crux of this proposal is to allow developers to do this (with a little tender loving care):
 
 ```JavaScript
 oInput.enhancements.myEnhancement.foo = bar;
-oCustomElement.enhancements.yourEnhancement.bar = foo;
+oMyCustomElement.enhancements.yourEnhancement.bar = foo;
 ```
 
 in a way that is recognized by the platform.
@@ -48,7 +48,7 @@ I think that would be a great start.  But the rest of this proposal outlines som
 
 ## Custom Attribute + Custom Property => Custom Enhancement
 
-The first thing beyond that announcement would be what many (including myself) are clamoring for:
+The next thing beyond that announcement would be what many (including myself) are clamoring for:
 
 The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  
 
@@ -59,13 +59,13 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (after dependencies have loaded) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oCustomElement.enhancements.yourEnhancement.
+... we can expect (after dependencies have loaded) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
 
 Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will often need to "pile in" all the initial property values into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON (or specify any value whatsoever), that is up to each custom enhancement vendor to decide.
 
-I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time, especially if a list of objects needs to be passed in, not to mention the frequent usage of JSON.stringify or eval(), and also quite critically the limitations of what can be passed via strings.   
+I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time (for example via JSON.stringify or eval()), especially if a list of objects needs to be passed in, and also quite critically the limitations of what can be passed via strings.   
 
 Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
@@ -81,7 +81,7 @@ Granted, the majority of enhancements would likely fit our common idea of what c
 
 But enhancements could also include specifying some common theme onto a white label web component, and contorting the language to make those sound like behaviors doesn't sound right:  "Be Picasso blue-period looking" for example.
 
-Some could be adding a copyright symbol to a text.  Does be-copyright-symboled feel right?
+Some could be adding some common paragraph containing copyright text.  The dictionary defines behaviors as something associated with actions, so does that apply here?
 
 Many are adding binding support to elements, which may or not resonate with developers as being a "behavior".
 
@@ -512,9 +512,28 @@ The templateAttr would be the original attribute string that was removed from th
 
 ## DetachedCallback lifecycle event
 
-When would the detachedCallback method be called?  One time it definitely would **not** be called is if the enh-* attribute, if present, is removed from the enhanced element. 
+When would the detachedCallback method be called?
 
-I *think* we would want all such detachedCallback's called *prior* to the custom element's disconnectedCallback() being called, when the enhanced element is removed from the live DOM tree, in the case of custom elements, and the equivalent internal call for built-in elements, if applicable.  But this is a question I would have to defer to the browser vendors, well beyond what I can confidently weigh in on.
+This is an area likely to require some critical feedback from browser vendors, but I will nevertheless express some thoughts on the matter.
+
+One time it definitely would **not** be called is if the enh-* attribute, if present, is removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attribute to reduce clutter, without jeopardizing the enhancement.
+
+I do think the detachedCallback should be associated in some way with the disconnectedCallback method of the enhanced element (or the equivalent for built-in elements).  However, there's a scenario where detachedCallback is called, where we don't necessarily want to fully "dump" the enhancement -- when the element is moved from one parent container to another (within a Shadow DOM realm or even crossing Shadow DOM boundaries.)  To me, it would be ideal if the enhancement could remain attached in this circumstance, as if nothing happened.
+
+On the other hand, I could see scenarios where the enhancement would want to know that its host has been disconnected.
+
+My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "connected".  It would be great if the elements also emitted a standard event when the element becomes connected and another event when it becomes disconnected.
+
+## How to programmatically detach an enhancement
+
+I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
+
+```JavaScript
+const removedEnhancement = await oElement.enhancements.whenRemoved('with-steel');
+```
+
+I think we would want this to remove the attribute also, if applicable.
+
 
 ## How an enhancement class indicates it has hydrated 
 
