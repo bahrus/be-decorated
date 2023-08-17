@@ -146,7 +146,7 @@ oInput.enhancements.withSteel = new WithAluminum()
 
 it would throw an error.
 
-## Methods of the enhancements property
+## Attachment methods of the enhancements property
 
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
 
@@ -518,22 +518,21 @@ This is an area likely to require some critical feedback from browser vendors, b
 
 One time it definitely would **not** be called is if the enh-* attribute, if present, is removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attribute to reduce clutter, without jeopardizing the enhancement.
 
-I do think the detachedCallback should be associated in some way with the disconnectedCallback method of the enhanced element (or the equivalent for built-in elements).  However, there's a scenario where detachedCallback is called, where we don't necessarily want to fully "dump" the enhancement -- when the element is moved from one parent container to another (within a Shadow DOM realm or even crossing Shadow DOM boundaries.)  To me, it would be ideal if the enhancement could remain attached in this circumstance, as if nothing happened.
+I do think the detachedCallback should be associated in some way with the disconnectedCallback method of the enhanced custom element (or the equivalent for built-in elements).  However, there's a scenario where a custom element's disconnectedCallback is called, where we don't necessarily want to fully "dump" the enhancement -- when the element is moved from one parent container to another (within a Shadow DOM realm or even crossing Shadow DOM boundaries.)  To me, it would be ideal if the enhancement could remain attached in this circumstance, as if nothing happened.  
 
-On the other hand, I could see scenarios where the enhancement would want to know that its host has been disconnected.
+On the other hand, I could see scenarios where the enhancement would want to know that its host has been disconnected.  So the custom enhancement should have a way of being notified that this transfer took place.
 
-My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes connected and another event when it becomes disconnected.
+My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes connected and (possibly another) event when it becomes disconnected.
 
 ## How to programmatically detach an enhancement
 
-I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
+I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
 ```JavaScript
-const removedEnhancement = await oElement.enhancements.whenRemoved('with-steel');
+const detachedEnhancement = await oElement.enhancements.whenDetached('with-steel');
 ```
 
 I think we would want this to remove the attribute also, if applicable.
-
 
 ## How an enhancement class indicates it has hydrated 
 
