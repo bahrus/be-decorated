@@ -494,6 +494,7 @@ class WithSteel extends ElementEnhancement {
 }
 ```
 
+
 ## AttachedCallback signature
 
 I propose the attached (and detached) callback signature look as follows:
@@ -533,7 +534,7 @@ I do think the detachedCallback should be associated in some way with the discon
 
 On the other hand, I could see scenarios where the enhancement would want to know that its host has been disconnected.  So the custom enhancement should have a way of being notified that this transfer took place.
 
-My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes connected and (possibly another) event when it becomes disconnected.
+My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another) event when it becomes disconnected](https://twitter.com/jaffathecake/status/1521023821003767808).
 
 ## How to programmatically detach an enhancement
 
