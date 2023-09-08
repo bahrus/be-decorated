@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-8/17/2023
+9/8/2023
 
 ## Backdrop
 
@@ -508,8 +508,8 @@ interface ElementEnhancement{
 }
 
 interface EnhancementInfo {
-    enh: string; //with-steel
-    enhancement: string; //withSteel
+    enh: string; //'with-steel'
+    enhancement: string; //'withSteel'
     initialPropValues: any; //{ carbonPercent = 0.2}
     templateAttr: string;
 }
