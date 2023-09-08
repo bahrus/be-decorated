@@ -483,6 +483,17 @@ The other reason for only doing it only for registered enhancements, is it means
 
 I suspect this "config" static property will grow to have other settings, especially as it integrates with template instantiation binding.
 
+For example, we may want to be able to specify whether it doesn't make sense for the enhancement to be applied during template instantiation, that it only makes sense to get attached when the element being enhanced becomes connected to the live DOM tree.  I have found one such use case with [be-a-beacon](https://github.com/bahrus/be-a-beacon).  So suggested name for that decision:  attachWhenConnected:
+
+```JavaScript
+class WithSteel extends ElementEnhancement {
+    static config = {
+        leaveAttr: true,
+        attachWhenConnected: true
+    }
+}
+```
+
 ## AttachedCallback signature
 
 I propose the attached (and detached) callback signature look as follows:
