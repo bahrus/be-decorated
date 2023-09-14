@@ -37,13 +37,15 @@ customEnhancements.define('log-to-console', class extends ElementEnhancement{
 
 Done!
 
-The functionality will work on some-custom-element, even if something goes wrong, and some-custom-element never upgrades from an unknown element.  I think the starting point for the "simple" use cases in this proposal is truly cross-cutting enhancements which don't really care what type of element is being enhanced.
+The functionality will work on some-custom-element, even if something goes wrong, and some-custom-element never upgrades from an unknown element (or it is a non custom element that likes to use dashes in its name).  I think the starting point for the "simple" use cases in this proposal is truly cross-cutting enhancements which don't really care what type of element is being enhanced.
 
 Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements. I could go with that (doesn't break the essence of this proposal in any way).  I do *think* it would cause less confusion to use attachedCallback (it feels to me more like attaching shadow, for example), though, but I think that decision should be of little consequence, so please replace it with  whatever name you like.
 
 Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name (and I think will cause us fairly insurmountable growing pains when the scope enlarges to allow for cross-library integration).  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
 But the point is, I don't think this proposal is any more complex than the alternatives, for achieving this simple use case requirement.  I would argue it is significantly simpler than at least two of them as they currently stand.
+
+To be fair, there is an orthogonal desire, to provide better semantics for self-documenting the supported format of the attribute string.  I think it is reasonable to see if there are some proposals that make sense at the custom element level, and then see if they carry over to the custom enhancement / attribute proposal.  In particular, such settings would go inside the static config property provided below:
 
 ## ElementEnhancement API Shape
 
@@ -69,6 +71,8 @@ So as far as I can tell, this pretty much covers the same problem space as the o
 But it leaves me very much wanting a better, more encompassing solution, which is what the rest of this proposal is about -- ending the isolation between libraries of "custom attributes", so that we can have one such library utilize another based on standard API's, and integrate with frameworks effectively, and with template instantiation, and other aspects.
 
 If that is not a problem that interests you, you can ignore the rest, and pretend the rest of the proposal doesn't exist (and call it the "custom attribute with funny naming conventions proposal" if that helps :-) )
+
+
 
 ## Backdrop
 
@@ -196,7 +200,6 @@ We can also filter out element types we have no intention of enhancing:
 customEnhancements.define('with-steel', WithSteel, {enhances: 'input,textarea'});
 ```
 
-I like the idea raised here that 
 
 The second parameter is our class which must extend ElementEnhancement.
 
