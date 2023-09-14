@@ -12,7 +12,7 @@ This is one of a number of interesting proposals, one of which (or some combinat
 
 ## Custom Attributes For Simple Enhancements
 
-Say all you need to do is to create an isolated behavior associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute.  Here's how that would be done with this proposal:
+Say all you need to do is to create an isolated behavior associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal:
 
 ```JS
 customEnhancements.define('log-to-console', class extends ElementEnhancement{
@@ -25,9 +25,9 @@ customEnhancements.define('log-to-console', class extends ElementEnhancement{
 ```
 
 ```HTML
-<svg log-to-console></svg>
+<svg log-to-console="clicked on an svg"></svg>
     ...
-<div log-to-console></div>
+<div log-to-console="clicked on a div"></div>
 ```
 
 Done!
@@ -35,6 +35,8 @@ Done!
 Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements. I could go with that (doesn't break the essence of this proposal in any way).  I do *think* it would cause less confusion to use attachedCallback (it feels more like attaching Shadow, for example), though, but I think that decision should be of little consequence, and please replace it with  whatever name you like.
 
 Why ElementEnhancement and not CustomAttribute?  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element.  So this proposal does "break" if we change it to that name (and I think will cause us fairly insurmountable growing pains when the scope enlarges to allow for cross-library integration).
+
+But the point is, I don't think this proposal is any more complex than the alternatives, for achieving this simple use case requirement.
 
 
 ## Backdrop
