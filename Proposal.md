@@ -18,7 +18,7 @@ Say all you need to do is to create an isolated behavior associated with an attr
 customEnhancements.define('log-to-console', class extends ElementEnhancement{
     attachedCallback(enhancedElement: Element){
         enhancedElement.addEventListener('click', e => {
-            console.log(e);
+            console.log(e.getAttribute('log-to-console'));
         })
     }
 });
