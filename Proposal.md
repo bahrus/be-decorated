@@ -45,7 +45,7 @@ Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" i
 
 But the point is, I don't think this proposal is any more complex than the alternatives, for achieving this simple use case requirement.  I would argue it is significantly simpler than at least two of them as they currently stand.
 
-To be fair, there [is an orthogonal desire](https://github.com/WICG/webcomponents/issues/1029), to provide better semantics for self-documenting the supported format of the attribute string.  I think it is reasonable to see if there are some proposals that make sense at the custom element level, and then see if they carry over to the custom enhancement / attribute proposal.  In particular, such settings would go inside the static config property provided below:
+To be fair, there [is an orthogonal desire](https://github.com/WICG/webcomponents/issues/1029), to provide better semantics for self-documenting the supported format of the attribute string.  I think it is reasonable to see if there are some proposals that make sense at the custom element level, and then see if they carry over to the custom enhancement / attribute proposal.  In particular, such settings could go inside the static config property provided below:
 
 ## ElementEnhancement API Shape
 
