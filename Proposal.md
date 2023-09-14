@@ -70,11 +70,14 @@ So for example (borrowing some code from the link above):
 class MyEnhancement extends ElementEnhancement {
 
     static config = {
-        value: { dataType: AttributeType.NUMBER, defaultValue: 0 }
+        value: { dataType: 'number', defaultValue: 0 }
     } 
 
+    parsedAttributeChangedCallback(oldValue: number, newValue: number) { /* ... */ }
 }
 ```
+
+This does seem useful, so I am officially stealing that idea (with the caveat that it is definitely nice to have, in conjunction with a similar proposal being added to custom elements themselves.)
 
 Again, this doesn't seem to me more complex than the alternatives, but I guess that is in the eye of the beholder.
 
