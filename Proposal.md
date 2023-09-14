@@ -79,7 +79,7 @@ class MyEnhancement extends ElementEnhancement {
 }
 ```
 
-This does seem useful, so I am officially stealing that idea (with the caveat that it is definitely nice to have, as opposed to a showstopper not to have, in conjunction with a similar proposal being added to custom elements themselves.)
+This does seem useful, so I am officially stealing that idea (with the caveat that it is definitely nice to have, as opposed to a showstopper if this aspect doesn't make the cut, in conjunction or as a follow-up with a similar proposal being added to custom elements themselves.)
 
 Again, this doesn't seem to me more complex than the alternatives, but I guess that is in the eye of the beholder.
 
