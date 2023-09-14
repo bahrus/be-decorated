@@ -8,7 +8,7 @@ Bruce B. Anderson
 
 9/13/2023
 
-This is one of a number of interesting proposals, one of which (or some combination?) can hopefully can get buy-in from all three browser vendors.
+This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.
 
 ## Custom Attributes For Simple Enhancements
 
@@ -17,9 +17,10 @@ Say all you need to do is to create an isolated behavior associated with an attr
 ```JS
 customEnhancements.define('log-to-console', class extends ElementEnhancement{
     attachedCallback(enhancedElement: Element){
+        const msg = enhancedElement.getAttribute('log-to-console');
         enhancedElement.addEventListener('click', e => {
-            console.log(e.getAttribute('log-to-console'));
-        })
+            console.log(msg);
+        });
     }
 });
 ```
@@ -32,12 +33,30 @@ customEnhancements.define('log-to-console', class extends ElementEnhancement{
 
 Done!
 
-Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements. I could go with that (doesn't break the essence of this proposal in any way).  I do *think* it would cause less confusion to use attachedCallback (it feels more like attaching Shadow, for example), though, but I think that decision should be of little consequence, and please replace it with  whatever name you like.
+Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements. I could go with that (doesn't break the essence of this proposal in any way).  I do *think* it would cause less confusion to use attachedCallback (it feels to me more like attaching shadow, for example), though, but I think that decision should be of little consequence, and please replace it with  whatever name you like.
 
 Why ElementEnhancement and not CustomAttribute?  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element.  So this proposal does "break" if we change it to that name (and I think will cause us fairly insurmountable growing pains when the scope enlarges to allow for cross-library integration).
 
-But the point is, I don't think this proposal is any more complex than the alternatives, for achieving this simple use case requirement.
+But the point is, I don't think this proposal is any more complex than the alternatives, for achieving this simple use case requirement.  I would argue it is significantly simpler than at least two of them.
 
+## ElementEnhancement API shape
+
+class ListAttribute extends Attribute {
+	ownerElement; // element this is attached to
+	value; // current value
+
+	connectedCallback() { /* ... */ }
+
+	disconnectedCallback() { /* ... */ }
+
+	// Called whenever the attribute's value changes
+	changedCallback() { /* ... */ }
+
+	static dataType = AttributeType.IDREF;
+	
+	// Optional default value
+	static defaultValue = null;
+}
 
 ## Backdrop
 
