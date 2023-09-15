@@ -61,6 +61,8 @@ class MyEnhancement extends ElementEnhancement {
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
 
+    static observedAttributes{get;set;}
+
 }
 ```
 
