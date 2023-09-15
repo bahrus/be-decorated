@@ -45,6 +45,8 @@ Why attachedCallback and not connectedCallback?  Advantages of connectedCallback
 
 Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
+Also, a singe element enhancement can "own" multiple attributes (for complex enhancements).
+
 ## ElementEnhancement API Shape
 
 ```JS
@@ -52,19 +54,19 @@ class MyEnhancement extends ElementEnhancement {
 
     static config = {/* ... */} //or use a get
 
-	attachedCallback(enhancedElement: Element, enhancedInfo:  EnhancementInfo) { /* ... */ } //or connectedCallback if that is clearer
+	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } //or connectedCallback if that is clearer
 
-	detachedCallback(enhancedElement: Element, enhancedInfo:  EnhancementInfo) { /* ... */ } //or disconnectedCallback if that is clearer.
+	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } //or disconnectedCallback if that is clearer.
 
 	// Called whenever the attribute's value changes
-	attributeChangedCallback(oldValue: string, newValue: string) { /* ... */ }
+	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
 
 }
 ```
 
 ### Better ergonomics for specifying the attribute format
 
-So for example (borrowing on the idea proposed heresome code from the link above):
+So for example (borrowing on the idea proposed [here](https://github.com/WICG/webcomponents/issues/1029)):
 
 ```JS
 class MyEnhancement extends ElementEnhancement {
