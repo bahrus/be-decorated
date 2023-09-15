@@ -61,7 +61,11 @@ class MyEnhancement extends ElementEnhancement {
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
 
-    static observedAttributes{get;set;}
+    static observedAttributes{/* ... */}
+
+    static get observedInstanceTypes{ //entirely optional
+        return [HTMLInputElement, HTMLTextArea, SomeAlreadyLoadedCustomElement]
+    }
 
 }
 ```
