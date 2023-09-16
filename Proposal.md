@@ -3,7 +3,7 @@
 ## Author(s)
 
 Bruce B. Anderson
-
+e
 ## Last update
 
 9/15/2023
@@ -17,7 +17,8 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal:
 
 ```JS
-customEnhancements.define('log-to-console', class extends ElementEnhancement{
+customEnhancements.define('logger', class extends ElementEnhancement{
+    static observedAttributes = ['log-to-console'];
     attachedCallback(enhancedElement: Element){
         const msg = enhancedElement.getAttribute('log-to-console');
         enhancedElement.addEventListener('click', e => {
@@ -59,12 +60,18 @@ class MyEnhancement extends ElementEnhancement {
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
 
-    static observedAttributes{/* ... */} //They must all have dashes and avoid aria-* and probably data-*, ideally prefixed by the name of the package.
+    //These must all have dashes and avoid aria-* and probably data-*, 
+    //ideally prefixed by the name of the package.
+    static observedAttributes{/* ... */} 
 
     //  Filtering conditions for when the enhancement should be invoked -- if none specified
 
     static get supportedInstanceTypes(){ //entirely optional
-        return [HTMLInputElement, HTMLTextArea, SomeAlreadyLoadedCustomElementClass, SVGElement]; //For example
+        return [HTMLInputElement, 
+                HTMLTextArea, 
+                SomeAlreadyLoadedCustomElementClass, 
+                SVGElement,
+                HTMLMarqueeElement]; //For example
     }
 
     static get supportedCSSMatches() { //entirely optional
@@ -74,9 +81,9 @@ class MyEnhancement extends ElementEnhancement {
 }
 ```
 
-### Better ergonomics for specifying the attribute format
+### Better ergonomics for specifying the attribute format [WIP]
 
-Borrowing on the nice idea proposed [here](https://github.com/WICG/webcomponents/issues/1029)):
+Borrowing on the nice idea proposed [here](https://github.com/WICG/webcomponents/issues/1029):
 
 ```JS
 class MyEnhancement extends ElementEnhancement {
@@ -86,7 +93,7 @@ class MyEnhancement extends ElementEnhancement {
         attr-2: { dataType: 'date', defaultValue: 0 },
     } 
 
-    parsedAttributeChangedCallback(name: string, oldValue: number, newValue: number) { /* ... */ }
+    parsedAttributeChangedCallback(name: string, oldValue: unknown, newValue: unknown) { /* ... */ }
 }
 ```
 
@@ -143,13 +150,9 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (after dependencies have loaded) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.
+... we can expect (after dependencies have loaded, and based on naming conventions a developer may choose to adopt) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.
 
-The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.
-
-Unlike custom elements, which have the luxury of creating a one-to-one mapping between properties and attributes, with these custom enhancements, the developer will often need to "pile in" all the initial property values into one attribute.  Typically, this means the attributes can get quite long in comparison, as the example above suggests.  These custom attributes would not be required to use JSON (or specify any value whatsoever), that is up to each custom enhancement vendor to decide.
-
-I would expect (and encourage) that once this handshake is established, the way developers will want to update properties of the enhancement is not via replacing the attribute, but via the namespaced properties.  This is already the case for custom elements (top level), and the argument applies even more strongly for custom enhancements, because it would be quite wasteful to have to re-parse the entire string each time (for example via JSON.stringify or eval()), especially if a list of objects needs to be passed in, and also quite critically the limitations of what can be passed via strings.   
+The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.  
 
 Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
@@ -671,14 +674,14 @@ I propose that the ElementEnhancement base class have a method:  dispatchEventFr
 class ElementEnhancement{
     ...
     dispatchEventFromEnhancedElement(type: string, init?: CustomEventInit){
-        const prefixedType = 'enh-' + this.enhancementInfo.enh + '.' + type;
+        const prefixedType = 'enhanced' + this.enhancementInfo.enhancement + '.' + type;
         const evt = init !== undefined ? new CustomEvent(prefixedType, init) : new Event(prefixedType);
         this.#enhancedElement.dispatchEvent(evt);
     }
 }
 ```
 
-So for the with-steel enhancement, if we call this method with type = "carbonPercentChanged", the event type would be namespaced to enh-with-steel.carbonPercentChanged.
+So for the with-steel enhancement, if we call this method with type = "carbonPercentChanged", the event type would be namespaced to enhanced.withSteel.carbonPercentChanged.
 
 
 
