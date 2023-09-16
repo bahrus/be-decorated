@@ -597,10 +597,9 @@ interface ElementEnhancement{
 }
 
 interface EnhancementInfo {
-    enh: string; //'with-steel'
     enhancement: string; //'withSteel'
     initialPropValues: any; //{ carbonPercent = 0.2}
-    templateAttr: string;
+    templateAttrs: Map<string, string>;
 }
 
 ```
