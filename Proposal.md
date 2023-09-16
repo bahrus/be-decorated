@@ -6,7 +6,7 @@ Bruce B. Anderson
 
 ## Last update
 
-9/13/2023
+9/15/2023
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -39,8 +39,6 @@ customEnhancements.define('log-to-console', class extends ElementEnhancement{
 
 Done!
 
-The functionality will work on some-custom-element, even if something goes wrong, and some-custom-element never upgrades from an unknown element (or it is a non custom element that likes to use dashes in its name).  I think the starting point for the "simple" use cases in this proposal is truly cross-cutting enhancements which don't really care what type of element is being enhanced, (and changing attribute values isn't a centerpiece either, though support for it is provided).
-
 Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements. I could go with that (doesn't break the essence of this proposal in any way).  I do *think* it would cause less confusion to use attachedCallback (it feels to me more like attaching shadow, for example), though, but I think that decision should be of little consequence, so please replace it with  whatever name you like.
 
 Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
@@ -52,6 +50,8 @@ Also, a singe element enhancement can "own" multiple attributes (for complex enh
 ```JS
 class MyEnhancement extends ElementEnhancement {
 
+    static CanonicalName: string;
+
     static config = {/* ... */} //or use a get
 
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } //or connectedCallback if that is clearer
@@ -61,10 +61,16 @@ class MyEnhancement extends ElementEnhancement {
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
 
-    static observedAttributes{/* ... */}
+    static observedAttributes{/* ... */} //They must all have dashes and avoid aria-* and probably data-*
 
-    static get observedInstanceTypes{ //entirely optional
-        return [HTMLInputElement, HTMLTextArea, SomeAlreadyLoadedCustomElement]
+    //  Filtering conditions for when the enhancement should be invoked -- if none specified
+
+    static get supportedInstanceTypes(){ //entirely optional
+        return [HTMLInputElement, HTMLTextArea, SomeAlreadyLoadedCustomElementClass, SVGElement]; //For example
+    }
+
+    static get supportedCSSMatches() { //entirely optional
+        return 'textarea, input'
     }
 
 }
@@ -134,7 +140,7 @@ The most minimal solution, then, is for the web platform to simply announce that
 
 I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
-## Custom Attribute + Custom Property => Custom Enhancement
+## Custom Property + Custom Attribute(s)  => Custom Enhancement
 
 The next thing beyond that announcement would be what many (including myself) are clamoring for:
 
@@ -183,11 +189,11 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 
 1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet -- lazy property setting, in other words).  
 2.  Sub-properties of the enhancements property can be reserved for only one specific class prototype, based on the customEnhancements.define method, with the scoped registry solution adopted.  It prevents others from using the same path with an instance of a different class.  
-3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that would be inefficient -- some other way of providing a mapping is suggested below).
-4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters enh- attributes with matching dash-delimited name.
+3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that may be inefficient -- some musings on what might be effect are outlined below).
+4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters any of the (enh- prefixed) observed attributes specified in the class.
 5.  Classes extend ElementEnhancement class, which extends EventTarget.
-6.  These classes will want to define a callback, "attachedCallback". The callback will pass in the matching target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the matching attribute.
-7.  AttributeChangedCallback method with two parameters (oldValue, newValue) is supported in addition. 
+6.  These classes will want to define a callback, "attachedCallback" (or connectedCallback if that ruffles some feathers). The callback will pass in the matching target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the observed attribute(s).
+7.  AttributeChangedCallback method with three parameters (name, oldValue, newValue) is supported in addition. 
 
 ## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required
 
@@ -209,28 +215,32 @@ The same solution for scoped registries is applied to these methods.
 Let's take a close look at what the define method should look like:
 
 ```JavaScript
-customEnhancements.define('with-steel', WithSteel, {enhances: '*'});
+customEnhancements.define('withSteel', Steel, {enhances: '*'});
 ```
 
-Going backwards, the third parameter is indicating to match on all element tag names (the default).  The CSS query for this define is '[with-steel],[enh-with-steel]'. 
+Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes static list.
 
-If matching elements are found, for built-in elements the attribute could be either with-steel or enh-with-steel.  For custom elements, only enh-with-steel would work.
+I recommend that the developer use a safe naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.
 
 We can also filter out element types we have no intention of enhancing:
 
 ```JavaScript
-customEnhancements.define('with-steel', WithSteel, {enhances: 'input,textarea'});
+customEnhancements.define('withSteel', SteelEnhancer, {enhances: {
+    cssMatches: 'input,textarea',
+    instanceOf: [HTMLMarqueeElement]
+}});
 ```
 
+So we have two ways for the types of elements the enhancement can act on -- static properties of the enhancement class, and the registration.  The party responsible for defining the class may differ from the party responsible for registering the enhancement. 
 
-The second parameter is our class which must extend ElementEnhancement.
+The second parameter is the class, which must extend ElementEnhancement.
 
-So what role does the first parameter fulfill?  Just as with data-my-stuff turning into oElement.dataset.myStuff, the define method above is telling the world that (within the scoped registry), oElement.enhancements.withSteel is "owned" by the class instance of WithSteel.
+The first parameter, gives the key off the enhancements object on the element where the enhancement should land (subject to murky scoped registry rules).  It can be a single word. 
 
 If some other developer attempts to "hijack" this property extension:
 
 ```JavaScript
-oInput.enhancements.withSteel = new WithAluminum()
+oInput.enhancements.withSteel = new AluminumEnhancer()
 ```
 
 it would throw an error.
@@ -240,11 +250,11 @@ it would throw an error.
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
-const enhancementInstance = await oElement.enhancements.whenAttached('with-steel');
-const enhancementInstance = await oElement.enhancements.whenResolved('with-steel');
+const enhancementInstance = await oElement.enhancements.whenAttached('withSteel');
+const enhancementInstance = await oElement.enhancements.whenResolved('withSteel');
 ```
 
-Both of these methods will see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class WithSteel to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
+Both of these methods will see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class SteelEnhancer to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
 
 The whenResolved promise is returned after the developer sets:
 
@@ -384,7 +394,7 @@ We move out those settings to a JSON-like structure that can be associated with 
         "make": {
             "button": [
                 {
-                    "beEnhancedBy": "be-counted",
+                    "beEnhancedBy": "counter",
                     "having": {
                         "transform": {
                             "span": "value"
@@ -564,7 +574,7 @@ class WithSteel extends ElementEnhancement {
 
 ```JavaScript
 class WithSteel extends ElementEnhancement {
-    static config = {leaveAttr: true}
+    static config = {leaveAttrs: true}
 }
 ```
 
