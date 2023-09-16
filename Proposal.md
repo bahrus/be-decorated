@@ -50,8 +50,6 @@ Also, a singe element enhancement can "own" multiple attributes (for complex enh
 ```JS
 class MyEnhancement extends ElementEnhancement {
 
-    static CanonicalName: string;
-
     static config = {/* ... */} //or use a get
 
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } //or connectedCallback if that is clearer
@@ -61,7 +59,7 @@ class MyEnhancement extends ElementEnhancement {
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
 
-    static observedAttributes{/* ... */} //They must all have dashes and avoid aria-* and probably data-*
+    static observedAttributes{/* ... */} //They must all have dashes and avoid aria-* and probably data-*, ideally prefixed by the name of the package.
 
     //  Filtering conditions for when the enhancement should be invoked -- if none specified
 
@@ -78,28 +76,20 @@ class MyEnhancement extends ElementEnhancement {
 
 ### Better ergonomics for specifying the attribute format
 
-So for example (borrowing on the idea proposed [here](https://github.com/WICG/webcomponents/issues/1029)):
+Borrowing on the nice idea proposed [here](https://github.com/WICG/webcomponents/issues/1029)):
 
 ```JS
 class MyEnhancement extends ElementEnhancement {
 
     static config = {
-        attr: { dataType: 'number', defaultValue: 0 }
+        attr-1: { dataType: 'number', defaultValue: 0 },
+        attr-2: { dataType: 'date', defaultValue: 0 },
     } 
 
-    parsedAttributeChangedCallback(oldValue: number, newValue: number) { /* ... */ }
+    parsedAttributeChangedCallback(name: string, oldValue: number, newValue: number) { /* ... */ }
 }
 ```
 
-This does seem useful, so I am officially stealing that idea (with the caveat that it is definitely nice to have, as opposed to a showstopper if this aspect doesn't make the cut, in conjunction or as a follow-up with a similar proposal being added to custom elements themselves.)
-
-Again, this doesn't seem to me more complex than the alternatives, but I guess that is in the eye of the beholder.
-
-So as far as I can tell, this pretty much covers the same problem space as the other proposals.  
-
-But it leaves me very much wanting a better, more encompassing solution, which is what the rest of this proposal is about -- ending the isolation between libraries of "custom attributes", so that we can have one such library utilize another based on standard API's, and integrate with frameworks effectively, and with template instantiation, and other aspects.
-
-If that is not a problem that interests you, you can ignore the rest, and pretend the rest of the proposal doesn't exist (and call it the "custom attribute with funny naming conventions proposal" if that helps :-) )
 
 
 ## Backdrop
