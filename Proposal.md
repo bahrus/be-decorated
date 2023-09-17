@@ -58,9 +58,11 @@ class MyEnhancement extends ElementEnhancement {
 
     static config = {/* ... */} //or use a get
 
-	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } //or connectedCallback if that is clearer
+    //or connectedCallback if that is clearer
+	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } 
 
-	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } //or disconnectedCallback if that is clearer.
+    //or disconnectedCallback if that is clearer.
+	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } 
 
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
@@ -69,8 +71,7 @@ class MyEnhancement extends ElementEnhancement {
     //ideally prefixed by the name of the package.
     static observedAttributes{/* ... */} 
 
-    //  Filtering conditions for when the enhancement should be invoked -- if none specified
-
+    //  Entirely optional filtering conditions for when the enhancement should be invoked.
     static get supportedInstanceTypes(){ //entirely optional
         return [HTMLInputElement, 
                 HTMLTextArea, 
@@ -79,12 +80,19 @@ class MyEnhancement extends ElementEnhancement {
                 HTMLMarqueeElement]; //For example
     }
 
-    static get supportedCSSMatches() { //entirely optional
+    //Entirely optional
+    static get supportedCSSMatches() { 
         return 'textarea, input'
     }
 
 }
 ```
+
+Having filtering support is there to benefit the developer first and foremost -- the developer is essentially publishing a "contract" of what kinds of elements they can support.  The idea for using supportedInstanceTypes, proposed [here](https://github.com/WICG/webcomponents/issues/1029) seems like it has some quite positive benefits:
+
+1.  I think it could help avoid some timing issues of attempting to start enhancing an unknown element. 
+2.  In some cases, especially with custom elements, it could group a bunch of custom elements together based on the base class.  CSS currently isn't so good at selecting elements based on a common prefix.
+
 
 ### Better ergonomics for specifying the attribute format?
 
