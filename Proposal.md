@@ -94,6 +94,8 @@ Having filtering support is there to benefit the developer first and foremost --
 2.  In some cases, especially with custom elements, it could group a bunch of custom elements together based on the base class.  CSS currently isn't so good at selecting elements based on a common prefix.
 3.  The names can be validated by TypeScript.
 
+Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on the class in memory so anything we can do to declaratively prevent that seems ike a win for all involved.
+
 ### Better ergonomics for specifying the attribute format?
 
 Since this proposal is focusing on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement.  
@@ -183,7 +185,7 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 
 1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet -- lazy property setting, in other words).  
 2.  Sub-properties of the enhancements property can be reserved for only one specific class prototype, based on the customEnhancements.define method, with the scoped registry solution adopted.  It prevents others from using the same path with an instance of a different class.  
-3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that may be inefficient -- some musings on what might be effect are outlined below).
+3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that may be inefficient -- some musings on what might be effective are outlined below).
 4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters any of the (enh- prefixed) observed attributes specified in the class.
 5.  Classes extend ElementEnhancement class, which extends EventTarget.
 6.  These classes will want to define a callback, "attachedCallback" (or connectedCallback if that ruffles some feathers). The callback will pass in the matching target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the observed attribute(s).
