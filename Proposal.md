@@ -153,7 +153,7 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (after dependencies have loaded, and based on naming conventions a developer may choose to adopt) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.
+... we can expect to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.  That simple relationship may not need to be rigid, or maybe it would, depending on how this proposal would integrate with scoped registries.
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.  
 
@@ -231,7 +231,7 @@ So we have two ways for the types of elements the enhancement can act on -- stat
 
 The second parameter is the class, which must extend ElementEnhancement.
 
-The first parameter, gives the key off the enhancements object on the element where the enhancement should land (subject to murky scoped registry rules).  It can be a single word. 
+The first parameter, gives the key off the enhancements object on the element where the enhancement should land (subject to murky scoped registry rules).  It can be a single word (subject to change as scope registry solution is integrated). 
 
 If some other developer attempts to "hijack" this property extension:
 
