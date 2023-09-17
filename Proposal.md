@@ -3,7 +3,7 @@
 ## Author(s)
 
 Bruce B. Anderson
-e
+
 ## Last update
 
 9/15/2023
@@ -44,7 +44,12 @@ Why attachedCallback and not connectedCallback?  Advantages of connectedCallback
 
 Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
-Also, a singe element enhancement can "own" multiple attributes (for complex enhancements).
+Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
+
+> [!NOTE]
+> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that needs to avoid colliding with other enhancements:  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, averts confronting that important complexity. 
+
+
 
 ## ElementEnhancement API Shape
 
@@ -81,23 +86,11 @@ class MyEnhancement extends ElementEnhancement {
 }
 ```
 
-### Better ergonomics for specifying the attribute format [WIP]
+### Better ergonomics for specifying the attribute format?
 
-Borrowing on the nice idea proposed [here](https://github.com/WICG/webcomponents/issues/1029):
+Since this proposal is focusing on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement.  
 
-```JS
-class MyEnhancement extends ElementEnhancement {
-
-    static config = {
-        attr-1: { dataType: 'number', defaultValue: 0 },
-        attr-2: { dataType: 'date', defaultValue: 0 },
-    } 
-
-    parsedAttributeChangedCallback(name: string, oldValue: unknown, newValue: unknown) { /* ... */ }
-}
-```
-
-
+I like the ideas provided [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  I think it makes sense to apply such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom enhancements.  I think those ideas are 100% compatible with this proposal, and doesn't break it any way.
 
 ## Backdrop
 
