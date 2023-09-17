@@ -92,7 +92,7 @@ Having filtering support is there to benefit the developer first and foremost --
 
 1.  I think it could help avoid some timing issues of attempting to start enhancing an unknown element. 
 2.  In some cases, especially with custom elements, it could group a bunch of custom elements together based on the base class.  CSS currently isn't so good at selecting elements based on a common prefix.
-
+3.  The names can be vaidated by TypeScipt.
 
 ### Better ergonomics for specifying the attribute format?
 
