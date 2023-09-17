@@ -90,15 +90,15 @@ class MyEnhancement extends ElementEnhancement {
 
 Having filtering support is there to benefit the developer first and foremost -- the developer is essentially publishing a "contract" of what kinds of elements they can support.  The idea for using supportedInstanceTypes, proposed [here](https://github.com/WICG/webcomponents/issues/1029) seems like it has some quite positive benefits:
 
-1.  I think it could help avoid some timing issues of attempting to start enhancing an unknown element. 
+1.  I think it could help avoid some timing issues of attempting to start enhancing an unknown element, by essentially enforcing a loading sequence of dependencies. 
 2.  In some cases, especially with custom elements, it could group a bunch of custom elements together based on the base class.  CSS currently isn't so good at selecting elements based on a common prefix.
 3.  The names can be validated by TypeScript.
 
-Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on the class in memory so anything we can do to declaratively prevent that seems ike a win for all involved.
+Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory so anything we can do to declaratively prevent that seems like a win for all involved.
 
 ### Better ergonomics for specifying the attribute format?
 
-Since this proposal is focusing on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement.  
+Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement.  
 
 I like the ideas provided [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  I think it makes sense to apply such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom enhancements.  I think those ideas are 100% compatible with this proposal, and doesn't break it any way.
 
