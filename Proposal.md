@@ -98,6 +98,32 @@ Another key reason for adding this filtering capability is performance -- there 
 
 Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, even though the enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as out first open question of the proposal.
 
+###  What, if any, are the benefits of having a "has" attribute?
+
+<details>
+    <summary>None, as far as I can see</summary>
+
+From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
+
+I amended this proposal to support multiple attributes for a singe enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement into multiple single-word attribute values.  Some frameworks may prefer working with single value attributes, and modify state via attributes vs. properties.
+
+However, I think by supporting multiple attributes, requiring that they have dashes, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong (**almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**).  So with this proposal, we can have attributes that naturally group together like so:
+
+```html
+<time lang="ar-EG" 
+    datetime=2011-11-18T14:54:39.929Z 
+    be-intl
+    be-intl-weekday=long be-intl-year=numeric be-intl-month=long
+    be-intl-day=numeric>
+</time>
+```
+
+What would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating enforcing such a rule, but is much more in favor of that kind of restriction, vs extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce.
+
+The only argument I see, honestly, in favor of the "has" requirement would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of last resort.
+
+</details>
+
 ### Better ergonomics for specifying the attribute format?
 
 Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement. 
