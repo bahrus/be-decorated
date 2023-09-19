@@ -4,9 +4,11 @@
 
 Bruce B. Anderson
 
+PR's [welcome](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md)
+
 ## Last update
 
-9/17/2023
+9/19/2023
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -40,7 +42,7 @@ customEnhancements.define('logger', class extends ElementEnhancement{
 
 Done!
 
-Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements. I could go with that (doesn't break the essence of this proposal in any way).  I do *think* it would cause less confusion to use attachedCallback (it feels to me more like attaching shadow, for example).  But I think that decision should be of little consequence, so please replace it with whatever name you like.
+Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements, and clearly the custom enhancement class above closely resembles a custom element. I could go with that.  It wouldn't break the essence of this proposal in any way.  I *think*, though it would cause less confusion to use attachedCallback (it feels to me more like attaching shadow, for example).  But I think that decision should be of little consequence, so please replace it with whatever name you like.
 
 Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
@@ -96,7 +98,12 @@ Having filtering support is there to benefit the developer first and foremost --
 
 Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory so anything we can do to declaratively prevent that seems like a win for all involved.
 
-Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, even though the enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as out first open question of the proposal.
+<details>
+    <summary>But at what cost?
+
+Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as out first open question of the proposal, which doesn't strike me as very significant, but you never know.
+
+</details>
 
 ###  What, if any, are the benefits of having a "has" attribute?
 
