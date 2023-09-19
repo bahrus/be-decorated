@@ -19,14 +19,15 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal:
 
 ```JS
-customEnhancements.define('logger', class extends ElementEnhancement{
-    static observedAttributes = ['log-to-console'];
+customEnhancements.define('logger', class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element){
         const msg = enhancedElement.getAttribute('log-to-console');
         enhancedElement.addEventListener('click', e => {
             console.log(msg);
         });
     }
+}, {
+    observedAttributes: ['log-to-console']
 });
 ```
 
