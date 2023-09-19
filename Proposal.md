@@ -127,6 +127,19 @@ However, I think by supporting multiple attributes, requiring that they have das
 </time>
 ```
 
+Or perhaps there's a desire to be even more like the has solution and provide for the base attribute as well:
+
+```html
+<time lang="ar-EG" 
+    datetime=2011-11-18T14:54:39.929Z
+    be-intl 
+    be-intl-weekday=long be-intl-year=numeric be-intl-month=long
+    be-intl-day=numeric>
+</time>
+```
+
+which this proposal also supports.
+
 So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am leaning towards such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce, that flies in the face of industry practice over several decades.
 
 The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of desperate last resort scenario.
