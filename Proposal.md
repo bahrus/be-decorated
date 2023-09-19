@@ -72,10 +72,6 @@ class MyEnhancement extends ElementEnhancement {
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
 
-    //These must all have dashes and avoid aria-* and probably data-*, 
-    //ideally prefixed by the name of the package.
-    static observedAttributes{/* ... */} 
-
     //  Entirely optional filtering conditions for when the enhancement should be invoked.
     static get supportedInstanceTypes(){ //entirely optional
         return [HTMLInputElement, 
@@ -115,7 +111,7 @@ Now, a well designed build process of a closed system web application would theo
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
-I amended this proposal, though, to support multiple attributes for a singe enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) that the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement/behavior into multiple attributes.  Benefits are:
+I amended this proposal, though, to support multiple attributes for a single enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) that the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement/behavior into multiple attributes.  Benefits are:
 
 1.  The values can be simple strings / numbers / boolean, vs JSON.  
 2.  Some frameworks may prefer to modify state via attributes instead of properties.
@@ -143,7 +139,7 @@ Or perhaps there's a desire to be even more like the has solution and provide fo
 
 which this proposal also supports.
 
-So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am leaning towards such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce, that flies in the face of industry practice over several decades.
+So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am weighing the pro's anc con's of such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce, that flies in the face of industry practice over several decades.
 
 The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of desperate last resort scenario.
 
@@ -153,7 +149,7 @@ The only argument I see, honestly, in favor of the "has" requirement, would be s
 
 Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement. 
 
-And for clarity, the "house words" for this proposal is "Custom Prop + Custom Attribute(s) => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties for custom enhancements, just as much as it does for custom elements.
+And for clarity, the "house words" for this proposal is "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties for custom enhancements, just as much as it does for custom elements.
 
 I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way.  
 
@@ -266,23 +262,30 @@ The same solution for scoped registries is applied to these methods.
 Let's take a close look at what the define method should look like:
 
 ```JavaScript
-customEnhancements.define('withSteel', Steel, {enhances: '*'});
+customEnhancements.define('steel', SteelEnhancer, {
+    enhances: '*',
+    observedAttributes: ['with-steel']
+});
 ```
 
-Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes static list.
+Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes list passed into the define method (if any).  Enhancements are not required to specify any attributes, as they are not intrinsically dependent on them.  Examples of enhancements which wouldn't want to burden the browser with searching for some attribute for no reason, are enhancements that are only expecting to be invoked programmatically by other enhancements (or by custom elements or frameworks).
 
 I recommend that the developer use a safe naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.
 
 We can also filter out element types we have no intention of enhancing:
 
 ```JavaScript
-customEnhancements.define('withSteel', SteelEnhancer, {enhances: {
-    cssMatches: 'input,textarea',
-    instanceOf: [HTMLMarqueeElement]
-}});
+customEnhancements.define('withSteel', SteelEnhancer, {
+    enhances: { //optional
+        cssMatches: 'input,textarea',
+        instanceOf: [HTMLMarqueeElement]
+    },
+    observedAttributes: ['with-steel']
+
+});
 ```
 
-So we have two ways for the types of elements the enhancement can act on -- static properties of the enhancement class, and the registration.  The party responsible for defining the class may differ from the party responsible for registering the enhancement. 
+So we have two ways for the types of elements the enhancement can act on -- static properties of the enhancement class, and the registration.  The party responsible for defining the class may differ from the party responsible for registering the enhancement.  Both parties need to opt-in. 
 
 The second parameter is the class, which must extend ElementEnhancement.
 
@@ -661,15 +664,16 @@ interface EnhancementInfo {
     enhancement: string; //'withSteel'
     initialPropValues: any; //{ carbonPercent = 0.2}
     templateAttrs: Map<string, string>;
+    observedAttributes: string[];
 }
 
 ```
 
-The strings enh and enhancement would, I think, be helpful for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement within the context of the scoped registry.
+The enhancement string, and observedAttributes array of strings would, I think, be helpful for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement and observedAttributes within the context of the scoped registry.
 
 The initialPropValues field of EnhancementInfo would be the object properties that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
 
-The templateAttr would be the original attribute string that was removed from the template, following Solution 2b above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
+The templateAttrs would be the original attribute strings that were removed from the template, following Solution 2b above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
 
 ## DetachedCallback lifecycle event
 
@@ -690,7 +694,7 @@ My (naive?) recommendation is that the platform add an event that can be subscri
 I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
 ```JavaScript
-const detachedEnhancement = await oElement.enhancements.whenDetached('with-steel');
+const detachedEnhancement = await oElement.enhancements.whenDetached('withSteel');
 ```
 
 I think we would want this to remove the attribute also, if applicable.
