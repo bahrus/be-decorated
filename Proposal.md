@@ -105,22 +105,24 @@ Now, a well designed build process of a closed system web application would theo
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
-I amended this proposal to support multiple attributes for a singe enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement into multiple single-word attribute values.  Some frameworks may prefer working with single value attributes, and modify state via attributes vs. properties.
+I amended this proposal, though, to support multiple attributes for a singe enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) that the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement/behavior into multiple attributes.  Benefits are:
 
-However, I think by supporting multiple attributes, requiring that they have dashes, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong (**almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**).  So with this proposal, we can have attributes that naturally group together like so:
+1.  The values can be simple strings / numbers / boolean, vs JSON.  
+2.  Some frameworks may prefer to modify state via attributes instead of properties.
+
+However, I think by supporting multiple attributes, requiring that they have dashes, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong.  **Almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**.  So with this proposal, we can have attributes that naturally group together.  To take one very practical example where this makes sense:  Suppose we want to provide a userland implementation of [this proposal](https://github.com/whatwg/html/issues/2404).  We could define it like this, which this proposal supports:
 
 ```html
 <time lang="ar-EG" 
     datetime=2011-11-18T14:54:39.929Z 
-    be-intl
     be-intl-weekday=long be-intl-year=numeric be-intl-month=long
     be-intl-day=numeric>
 </time>
 ```
 
-What would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating enforcing such a rule, but is much more in favor of that kind of restriction, vs extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce.
+So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am leaning towards such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce, that flies in the face of industry practice over several decades.
 
-The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of last resort.
+The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of desperate last resort scenario.
 
 </details>
 
