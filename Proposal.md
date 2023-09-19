@@ -99,7 +99,7 @@ Having filtering support is there to benefit the developer first and foremost --
 Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory so anything we can do to declaratively prevent that seems like a win for all involved.
 
 <details>
-    <summary>But at what cost?
+    <summary>But at what cost?</summary>
 
 Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as out first open question of the proposal, which doesn't strike me as very significant, but you never know.
 
@@ -137,9 +137,9 @@ The only argument I see, honestly, in favor of the "has" requirement, would be s
 
 Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement. 
 
-And for clarity, the "house words" for this proposal is "Custom Prop + Custom Attribute(s) => Custom Enhancements".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties for custom enhancements, just as much as it does for custom elements.
+And for clarity, the "house words" for this proposal is "Custom Prop + Custom Attribute(s) => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties for custom enhancements, just as much as it does for custom elements.
 
-I like the ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way.  
+I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way.  
 
 ## Backdrop
 
