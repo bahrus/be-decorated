@@ -118,9 +118,9 @@ However, I think by supporting multiple attributes, requiring that they have das
 </time>
 ```
 
-What would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating enforcing such a rule, but is much more in favor of that kind of restriction, vs extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce.
+What would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating enforcing such a rule, but is much more in favor of that kind of restriction, vs extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce.
 
-The only argument I see, honestly, in favor of the "has" requirement would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of last resort.
+The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of last resort.
 
 </details>
 
