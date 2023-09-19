@@ -47,7 +47,7 @@ Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" i
 Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
 
 > [!NOTE]
-> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that needs to avoid colliding with other enhancements:  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, avoids confronting that important complexity. 
+> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that needs to avoid colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, avoids confronting that important complexity. 
 
 
 
