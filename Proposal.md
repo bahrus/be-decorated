@@ -47,7 +47,7 @@ Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" i
 Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
 
 > [!NOTE]
-> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that needs to avoid colliding with other enhancements:  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, averts confronting that important complexity. 
+> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that needs to avoid colliding with other enhancements:  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, avoids confronting that important complexity. 
 
 
 
@@ -98,9 +98,11 @@ Another key reason for adding this filtering capability is performance -- there 
 
 ### Better ergonomics for specifying the attribute format?
 
-Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement.  
+Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement. 
 
-I like the ideas provided [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  I think it makes sense to apply such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom enhancements.  I think those ideas are 100% compatible with this proposal, and doesn't break it any way.
+And for clarity, the "house words" for this proposal is "Custom Prop + Custom Attribute(s) => Custom Enhancements".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties for custom enhancements, just as much as it does for custom elements.
+
+I like the ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to apply such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and doesn't break it in any way.  
 
 ## Backdrop
 
