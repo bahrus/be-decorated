@@ -743,7 +743,7 @@ class ElementEnhancement{
 }
 ```
 
-So for the with-steel enhancement, if we call this method with type = "carbonPercentChanged", the event type would be namespaced to enhanced.withSteel.carbonPercentChanged.
+So for the withSteel enhancement, if we call this method with type = "carbonPercentChanged", the event type would be namespaced to enhanced.withSteel.carbonPercentChanged.
 
 
 
