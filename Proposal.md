@@ -55,7 +55,6 @@ Why not use a static observedAttributes property, why is that part of the regist
 > I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  While the role that 'log-to-console' plays above is self-evident, the role that the name of the enhancement -- 'logger' plays will be revealed below (hint:  it is the "custom property" in the name of this proposal).  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, avoids confronting that important complexity. 
 
 
-
 ## ElementEnhancement API Shape
 
 ```JS
@@ -669,7 +668,11 @@ interface EnhancementInfo {
 
 ```
 
-The enhancement string, and observedAttributes array of strings would, I think, be helpful for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement and observedAttributes within the context of the scoped registry.
+The enhancement string, and observedAttributes array of strings would, I think, be critical for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement and observedAttributes within the context of the scoped registry.
+
+And now, dear reader, I confront you with perhaps the most dizzying concept we will need to face.  Brace yourself in what follows:
+
+1.  We want enhancements to optionally be able to be associated with one or more 
 
 The initialPropValues field of EnhancementInfo would be the object properties that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
 
