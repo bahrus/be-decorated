@@ -8,7 +8,7 @@
 >
 >  ...
 >
->  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming almost comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as an optional [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php) that aids us in our pursuit of creating a custom element enhancement.
+>  Warning:  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming almost comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as an optional [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php) that aids us in our pursuit of creating a custom element enhancement.
 
 ## Author(s)
 
@@ -285,9 +285,9 @@ customEnhancements.define('steel', SteelEnhancer, {
 Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes list passed into the define method (if any).  Enhancements are not required to specify any attributes, as they are not intrinsically dependent on them.  Examples of enhancements which wouldn't want to burden the browser with searching for some attribute for no reason, are enhancements that are only expecting to be invoked programmatically by other enhancements (or by custom elements or frameworks).
 
 >[!NOTE]
->Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified, you will be "enhancing" every single DOM element on the page, which seems like it would be quite costly, especially if that wasn't your intention.  With great power comes great... you know the rest. 
+>Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore* the observedAttributes restriction altogether when the developer programmatically attaches an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
 
-I recommend that the developer use a logical naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.  The reason for this, is I suspect even with the power of the scoped registry, life will still be simpler that way.
+I recommend that the developer use a logical naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.  The reason for this is I suspect, even with the power of the scoped registry, life will still be simpler that way.
 
 We can also filter out element types we have no intention of enhancing:
 
@@ -302,7 +302,7 @@ customEnhancements.define('withSteel', SteelEnhancer, {
 });
 ```
 
-So we have two ways for the types of elements the enhancement can act on -- static properties of the enhancement class, and the registration.  The party responsible for defining the class may differ from the party responsible for registering the enhancement.  Both parties need to opt-in. 
+This enhances option (combined with the static properties of the class) is a binding contract -- the platform won't allow enhancements to take place outside these conditions, if specified.  The cssMatches and instanceOf form an "or" condition (same with static class specifiers).  But an "and" condition is applied to the enhancement restrictions specified in the registration, and the enhancement restrictions specified by the class static properties (supportedInstanceTypes, supportedCSSMatches.)  I.e. both the enhancement author and the enhancement registrar (doing the registering) must opt-in. 
 
 The second parameter is the class, which must extend ElementEnhancement.
 
