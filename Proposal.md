@@ -1,7 +1,9 @@
-# CustomProp: string + CustomAttr: [string, string..., string] => Custom Enhancements Proposal
+# The CustomEnhancement:  {CustomProp: string,  CustomAttr?: [string, string..., string]} Proposal
 
 > [!NOTE]
->  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming almost comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as a [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php)
+>  Reader discretion is advised.
+>  ...
+>  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming almost comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as an optional [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php) that aids us in our pursuit of creating a custom element enhancement.
 
 ## Author(s)
 
@@ -11,7 +13,7 @@ PR's [welcome](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md)
 
 ## Last update
 
-9/19/2023
+9/20/2023
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -19,15 +21,16 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 
 ## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
-Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal:
+Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, but I don't want to skirt over some of the  weirdness of what I am proposing.
 
 ```JS
-const observedAttributes = ['log-to-console'];
+const observedAttributes = ['log-to-console']; //canonical name of our custom attribute(s)
 customEnhancements.define('logger', class extends ElementEnhancement {
-    attachedCallback(enhancedElement: Element){
-        const msg = enhancedElement.getAttribute('log-to-console');
+    attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+        const {observedAttributes} = enhancementInfo;
+        const [msgAttr] = observedAttributes; // most likely, msgAttr will equal 'log-to-console', but the party responsible for registering the enhancement could choose to modify the name.
         enhancedElement.addEventListener('click', e => {
-            console.log(msg);
+            console.log(enhancedElement.getAttribute(msgAttr)); 
         });
     }
 }, {
