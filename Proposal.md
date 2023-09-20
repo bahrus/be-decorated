@@ -8,7 +8,7 @@
 >
 >  ...
 >
->  Warning:  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming almost comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as an optional [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php) that aids us in our pursuit of creating a custom element enhancement.
+>  Warning:  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming (almost?) comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as an optional [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php) that aids us in our pursuit of creating a custom (HTML/SVG) element enhancement.
 
 ## Author(s)
 
@@ -26,15 +26,21 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 
 ## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
-Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, but I don't want to skirt over some of the  weirdness of what I am proposing.
+Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity.  I don't want to skirt over some of the  weirdness of what I am proposing in this initial example.
 
 ```JS
-export const enhancement = 'logger'; //canonical name of our custom prop, accessible via oElement.enhancements[enhancement]
-export const observedAttributes = ['log-to-console']; //canonical name of our custom attribute(s)
+//canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
+//which is where we will find an instance of the class defined below.
+export const enhancement = 'logger'; 
+//canonical name(s) of our custom attribute(s)
+export const observedAttributes = ['log-to-console']; 
 customEnhancements.define(enhancement, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {observedAttributes, enhancement} = enhancementInfo;
-        const [msgAttr] = observedAttributes; // most likely, msgAttr will equal 'log-to-console', but the party responsible for registering the enhancement could choose to modify the name, either globally, or inside a scoped registry.
+        const [msgAttr] = observedAttributes; 
+        // most likely, msgAttr will equal 'log-to-console', 
+        // but the party (or parties) responsible for registering the enhancement 
+        // could choose to modify the name, either globally, or inside a scoped registry.
         enhancedElement.addEventListener('click', e => {
             console.log(enhancedElement.getAttribute(msgAttr)); 
         });
@@ -62,10 +68,10 @@ Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" i
 
 Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
 
-Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, which is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.  But because we are talking about an array of strings, we need to think of that array as a tuple of string.
+Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, which is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.  But because we are talking about an array of strings that can be renamed, we need to think of that array as a tuple of strings.
 
 > [!NOTE]
-> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  While the role that 'log-to-console' plays above is self-evident, the role that the name of the enhancement -- 'logger' plays will be revealed below (hint:  it is the "custom property" in the name of this proposal).  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, avoids confronting that important complexity, and chooses the names that make the most sense to the author, without worrying about what compromises will be required (if any) to avoid namespace collisions. 
+> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
 
 
 ## ElementEnhancement API Shape
@@ -114,7 +120,7 @@ Another key reason for adding this filtering capability is performance -- there 
 <details>
     <summary>But at what cost?</summary>
 
-Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as out first open question of the proposal, which doesn't strike me as very significant, but you never know.
+Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as our first open question of the proposal, which doesn't strike me as very significant, but you never know.
 
 </details>
 
@@ -125,7 +131,7 @@ Now, a well designed build process of a closed system web application would theo
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
-I amended this proposal, though, to support multiple attributes for a single enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) that the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement/behavior into multiple attributes.  Benefits are:
+I amended this proposal, though, to support multiple attributes for a single enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can definitely relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) that the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement/behavior into multiple attributes.  Benefits are:
 
 1.  The values can be simple strings / numbers / boolean, vs JSON.  
 2.  Some frameworks may prefer to modify state via attributes instead of properties.
@@ -153,7 +159,7 @@ Or perhaps there's a desire to be even more like the has solution and provide fo
 
 which this proposal also supports.
 
-So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am weighing the pro's anc con's of such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce, that flies in the face of industry practice over several decades.
+So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am weighing the pro's and con's of such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce, that flies in the face of industry practice over several decades.
 
 The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of desperate last resort scenario.
 
