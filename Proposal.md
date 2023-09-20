@@ -29,12 +29,12 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, but I don't want to skirt over some of the  weirdness of what I am proposing.
 
 ```JS
-const enhancement = 'logger';
-const observedAttributes = ['log-to-console']; //canonical name of our custom attribute(s)
+export const enhancement = 'logger'; //canonical name of our custom prop, accessible via oElement.enhancements[enhancement]
+export const observedAttributes = ['log-to-console']; //canonical name of our custom attribute(s)
 customEnhancements.define(enhancement, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {observedAttributes, enhancement} = enhancementInfo;
-        const [msgAttr] = observedAttributes; // most likely, msgAttr will equal 'log-to-console', but the party responsible for registering the enhancement could choose to modify the name.
+        const [msgAttr] = observedAttributes; // most likely, msgAttr will equal 'log-to-console', but the party responsible for registering the enhancement could choose to modify the name, either globally, or inside a scoped registry.
         enhancedElement.addEventListener('click', e => {
             console.log(enhancedElement.getAttribute(msgAttr)); 
         });
@@ -82,7 +82,9 @@ class MyEnhancement extends ElementEnhancement {
 	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } 
 
 	// Called whenever the attribute's value changes
-	attributeChangedCallback(name: string, oldValue: string, newValue: string) { /* ... */ }
+	attributeChangedCallback(
+        idx: number /* I'm so sorry, but I think we will have to deal with this calamity. */, 
+        oldValue: string, newValue: string) { /* ... */ }
 
     //  Entirely optional filtering conditions for when the enhancement should be invoked.
     static get supportedInstanceTypes(){ //entirely optional
@@ -203,7 +205,7 @@ The most minimal solution, then, is for the web platform to simply announce that
 
 I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
-## Custom Property + Custom Attribute(s)  => Custom Enhancement
+## CustomEnhancement:  {CustomProp: string,  CustomAttr?: [string, string..., string]}
 
 The next thing beyond that announcement would be what many (including myself) are clamoring for:
 
@@ -218,7 +220,7 @@ So if server-rendered HTML looks as follows:
 
 ... we can expect to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.  That simple relationship may not need to be rigid, or maybe it would, depending on how this proposal would integrate with scoped registries.
 
-The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute contain a dash.  
+The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es).  
 
 Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
@@ -252,7 +254,7 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters any of the (enh- prefixed) observed attributes specified in the class.
 5.  Classes extend ElementEnhancement class, which extends EventTarget.
 6.  These classes will want to define a callback, "attachedCallback" (or connectedCallback if that ruffles some feathers). The callback will pass in the matching target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the observed attribute(s).
-7.  AttributeChangedCallback method with three parameters (name, oldValue, newValue) is supported in addition. 
+7.  AttributeChangedCallback method with three parameters (index, oldValue, newValue) is supported in addition.  Yes, the first parameter is a number!
 
 ## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required
 
@@ -275,12 +277,15 @@ Let's take a close look at what the define method should look like:
 
 ```JavaScript
 customEnhancements.define('steel', SteelEnhancer, {
-    enhances: '*',
+    enhances: '*', //the default
     observedAttributes: ['with-steel']
 });
 ```
 
 Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes list passed into the define method (if any).  Enhancements are not required to specify any attributes, as they are not intrinsically dependent on them.  Examples of enhancements which wouldn't want to burden the browser with searching for some attribute for no reason, are enhancements that are only expecting to be invoked programmatically by other enhancements (or by custom elements or frameworks).
+
+>[!NOTE]
+>Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified, you will be "enhancing" every single DOM element on the page, which seems like it would be quite costly, especially if that wasn't your intention.  With great power comes great... you know the rest. 
 
 I recommend that the developer use a safe naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.
 
