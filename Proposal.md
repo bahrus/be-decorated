@@ -1,8 +1,13 @@
 # The CustomEnhancement:  {CustomProp: string,  CustomAttr?: [string, string..., string]} Proposal
 
 > [!NOTE]
->  Reader discretion is advised.
+>  Reader discretion is advised.  
 >  ...
+>
+>  ...
+>
+>  ...
+>
 >  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming almost comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as an optional [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php) that aids us in our pursuit of creating a custom element enhancement.
 
 ## Author(s)
