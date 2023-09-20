@@ -287,7 +287,7 @@ Going backwards, the third parameter is indicating to match on all element tag n
 >[!NOTE]
 >Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified, you will be "enhancing" every single DOM element on the page, which seems like it would be quite costly, especially if that wasn't your intention.  With great power comes great... you know the rest. 
 
-I recommend that the developer use a safe naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.
+I recommend that the developer use a logical naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.  The reason for this, is I suspect even with the power of the scoped registry, life will still be simpler that way.
 
 We can also filter out element types we have no intention of enhancing:
 
