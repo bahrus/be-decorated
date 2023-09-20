@@ -1,4 +1,7 @@
-# Custom Enhancements Proposal
+# CustomProp: string + CustomAttr: [string, string..., string] => Custom Enhancements Proposal
+
+> [!NOTE]
+>  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming almost comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as a [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php)
 
 ## Author(s)
 
@@ -19,6 +22,7 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal:
 
 ```JS
+const observedAttributes = ['log-to-console'];
 customEnhancements.define('logger', class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element){
         const msg = enhancedElement.getAttribute('log-to-console');
@@ -27,7 +31,7 @@ customEnhancements.define('logger', class extends ElementEnhancement {
         });
     }
 }, {
-    observedAttributes: ['log-to-console']
+    observedAttributes
 });
 ```
 
