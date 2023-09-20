@@ -24,10 +24,11 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, but I don't want to skirt over some of the  weirdness of what I am proposing.
 
 ```JS
+const enhancement = 'logger';
 const observedAttributes = ['log-to-console']; //canonical name of our custom attribute(s)
-customEnhancements.define('logger', class extends ElementEnhancement {
+customEnhancements.define(enhancement, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
-        const {observedAttributes} = enhancementInfo;
+        const {observedAttributes, enhancement} = enhancementInfo;
         const [msgAttr] = observedAttributes; // most likely, msgAttr will equal 'log-to-console', but the party responsible for registering the enhancement could choose to modify the name.
         enhancedElement.addEventListener('click', e => {
             console.log(enhancedElement.getAttribute(msgAttr)); 
@@ -56,10 +57,10 @@ Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" i
 
 Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
 
-Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, which is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.
+Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, which is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.  But because we are talking about an array of strings, we need to think of that array as a tuple of string.
 
 > [!NOTE]
-> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  While the role that 'log-to-console' plays above is self-evident, the role that the name of the enhancement -- 'logger' plays will be revealed below (hint:  it is the "custom property" in the name of this proposal).  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, avoids confronting that important complexity. 
+> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  While the role that 'log-to-console' plays above is self-evident, the role that the name of the enhancement -- 'logger' plays will be revealed below (hint:  it is the "custom property" in the name of this proposal).  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, avoids confronting that important complexity, and chooses the names that make the most sense to the author, without worrying about what compromises will be required (if any) to avoid namespace collisions. 
 
 
 ## ElementEnhancement API Shape
