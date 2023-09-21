@@ -22,7 +22,7 @@ PR's [welcome](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md)
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
-**I would be delighted if any of the alternatives get through, without a single idea adopted from this proposal, as I see no showstoppers in them**.  This proposal just continues to be my view of the **best** approach.  Consider it a "spare" waiting on standby.
+This proposal just continues to be my view of the **best** approach, and I don't think [I'm alone](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1728875331), at least in the big things. 
 
 ## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
