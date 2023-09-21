@@ -31,9 +31,9 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 ```JS
 //canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
 //which is where we will find an instance of the class defined below.
-export const enhancement = 'logger'; 
+export const canonicalEnhancementName = 'logger'; 
 //canonical name(s) of our custom attribute(s)
-export const observedAttributes = ['log-to-console']; 
+export const canonicalObservedAttributes = ['log-to-console']; 
 customEnhancements.define(enhancement, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {observedAttributes, enhancement} = enhancementInfo;
@@ -46,7 +46,7 @@ customEnhancements.define(enhancement, class extends ElementEnhancement {
         });
     }
 }, {
-    observedAttributes
+    observedAttributes: canonicalObservedAttributes
 });
 ```
 
@@ -77,6 +77,7 @@ Why not use a static observedAttributes property, why is that part of the regist
 ## ElementEnhancement API Shape
 
 ```JS
+const canonicalObservedAttributes: [string, string, ..., string] = [/* ... */]
 class MyEnhancement extends ElementEnhancement {
 
     static config = {/* ... */} //or use a get
@@ -88,9 +89,9 @@ class MyEnhancement extends ElementEnhancement {
 	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } 
 
 	// Called whenever the attribute's value changes
-	attributeChangedCallback(
-        idx: number /* I'm so sorry, but I think we will have to deal with this calamity. */, 
-        oldValue: string, newValue: string) { /* ... */ }
+	attributeChangedCallback(idx: number, oldValue: string, newValue: string) { 
+        const canonicalAttrName = canonicaObservedAttributes[idx];
+    }
 
     //  Entirely optional filtering conditions for when the enhancement should be invoked.
     static get supportedInstanceTypes(){ //entirely optional
@@ -103,7 +104,7 @@ class MyEnhancement extends ElementEnhancement {
 
     //Entirely optional
     static get supportedCSSMatches() { 
-        return 'textarea, input'
+        return 'textarea, input';
     }
 
 }
