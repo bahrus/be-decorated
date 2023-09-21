@@ -1,14 +1,3 @@
-# The CustomEnhancement:  {CustomProp: string,  CustomAttr?: [string, string..., string]} Proposal
-
-> [!NOTE]
->  Reader discretion is advised.  
->  ...
->
->  ...
->
->  ...
->
->  Warning:  Prepare yourself for a bit of a brainf**k. I realize the title of this proposal is becoming (almost?) comical, but it is capturing the (evolving) essence of this proposal as best as I can summarize it.  At the moment, I think that we need to think of custom attributes as an optional [tuple of strings](https://www.w3schools.com/typescript/typescript_tuples.php) that aids us in our pursuit of creating a custom (HTML/SVG) element enhancement.
 
 ## Author(s)
 
@@ -18,7 +7,7 @@ PR's [welcome](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md)
 
 ## Last update
 
-9/20/2023
+9/21/2023
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -71,6 +60,11 @@ Also, a single element enhancement can "own" multiple attributes (for complex en
 Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, which is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.  But because we are talking about an array of strings that can be renamed, we need to think of that array as a tuple of strings.
 
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
+
+The only cautionary note I have is that because of the complete flexibility this proposal provides as far as allowing users of a custom enhancement to choose their own custom attribute names, that may differ from the canonical names defined in the class, the developer will probably want to be a bit cautious when declaring a public attribute that the enhancement supports, kind of like defining columns of a database table.  Like the database table example, adding additional attributes will be easy as pie.  Removing an attribute, though, could break compatibility.  So maybe when introducing a new attribute, give it some time to mature, test it out with your own stuff first, and once you are convinced the need for the attribute is here to stay, only then release the new version that supports the new attribute.
+
+This cautionary note is only applicable for enhancements you wish to make public and have it be widely used.
+ 
 
 > [!NOTE]
 > I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
