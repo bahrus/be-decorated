@@ -23,7 +23,7 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 export const canonicalEnhancementName = 'logger'; 
 //canonical name(s) of our custom attribute(s)
 export const canonicalObservedAttributes = ['log-to-console']; 
-customEnhancements.define(enhancement, class extends ElementEnhancement {
+customEnhancements.define(canonicalEnhancementName, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {observedAttributes, enhancement} = enhancementInfo;
         const [msgAttr] = observedAttributes; 
