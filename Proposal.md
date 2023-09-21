@@ -15,7 +15,7 @@ This proposal just continues to be my view of the **best** approach, and I don't
 
 ## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
-Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity.  I don't want to skirt over some of the  weirdness of what I am proposing in this initial example.
+Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
 
 ```JS
 //canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
