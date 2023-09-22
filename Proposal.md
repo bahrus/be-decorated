@@ -83,7 +83,7 @@ const canonicalObservedAttributes: [string, string, ..., string] = [
 ];
 class MyEnhancement extends ElementEnhancement {
 
-    static config = {}
+    static config = {};
     
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or connectedCallback if that is clearer
