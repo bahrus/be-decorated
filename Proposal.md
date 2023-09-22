@@ -86,7 +86,7 @@ class MyEnhancement extends ElementEnhancement {
 
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(idx: number, oldValue: string, newValue: string) { 
-        const canonicalAttrName = canonicaObservedAttributes[idx];
+        const canonicalAttrName = canonicalObservedAttributes[idx];
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be invoked.
@@ -288,9 +288,9 @@ customEnhancements.define('steel', SteelEnhancer, {
 Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes list passed into the define method (if any).  Enhancements are not required to specify any attributes, as they are not intrinsically dependent on them.  Examples of enhancements which wouldn't want to burden the browser with searching for some attribute for no reason, are enhancements that are only expecting to be invoked programmatically by other enhancements (or by custom elements or frameworks).
 
 >[!NOTE]
->Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore* the observedAttributes restriction altogether when the developer programmatically attaches an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the observedAttributes criteria altogether when the developer programmatically attaches an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
 
-I recommend that the developer use a logical naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.  The reason for this is I suspect, even with the power of the scoped registry, life will still be simpler that way.
+I recommend that the developer use a logical naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.  The reason for this is that I suspect, even with the power of the scoped registry, life will still be simpler that way.
 
 We can also filter out element types we have no intention of enhancing:
 
