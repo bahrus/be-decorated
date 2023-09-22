@@ -81,30 +81,35 @@ class MyEnhancement extends ElementEnhancement {
     static config = {/* ... */}
 
     //or connectedCallback if that is clearer
-	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } 
+	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
+        /* ... */
+    } 
 
     //or disconnectedCallback if that is clearer.
-	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } 
+	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
+        /* ... */ 
+    } 
 
 	// Called whenever the attribute's value changes
 	attributeChangedCallback(idx: number, oldValue: string, newValue: string) { 
         const canonicalAttrName = canonicalObservedAttributes[idx];
+        /* ... */
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be
     // allowed to be attached.
-    static get supportedInstanceTypes(){ //entirely optional
-        return [HTMLInputElement, 
-                HTMLTextArea, 
-                SomeAlreadyLoadedCustomElementClass, 
-                SVGElement,
-                HTMLMarqueeElement]; //For example
-    }
+    static supportedInstanceTypes = //entirely optional
+        [
+            HTMLInputElement, 
+            HTMLTextArea, 
+            SomeAlreadyLoadedCustomElementClass, 
+            SVGElement,
+            HTMLMarqueeElement
+        ]; //For example
+    
 
     //Entirely optional
-    static get supportedCSSMatches() { 
-        return 'textarea, input';
-    }
+    static supportedCSSMatches = 'textarea, input';
 
 }
 ```
