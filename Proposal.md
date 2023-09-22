@@ -27,9 +27,11 @@ customEnhancements.define(canonicalEnhancementName, class extends ElementEnhance
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {observedAttributes, enhancement} = enhancementInfo;
         const [msgAttr] = observedAttributes; 
-        // most likely, msgAttr will equal 'log-to-console', 
-        // but the party (or parties) responsible for registering the enhancement 
-        // could choose to modify the name, either globally, or inside a scoped registry.
+        // in this example, msgAttr will simply equal 'log-to-console', 
+        // but this code is demonstrating how to code defensively, so that
+        // the party (or parties) responsible for registering the enhancement 
+        // could be choose to modify the name, either globally, or inside a scoped registry
+        // in a different file.
         enhancedElement.addEventListener('click', e => {
             console.log(enhancedElement.getAttribute(msgAttr)); 
         });
@@ -51,9 +53,9 @@ customEnhancements.define(canonicalEnhancementName, class extends ElementEnhance
 
 Done!
 
-Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements, and clearly the custom enhancement class above closely resembles a custom element. I could go with that.  It wouldn't break the essence of this proposal in any way.  I *think*, though it would cause less confusion to use attachedCallback (it feels to me more like attaching shadow, for example).  But I think that decision should be of little consequence, so please replace it with whatever name you like.
+Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements, and clearly the custom enhancement class above closely resembles a custom element. I could go with that.  It wouldn't break the essence of this proposal in any way.  I *think*, though, it would cause less confusion to use attachedCallback (it feels to me more like attaching shadow, for example).  But I think that decision should be of little consequence, so please replace it with whatever name you like.
 
-Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
+Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable, interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
 Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
 
@@ -61,7 +63,7 @@ Why not use a static observedAttributes property, why is that part of the regist
 
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
 
-The only cautionary note I have is that because of the complete flexibility this proposal provides as far as allowing users of a custom enhancement to choose their own custom attribute names, that may differ from the canonical names defined in the class, the developer will probably want to be a bit cautious when declaring a public attribute that the enhancement supports, kind of like defining columns of a database table.  Like the database table example, adding additional attributes will be easy as pie.  Removing an attribute, though, could break compatibility.  So maybe when introducing a new attribute, give it some time to mature, test it out with your own stuff first, and once you are convinced the need for the attribute is here to stay, only then release the new version that supports the new attribute.
+The only cautionary note I have is that because of the complete flexibility this proposal provides as far as allowing users of a custom enhancement to choose their own custom attribute names, that may differ from the canonical names (optionally) defined in the class, the developer will probably want to be a bit cautious when declaring a public attribute that the enhancement supports, kind of like defining columns of a database table.  Like the database table example, adding additional attributes will be easy as pie.  Removing an attribute, though, could break compatibility.  So maybe when introducing a new attribute, give it some time to mature, test it out with your own stuff first, and once you are convinced the need for the attribute is here to stay, only then release the new version that supports the new attribute.
 
 This cautionary note is only applicable for enhancements you wish to make public and have it be widely used.
  
@@ -76,7 +78,7 @@ This cautionary note is only applicable for enhancements you wish to make public
 const canonicalObservedAttributes: [string, string, ..., string] = [/* ... */]
 class MyEnhancement extends ElementEnhancement {
 
-    static config = {/* ... */} //or use a get
+    static config = {/* ... */}
 
     //or connectedCallback if that is clearer
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { /* ... */ } 
@@ -89,7 +91,8 @@ class MyEnhancement extends ElementEnhancement {
         const canonicalAttrName = canonicalObservedAttributes[idx];
     }
 
-    //  Entirely optional filtering conditions for when the enhancement should be invoked.
+    //  Entirely optional filtering conditions for when the enhancement should be
+    // allowed to be attached.
     static get supportedInstanceTypes(){ //entirely optional
         return [HTMLInputElement, 
                 HTMLTextArea, 
