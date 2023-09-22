@@ -80,18 +80,19 @@ class MyEnhancement extends ElementEnhancement {
 
     static config = {/* ... */}
 
-    //or connectedCallback if that is clearer
+    
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
+        //or connectedCallback if that is clearer
         /* ... */
     } 
-
-    //or disconnectedCallback if that is clearer.
+    
 	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
+        //or disconnectedCallback if that is clearer.
         /* ... */ 
     } 
-
-	// Called whenever the attribute's value changes
+	
 	attributeChangedCallback(idx: number, oldValue: string, newValue: string) { 
+        // Called whenever the attribute(s) values change
         const canonicalAttrName = canonicalObservedAttributes[idx];
         /* ... */
     }
