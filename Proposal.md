@@ -75,26 +75,27 @@ This cautionary note is only applicable for enhancements you wish to make public
 ## ElementEnhancement API Shape
 
 ```JS
-const canonicalObservedAttributes: [string, string, ..., string] = [/* ... */]
+const canonicalObservedAttributes: [string, string, ..., string] = [
+    'my-canonical-attr-1',
+    'my-canonical-attr-2',
+    ...
+    'my-canonical-attr-n',
+];
 class MyEnhancement extends ElementEnhancement {
 
-    static config = {/* ... */}
-
+    static config = {}
     
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or connectedCallback if that is clearer
-        /* ... */
     } 
     
 	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or disconnectedCallback if that is clearer.
-        /* ... */ 
     } 
 	
 	attributeChangedCallback(idx: number, oldValue: string, newValue: string) { 
         // Called whenever the attribute(s) values change
         const canonicalAttrName = canonicalObservedAttributes[idx];
-        /* ... */
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be
