@@ -7,11 +7,11 @@ PR's [welcome](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md)
 
 ## Last update
 
-9/21/2023
+2023-09-24
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
-This proposal just continues to be my view of the **best** approach, and I don't think [I'm alone](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1728875331), at least in the big things. 
+This proposal just continues to be my view of the **best** approach, and I don't think [I'm alone](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1728875331), at least in the important things. 
 
 ## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
@@ -59,11 +59,11 @@ Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" i
 
 Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
 
-Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, which is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.  But because we are talking about an array of strings that can be renamed, we need to think of that array as a tuple of strings.
+Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, whose name is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.  But because we are talking about an array of strings that can be renamed, we need to think of that array as a tuple of strings.
 
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
 
-The only cautionary note I have is that because of the complete flexibility this proposal provides as far as allowing users of a custom enhancement to choose their own custom attribute names, that may differ from the canonical names (optionally) defined in the class, the developer will probably want to be a bit cautious when declaring a public attribute that the enhancement supports, kind of like defining columns of a database table.  Like the database table example, adding additional attributes will be easy as pie.  Removing an attribute, though, could break compatibility.  So maybe when introducing a new attribute, give it some time to mature, test it out with your own stuff first, and once you are convinced the need for the attribute is here to stay, only then release the new version that supports the new attribute.
+The only cautionary note I have is that because of the complete flexibility this proposal provides as far as allowing users of a custom enhancement to choose their own custom attribute names, that may differ from the canonical names (optionally) provided as a helpful constant in the class, the developer will probably want to be a bit cautious when declaring a public attribute that the enhancement supports, kind of like defining columns of a database table.  Like the database columns of a table example, adding additional attributes will be easy as pie.  Removing an attribute, though, could break compatibility.  So maybe when introducing a new attribute, give it some time to mature, test it out with your own stuff first, and once you are convinced the need for the attribute is here to stay, only then release the new version that supports the new attribute.
 
 This cautionary note is only applicable for enhancements you wish to make public and have it be widely used.
  
@@ -128,6 +128,8 @@ Another key reason for adding this filtering capability is performance -- there 
     <summary>But at what cost?</summary>
 
 Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as our first open question of the proposal, which doesn't strike me as very significant, but you never know.
+
+I *think* the solution for this conundrum would be if the build process also removes the filtering properties (supportedInstanceTypes, supportedCSSMatches) during the build.
 
 </details>
 
