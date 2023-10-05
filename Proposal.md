@@ -138,6 +138,9 @@ I *think* the solution for this conundrum would be if the build process also rem
 <details>
     <summary>None, as far as I can see</summary>
 
+> [!NOTE]
+> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes, so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
+
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
 I amended this proposal, though, to support multiple attributes for a single enhancement, in order to accommodate, as best I can, the [apparent appeal, which I can definitely relate to](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1719996635) that the "has" attribute seemingly provides, kind of a way of grouping related attributes together.  I actually do believe there are very strong use cases where we *do* want one enhancement to be able to break down the "aspects" of the enhancement/behavior into multiple attributes.  Benefits are:
@@ -178,9 +181,9 @@ The only argument I see, honestly, in favor of the "has" requirement, would be s
 
 Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement. 
 
-And for clarity, the "house words" for this proposal is "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties for custom enhancements, just as much as it does for custom elements.
+And for clarity, the "house words" for this proposal are "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties, some of which may pair with observed attributes for custom enhancements, just as much as it does for custom elements.
 
-I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way.  
+I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such improvements to custom elements themselves, and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way.  
 
 ## Backdrop
 
@@ -703,10 +706,6 @@ interface EnhancementInfo {
 ```
 
 The enhancement string, and observedAttributes array of strings would, I think, be critical for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement and observedAttributes within the context of the scoped registry.
-
-And now, dear reader, I confront you with perhaps the most dizzying concept we will need to face.  Brace yourself in what follows:
-
-1.  We want enhancements to optionally be able to be associated with one or more 
 
 The initialPropValues field of EnhancementInfo would be the object properties that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
 
