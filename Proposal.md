@@ -7,7 +7,7 @@ PR's [welcome](https://github.com/bahrus/be-decorated/blob/baseline/Proposal.md)
 
 ## Last update
 
-2023-09-24
+2023-10-5
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -271,12 +271,13 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 6.  These classes will want to define a callback, "attachedCallback" (or connectedCallback if that ruffles some feathers). The callback will pass in the matching target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the observed attribute(s).
 7.  AttributeChangedCallback method with three parameters (index, oldValue, newValue) is supported in addition.  Yes, the first parameter is a number!
 
-## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required
+## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required (or strongly suggested?)
 
 The reason the prefix enh-* should be required is this:
 
 1.  If enh-* is only encouraged the way data-* is encouraged, at least we could still count on custom element authors likely avoiding that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
 2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, which seems quite likely to happen frequently, it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
+3.  However, it could be argued, depending on how smoothly working with scoped registry proves to be in this context, that such catastrophes could be averted using the scoped registry.  So maybe it shouldn't be required, and may seem silly for developers working in a closed environment, with enhancements they have no interest in publishing for general consumption.  But even so, I think it would be quite useful for the platform to at a minimum provide for a key prefix that developers can use to help avoid having to be always on the watch out for such collisions (which might not become immediately apparent until some user discovers it in production).
 
 ## Global api's.
 
